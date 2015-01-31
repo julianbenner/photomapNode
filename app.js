@@ -12,6 +12,7 @@ connection = mysql.createConnection({
     password : 'banane',
     database : 'photomap'
 });
+app.use(express.static(__dirname + '/public'));
 
 connection.connect();
 
