@@ -1,0 +1,24 @@
+{
+  "name": "photomap",
+  "version": "0.0.1",
+  "authors": [
+    "Julian Benner <dev@jbenner.de>"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "fontawesome": "~4.3.0",
+    "bootstrap-sass-official": "~3.3.3"
+  },
+  "resolutions": {
+    "bootstrap-sass-official": "~3.3.3",
+    "fontawesome": "~4.3.0"
+  }
+}
