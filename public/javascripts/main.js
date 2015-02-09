@@ -1,1 +1,0 @@
-var script = require('./script');
