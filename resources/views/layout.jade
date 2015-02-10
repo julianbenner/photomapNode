@@ -3,16 +3,34 @@ html
     head
         title=title
         link(href='/css/style.css', rel='stylesheet')
+        script(src='/javascripts/jquery.js')
+        script(src='/javascripts/bootstrap.js')
+
     body
-      .container
-        div.row
-          nav.navbar.navbar-default
-            div.container-fluid
-              div.navbar-header
-                a.navbar-brand(href='/') Photomap
-              div.navbar-collapse
-                ul.navbar-nav.nav
+        nav.navbar.navbar-default.navbar-static-top
+          div.container
+            div.navbar-header
+              a.navbar-brand(href='/') Photomap
+            div.navbar-collapse
+              ul.navbar-nav.nav
+                li
+                  a(href='/') Link
+              ul.navbar-nav.nav.navbar-right
+                if(user)
+                  li.dropdown
+                    a.dropdown-toggle(href='#', role='button', data-toggle='dropdown')
+                      | #{user.username} 
+                      span.caret
+                    ul.dropdown-menu(role='menu')
+                      li
+                        a(href='') Settings
+                      li.divider
+                      li
+                        a(href='/admin/logout') Log out
                   li
-                    a(href='/') Link
+                else
+                  li
+                    a(href='/admin/login') Log in
                     
-        block content
+        div.container
+          block content

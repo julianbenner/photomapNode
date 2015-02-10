@@ -1,0 +1,79 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'express-bodyparser' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.35
+4 verbose node symlink C:\Program Files\nodejs\\node.exe
+5 warn package.json untitled@0.0.0 No description
+6 warn package.json untitled@0.0.0 No repository field.
+7 warn package.json untitled@0.0.0 No README data
+8 verbose readDependencies using package.json deps
+9 verbose cache add [ 'express-bodyparser', null ]
+10 verbose cache add name=undefined spec="express-bodyparser" args=["express-bodyparser",null]
+11 verbose parsed url { protocol: null,
+11 verbose parsed url   slashes: null,
+11 verbose parsed url   auth: null,
+11 verbose parsed url   host: null,
+11 verbose parsed url   port: null,
+11 verbose parsed url   hostname: null,
+11 verbose parsed url   hash: null,
+11 verbose parsed url   search: null,
+11 verbose parsed url   query: null,
+11 verbose parsed url   pathname: 'express-bodyparser',
+11 verbose parsed url   path: 'express-bodyparser',
+11 verbose parsed url   href: 'express-bodyparser' }
+12 silly lockFile 5bd6e37b-express-bodyparser express-bodyparser
+13 verbose lock express-bodyparser C:\Users\Julian\AppData\Roaming\npm-cache\5bd6e37b-express-bodyparser.lock
+14 silly lockFile 5bd6e37b-express-bodyparser express-bodyparser
+15 silly lockFile 5bd6e37b-express-bodyparser express-bodyparser
+16 verbose addNamed [ 'express-bodyparser', '' ]
+17 verbose addNamed [ null, '*' ]
+18 silly lockFile e25467c3-express-bodyparser express-bodyparser@
+19 verbose lock express-bodyparser@ C:\Users\Julian\AppData\Roaming\npm-cache\e25467c3-express-bodyparser.lock
+20 silly addNameRange { name: 'express-bodyparser', range: '*', hasData: false }
+21 verbose request where is /express-bodyparser
+22 verbose request registry https://registry.npmjs.org/
+23 verbose request id d61560db09c5ae1b
+24 verbose url raw /express-bodyparser
+25 verbose url resolving [ 'https://registry.npmjs.org/', './express-bodyparser' ]
+26 verbose url resolved https://registry.npmjs.org/express-bodyparser
+27 verbose request where is https://registry.npmjs.org/express-bodyparser
+28 info trying registry request attempt 1 at 09:21:54
+29 http GET https://registry.npmjs.org/express-bodyparser
+30 http 404 https://registry.npmjs.org/express-bodyparser
+31 silly registry.get cb [ 404,
+31 silly registry.get   { date: 'Tue, 10 Feb 2015 08:21:56 GMT',
+31 silly registry.get     server: 'CouchDB/1.5.0 (Erlang OTP/R16B03)',
+31 silly registry.get     etag: '"ELJLTURITSWKDBWHMG6UBS7GS"',
+31 silly registry.get     'content-type': 'application/json',
+31 silly registry.get     'cache-control': 'max-age=0',
+31 silly registry.get     'content-length': '526',
+31 silly registry.get     'accept-ranges': 'bytes',
+31 silly registry.get     via: '1.1 varnish',
+31 silly registry.get     age: '0',
+31 silly registry.get     'x-served-by': 'cache-fra1231-FRA',
+31 silly registry.get     'x-cache': 'MISS',
+31 silly registry.get     'x-cache-hits': '0',
+31 silly registry.get     'x-timer': 'S1423556516.468618,VS0,VE421',
+31 silly registry.get     vary: 'Accept',
+31 silly registry.get     'keep-alive': 'timeout=10, max=50',
+31 silly registry.get     connection: 'Keep-Alive' } ]
+32 silly lockFile e25467c3-express-bodyparser express-bodyparser@
+33 silly lockFile e25467c3-express-bodyparser express-bodyparser@
+34 error 404 Not Found
+34 error 404
+34 error 404 'express-bodyparser' is not in the npm registry.
+34 error 404 You should bug the author to publish it
+34 error 404 It was specified as a dependency of 'untitled'
+34 error 404
+34 error 404 Note that you can also install from a
+34 error 404 tarball, folder, or http url, or git url.
+35 error System Windows_NT 6.2.9200
+36 error command "C:\\Program Files\\nodejs\\\\node.exe" "C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "express-bodyparser"
+37 error cwd C:\Users\Julian\Documents\photomapNode
+38 error node -v v0.10.35
+39 error npm -v 1.4.28
+40 error code E404
+41 verbose exit [ 1, true ]

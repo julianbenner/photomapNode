@@ -15,7 +15,8 @@
   ],
   "dependencies": {
     "fontawesome": "~4.3.0",
-    "bootstrap-sass-official": "~3.3.3"
+    "bootstrap-sass-official": "~3.3.3",
+    "bootstrap": "~3.3.2"
   },
   "resolutions": {
     "bootstrap-sass-official": "~3.3.3",
