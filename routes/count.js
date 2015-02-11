@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 function get_image_count(lat_min, lat_max, lon_min, lon_max, callback) {
+    var connection = require('../routes/Database').Get();
+
     var query = 'SELECT image_count, slat/image_count as avg_lat, slon/image_count as avg_lon FROM ' +
         '(SELECT COUNT(*) as image_count, SUM(lat) as slat, SUM(lon) as slon FROM ' +
         'photomap_image WHERE lat BETWEEN '+connection.escape(lat_min)+' AND '+connection.escape(lat_max)+' AND lon BETWEEN '+connection.escape(lon_min)+' AND '+connection.escape(lon_max)+') t';

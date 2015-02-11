@@ -1,8 +1,9 @@
 extends layout
 
 block content
-  div.row
-    if(user)
-      h2 Logged in
-    else
-      h2 Please log in first.
+  div.container
+    div.row
+      if(user)
+        h2 Logged in
+      else
+        h2 Please log in first.
