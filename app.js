@@ -1,6 +1,9 @@
 var express = require('express');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
+var session = require('express-session');
+var flash = require('connect-flash');
+var passport = require('passport');
 
 var count = require('./routes/count');
 
@@ -13,6 +16,16 @@ app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+require('./routes/passport');
+app.use(session({
+    secret: 'ilovescotchscotchyscotchscotch',
+    saveUninitialized: true,
+    resave: true
+})); // session secret
+app.use(passport.initialize());
+app.use(passport.session()); // persistent login sessions
+app.use(flash());
 
 app.set('views', './resources/views');
 app.set('view engine', 'jade');

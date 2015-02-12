@@ -1,18 +1,34 @@
 var express = require('express');
 var path = require('path');
-var passport = require('../routes/passport.js');
+var passport = require('passport');
+
+function get_list_of_images(amount, page, callback) {
+  var connection = require('../routes/Database').Get();
+
+  page = parseInt(page);
+  page = isNaN(page) ? 1 : page;
+
+  var start_from = connection.escape(amount * (page - 1));
+  amount = connection.escape(amount);
+
+  var query = 'SELECT * FROM photomap_image ORDER BY path,name LIMIT ' + start_from + ', ' + amount;
+  console.log(query);
+  connection.query(
+    query,
+    function(err, rows, fields) {
+      if (err) throw err;
+      callback(rows);
+    });
+}
+
+function user_is_admin(request) {
+  return true; // TODO
+}
 
 module.exports = function admin() {
   var router = express.Router();
 
   var relPath = '/admin';
-
-  router.use(session({
-    secret: 'ilovescotchscotchyscotchscotch'
-  })); // session secret
-  router.use(passport.initialize());
-  router.use(passport.session()); // persistent login sessions
-  router.use(flash());
 
   router.post('/login',
     passport.authenticate('local', {
@@ -44,6 +60,16 @@ module.exports = function admin() {
   router.get('/logout', function(req, res) {
     req.logout();
     res.redirect(path.join(relPath, '/'));
+  });
+
+  router.get('/list', function(req, res) {
+    if (user_is_admin(req)) {
+      get_list_of_images(20, req.query.page, function(result) {
+        res.json(result);
+      });
+    } else {
+      res.sendStatus(401);
+    }
   });
 
   return router;

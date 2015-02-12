@@ -2,8 +2,7 @@ extends layout
 
 block content
   div.container
-    div.row
-      if(user)
-        h2 Logged in
-      else
-        h2 Please log in first.
+    if(user)
+      include admin-content.jade
+    else
+      h2 You are not authorized to access this page.
