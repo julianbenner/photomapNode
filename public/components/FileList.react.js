@@ -1,3 +1,9 @@
+var FileListItem = require('./FileListItem.react');
+var $ = require('jquery');
+var React = require('react/addons');
+var FileStore = require('./FileStore.js');
+var Dispatcher = require('./Dispatcher.js');
+
 var FileList = React.createClass({
     getInitialState: function() {
         return {
@@ -7,24 +13,22 @@ var FileList = React.createClass({
         };
     },
 
-    getItems: function (page, amount) {
-        $.getJSON( "/admin/list?page=" + page + "&amount=" + amount, function( data ) {
-          this.setState({
-            items: data
-          })
-        }.bind(this));
-    },
-
-    showPage: function (page) {
-        this.getItems(page, this.props.amount);
-    },
-
     componentDidMount: function () {
-        this.showPage(this.state.page);
+        FileStore.on('files-changed', this.showPage);
+        Dispatcher.dispatch({
+            eventName: 'load-files'
+        });
     },
 
     componentWillUnmount: function () {
+        FileStore.removeListener('files-changed', this.showPage);
+    },
 
+    showPage: function () {
+        var pageContent = FileStore.getPageContent(this.state.page);
+        this.setState({
+            items: pageContent
+        });
     },
 
     prevPage: function () {
@@ -53,7 +57,7 @@ var FileList = React.createClass({
         var item, items;
         item = "";
         items = this.state.items.map(function(itemChild) {
-            return (<FileListItem key={itemChild.id} index={itemChild.id} name={itemChild.name} lat={itemChild.lat} lon={itemChild.lon} date={itemChild.date} />);
+            return (<FileListItem key={itemChild.id} index={itemChild.id} name={itemChild.name} lat={itemChild.lat} lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected} />);
         });
 
         var previousClass = React.addons.classSet({
@@ -77,3 +81,5 @@ var FileList = React.createClass({
             );
     }
 });
+
+module.exports = FileList;

@@ -1,3 +1,7 @@
+var React = require('react');
+var FileStore = require('./FileStore.js');
+var Dispatcher = require('./Dispatcher.js');
+
 var FileListItem = React.createClass({
     getInitialState: function() {
         return {
@@ -23,16 +27,17 @@ var FileListItem = React.createClass({
     },
 
     toggleEdit: function () {
-        this.setState({
-            editIsVisible: !this.state.editIsVisible
+        Dispatcher.dispatch({
+            eventName: 'select-file',
+            fileIndex: this.props.index
         });
     },
 
     render: function() {
 
         var editStyle = {
-            'visibility': this.state.editIsVisible ? 'visible' : 'hidden',
-            'position': this.state.editIsVisible ? 'static' : 'absolute'
+            'visibility': this.props.selected ? 'visible' : 'hidden',
+            'position': this.props.selected ? 'static' : 'absolute'
         };
 
         return (
@@ -60,3 +65,5 @@ var FileListItem = React.createClass({
         );
     }
 });
+
+module.exports = FileListItem;
