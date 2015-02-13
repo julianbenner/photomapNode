@@ -2,7 +2,11 @@ div.row
   div.col-md-6
     div.panel.panel-default
       div.panel-heading Edit files
-      div.panel-body asd2
+      div.panel-body 
+        div#file-list
+      script(src='/components/FileListItem.react.js', type='text/jsx')
+      script(src='/components/FileList.react.js', type='text/jsx')
+      script(src='/javascripts/react-client.js', type='text/jsx')
   div.col-md-6
     div.panel.panel-default
       div.panel-heading Add new files

@@ -13,7 +13,7 @@ var config = {
 
 gulp.task('bower', function() {
 	return bower()
-		.pipe(gulp.dest(config.bowerDir));
+		.pipe(gulp.dest('./public/javascripts'));
 });
 
 gulp.task('icons', function() {

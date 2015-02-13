@@ -7,6 +7,8 @@ function get_list_of_images(amount, page, callback) {
 
   page = parseInt(page);
   page = isNaN(page) ? 1 : page;
+  amount = parseInt(amount);
+  amount = isNaN(amount) ? 10 : amount;
 
   var start_from = connection.escape(amount * (page - 1));
   amount = connection.escape(amount);
@@ -64,7 +66,7 @@ module.exports = function admin() {
 
   router.get('/list', function(req, res) {
     if (user_is_admin(req)) {
-      get_list_of_images(20, req.query.page, function(result) {
+      get_list_of_images(req.query.amount, req.query.page, function(result) {
         res.json(result);
       });
     } else {
