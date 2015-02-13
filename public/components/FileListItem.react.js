@@ -32,19 +32,31 @@ var FileListItem = React.createClass({
 
         var editStyle = {
             'visibility': this.state.editIsVisible ? 'visible' : 'hidden',
-            'display': 'inline-block'
+            'position': this.state.editIsVisible ? 'static' : 'absolute'
         };
 
         return (
-            <a className="list-group-item" onClick={this.toggleEdit}>
-                {this.state.name}
+            <div className="list-group-item" onClick={this.toggleEdit}>
+                {this.props.index} - {this.state.name}
                 <div style={editStyle}><br />
-                  <input type="text" placeholder="File name" value={this.state.name} />
-                  <input type="text" placeholder="Latitude" value={this.state.lat} />
-                  <input type="text" placeholder="Longitude" value={this.state.lon} />
-                  <input type="text" placeholder="Date" value={this.state.date} />
+                  <div className="input-group">
+                      <span className="input-group-addon">File</span>
+                      <input type="text" className="form-control" placeholder="File name" value={this.state.name} />
+                  </div>
+                  <div className="input-group">
+                      <span className="input-group-addon">Lat</span>
+                      <input type="text" className="form-control" placeholder="Latitude" value={this.state.lat} />
+                  </div>
+                  <div className="input-group">
+                      <span className="input-group-addon">Lon</span>
+                      <input type="text" className="form-control" placeholder="Longitude" value={this.state.lon} />
+                  </div>
+                  <div className="input-group">
+                      <span className="input-group-addon">Date</span>
+                      <input type="text" className="form-control" placeholder="Date" value={this.state.date} />
+                  </div>
                 </div>
-            </a>
+            </div>
         );
     }
 });
