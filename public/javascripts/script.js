@@ -16,13 +16,20 @@ map.on('moveend', function(e) {
 
 marker_array = [];
 
-function show_circle(lat, lon, text, size) {
+function create_circle(lat, lon, text, size) {
 	return L.marker([lat, lon], {
 		icon: L.divIcon({
 			html: '<div class="image_count_child">' + text + '</div>',
 			iconSize: [size, size],
 			className: 'image_count'
 		})
+	});
+}
+
+function jsonToGallery(input) {
+	$('#gallery-view').html('');
+	input.forEach(function(item) {
+		$('#gallery-view').append($('<a></a>').text(item.name).attr('href', '/images/' + item.name).append($('<br/>')));
 	});
 }
 
@@ -49,13 +56,13 @@ function draw_raster_block(lat_min, lat_max, lon_min, lon_max) {
 			}
 		});
 		if (image_count > 0) {
-			var circleMarker = show_circle(avg_lat, avg_lon, image_count, (Math.log(image_count) + 5) * 7);
+			var circleMarker = create_circle(avg_lat, avg_lon, image_count, (Math.log(image_count) + 5) * 7);
 			marker_array.push(circleMarker);
 			circleMarker.addTo(map);
 			$('.image_count').last().attr("data-toggle", "modal").attr("data-target", "#myModal").click(function() {
 				$.getJSON("get_image_list/" + lat_min + "," + lat_max + "," + lon_min + "," + lon_max, {}).
 				success(function(data2) {
-					$('#gallery-view').html($.param(data2));
+					jsonToGallery(data2);
 				});
 			});
 		}
@@ -63,8 +70,8 @@ function draw_raster_block(lat_min, lat_max, lon_min, lon_max) {
 }
 
 function show_circles() {
-	raster_hor = 5;
-	raster_ver = 5;
+	raster_hor = 2;
+	raster_ver = 2;
 	bounds = map.getBounds();
 	map_lat_min = bounds._southWest.lat;
 	map_lon_min = bounds._southWest.lng;

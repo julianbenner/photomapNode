@@ -23,6 +23,7 @@ var FileListItem = React.createClass({
         return (
             <a href="#" className={classes} onClick={this.toggleEdit}>
                 {this.props.index} - {this.props.name}
+                <span className="small">{this.props.lat}, {this.props.lon}</span>
             </a>
         );
     }
