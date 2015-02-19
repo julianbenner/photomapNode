@@ -5,6 +5,8 @@ var passport = require('passport');
 function get_list_of_images(amount, page, callback) {
   var connection = require('../routes/Database').Get();
 
+  var use_limit = amount === 'all' ? false : true;
+
   page = parseInt(page);
   page = isNaN(page) ? 1 : page;
   amount = parseInt(amount);
@@ -13,7 +15,7 @@ function get_list_of_images(amount, page, callback) {
   var start_from = connection.escape(amount * (page - 1));
   amount = connection.escape(amount);
 
-  var query = 'SELECT * FROM photomap_image ORDER BY path,name LIMIT ' + start_from + ', ' + amount;
+  var query = 'SELECT * FROM photomap_image ORDER BY path,name' + (use_limit ? ' LIMIT ' + start_from + ', ' + amount : '');
   console.log(query);
   connection.query(
     query,
@@ -21,6 +23,20 @@ function get_list_of_images(amount, page, callback) {
       if (err) throw err;
       callback(rows);
     });
+}
+
+function edit_image(id, name, lat, lon, date, callback) {
+  var connection = require('../routes/Database').Get();
+
+  var image = {id: id, name: name, lat: lat, lon: lon, date: date};
+
+  if (id > 0) {
+    var query = connection.query('UPDATE photomap_image SET ? WHERE id = ' + connection.escape(image.id), image, function(err, result) {
+      callback();
+    }); 
+    console.log(query.sql);
+  }
+  callback();
 }
 
 function user_is_admin(request) {
@@ -31,6 +47,16 @@ module.exports = function admin() {
   var router = express.Router();
 
   var relPath = '/admin';
+
+  router.post('/edit', function(req, res) {
+    if (user_is_admin(req)) {
+      edit_image(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
+        res.send('');
+      });
+    } else {
+      res.sendStatus(401);
+    }
+  });
 
   router.post('/login',
     passport.authenticate('local', {

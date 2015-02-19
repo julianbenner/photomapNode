@@ -34,34 +34,15 @@ var FileListItem = React.createClass({
     },
 
     render: function() {
-
-        var editStyle = {
-            'visibility': this.props.selected ? 'visible' : 'hidden',
-            'position': this.props.selected ? 'static' : 'absolute'
-        };
+        var classes = React.addons.classSet({
+            'list-group-item': true,
+            'active': this.props.selected
+        });
 
         return (
-            <div className="list-group-item" onClick={this.toggleEdit}>
+            <a href="#" className={classes} onClick={this.toggleEdit}>
                 {this.props.index} - {this.state.name}
-                <div style={editStyle}><br />
-                  <div className="input-group">
-                      <span className="input-group-addon">File</span>
-                      <input type="text" className="form-control" placeholder="File name" value={this.state.name} />
-                  </div>
-                  <div className="input-group">
-                      <span className="input-group-addon">Lat</span>
-                      <input type="text" className="form-control" placeholder="Latitude" value={this.state.lat} />
-                  </div>
-                  <div className="input-group">
-                      <span className="input-group-addon">Lon</span>
-                      <input type="text" className="form-control" placeholder="Longitude" value={this.state.lon} />
-                  </div>
-                  <div className="input-group">
-                      <span className="input-group-addon">Date</span>
-                      <input type="text" className="form-control" placeholder="Date" value={this.state.date} />
-                  </div>
-                </div>
-            </div>
+            </a>
         );
     }
 });

@@ -1,4 +1,5 @@
 var FileListItem = require('./FileListItem.react');
+var FileListEdit = require('./FileListEdit.react');
 var $ = require('jquery');
 var React = require('react/addons');
 var FileStore = require('./FileStore.js');
@@ -8,8 +9,9 @@ var FileList = React.createClass({
     getInitialState: function() {
         return {
             items: [],
-            index: 0,
-            page: 1
+            currently_selected: 0,
+            page: 1,
+            amount_of_pages: 1
         };
     },
 
@@ -27,7 +29,8 @@ var FileList = React.createClass({
     showPage: function () {
         var pageContent = FileStore.getPageContent(this.state.page);
         this.setState({
-            items: pageContent
+            items: pageContent,
+            amount_of_pages: FileStore.getAmountOfPages()
         });
     },
 
@@ -54,29 +57,35 @@ var FileList = React.createClass({
     },
 
     render: function() {
-        var item, items;
-        item = "";
-        items = this.state.items.map(function(itemChild) {
+        var items = this.state.items.map(function(itemChild) {
             return (<FileListItem key={itemChild.id} index={itemChild.id} name={itemChild.name} lat={itemChild.lat} lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected} />);
         });
 
         var previousClass = React.addons.classSet({
-            'previous': true,
             'disabled': this.state.page == 1
         });
 
         return (
             <div>
-            <div className="list-group">
-            {items}
-            </div>
-            <div>{item}</div>
-            <nav>
-              <ul className="pager">
-                <li className={previousClass}><a href="#" onClick={this.prevPage}><span aria-hidden="true">&larr;</span> Older</a></li>
-                <li className="next"><a href="#" onClick={this.nextPage}>Newer <span aria-hidden="true">&rarr;</span></a></li>
-              </ul>
-            </nav>
+                <nav>
+                  <ul className="pagination">
+                    <li className={previousClass}>
+                        <a href="#" onClick={this.prevPage}>
+                            <span aria-hidden="true">&larr;</span>
+                        </a>
+                    </li>
+                    <li><span>{this.state.page + '/' + this.state.amount_of_pages}</span></li>
+                    <li className="next">
+                        <a href="#" onClick={this.nextPage}>
+                            <span aria-hidden="true">&rarr;</span>
+                        </a>
+                    </li>
+                  </ul>
+                </nav>
+                <div className="list-group">
+                    {items}
+                </div>
+                <FileListEdit />
             </div>
             );
     }

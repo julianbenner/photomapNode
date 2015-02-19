@@ -2,7 +2,7 @@ var Dispatcher = require('./Dispatcher.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 
-var pageSize = 5;
+var pageSize = 10;
 
 var _files = [];
 var _fileIndex = 0;
@@ -13,8 +13,8 @@ var FileStore = assign({}, EventEmitter.prototype, {
         return pageContent;
     },
 
-    getSeletedFile: function () {
-        return _fileIndex;
+    getSelectedFile: function () {
+        return _files[FileStore.getItemIdByDbId(_fileIndex)];
     },
 
     getItemIdByDbId: function (id) {
@@ -22,14 +22,25 @@ var FileStore = assign({}, EventEmitter.prototype, {
             if (_files[i].id == id) return i;
         }
         return -1; // TODO
+    },
+
+    getAmountOfPages: function () {
+        return Math.ceil(_files.length / pageSize);
     }
 });
 
 Dispatcher.register(function (payload) {
     switch (payload.eventName) {
         case 'load-files':
-            $.getJSON( "/admin/list?page=" + 1 + "&amount=" + 999, function( data ) {
+            $.getJSON( "/admin/list?page=" + 1 + "&amount=all", function( data ) {
               _files = data;
+              FileStore.emit('files-changed');
+            });
+            break;
+        case 'edit-file':
+            _files[FileStore.getItemIdByDbId(_fileIndex)] = payload.file;
+            $.post( "/admin/edit", payload.file).done(function( data ) {
+                console.log(data);
               FileStore.emit('files-changed');
             });
             break;
