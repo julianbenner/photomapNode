@@ -4,26 +4,7 @@ var Dispatcher = require('./Dispatcher.js');
 
 var FileListItem = React.createClass({
     getInitialState: function() {
-        return {
-            name: '',
-            lat: 0.0,
-            lon: 0.0,
-            date: '',
-            editIsVisible: false
-        };
-    },
-
-    componentDidMount: function () {
-        this.setState({
-            name: this.props.name,
-            lat: this.props.lat,
-            lon: this.props.lon,
-            date: this.props.date,
-        });
-    },
-
-    componentWillUnmount: function () {
-
+        return {};
     },
 
     toggleEdit: function () {
@@ -41,7 +22,7 @@ var FileListItem = React.createClass({
 
         return (
             <a href="#" className={classes} onClick={this.toggleEdit}>
-                {this.props.index} - {this.state.name}
+                {this.props.index} - {this.props.name}
             </a>
         );
     }

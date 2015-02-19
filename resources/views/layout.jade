@@ -5,11 +5,6 @@ html
     link(href='/css/style.css', rel='stylesheet')
     script(src='/javascripts/jquery.js')
     script(src='/javascripts/bootstrap.js')
-        
-    link(rel='stylesheet', href='http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css')
-    link(rel='stylesheet', href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.5.2/mapbox-gl.css')
-    script(src='http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js')
-    script(src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.5.2/mapbox-gl.js')
 
 
   body(class=(isMap ? 'body-map' : ''))
@@ -20,7 +15,10 @@ html
         div.navbar-collapse
           ul.navbar-nav.nav
             li
-              a(href='/') Link
+              a#popoverExampleTwo(data-placement='bottom') Date
+              div#popoverExampleTwoHiddenContent(style='display:none')
+                div
+                  b asd
           ul.navbar-nav.nav.navbar-right
             if(user)
               li.dropdown

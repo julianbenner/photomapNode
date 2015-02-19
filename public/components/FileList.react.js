@@ -58,7 +58,7 @@ var FileList = React.createClass({
 
     render: function() {
         var items = this.state.items.map(function(itemChild) {
-            return (<FileListItem key={itemChild.id} index={itemChild.id} name={itemChild.name} lat={itemChild.lat} lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected} />);
+            return (<FileListItem index={itemChild.id} name={itemChild.name} lat={itemChild.lat} lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected} />);
         });
 
         var previousClass = React.addons.classSet({

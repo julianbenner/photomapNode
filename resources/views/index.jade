@@ -4,5 +4,6 @@ block content
 
   div.container.container-map
     div#map
-  script(src='/javascripts/leaflet-mapbox-gl.js')
   script(src='/javascripts/bundle.js')
+  if isMap
+    include map-content

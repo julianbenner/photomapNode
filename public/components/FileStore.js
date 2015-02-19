@@ -39,8 +39,9 @@ Dispatcher.register(function (payload) {
             break;
         case 'edit-file':
             _files[FileStore.getItemIdByDbId(_fileIndex)] = payload.file;
+            _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true; // above, we override this property
             $.post( "/admin/edit", payload.file).done(function( data ) {
-                console.log(data);
+              console.log(data);
               FileStore.emit('files-changed');
             });
             break;

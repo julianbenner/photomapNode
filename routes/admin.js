@@ -35,6 +35,7 @@ function edit_image(id, name, lat, lon, date, callback) {
       callback();
     }); 
     console.log(query.sql);
+    return;
   }
   callback();
 }
