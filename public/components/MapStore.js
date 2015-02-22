@@ -7,6 +7,7 @@ var zoom = 12;
 var rasterSize = function() { return 480/Math.pow(2,zoom); };
 
 var markers = [];
+var gallery = [];
 
 function loadMarker(lat, lon) {
     "use strict";
@@ -42,9 +43,22 @@ function loadMarkers(lat_min, lat_max, lon_min, lon_max) {
     }
 }
 
+function loadGallery(lat, lon) {
+    "use strict";
+    $.getJSON("get_image_list/" + lat*rasterSize() + "," + ((lat+1) * rasterSize()) + "," + lon*rasterSize() + "," + ((lon + 1) * rasterSize()), {}).
+    success(function (data) {
+        gallery = data;
+        MapStore.emit('refresh-gallery');
+    });
+}
+
 var MapStore = assign({}, EventEmitter.prototype, {
     getMarkers: function () {
         return markers;
+    },
+
+    getGallery: function () {
+        return gallery;
     }
 });
 
@@ -57,6 +71,10 @@ Dispatcher.register(function (payload) {
             zoom = payload.zoom;
             markers = [];
             loadMarkers(payload.bounds.lat_min, payload.bounds.lat_max, payload.bounds.lon_min, payload.bounds.lon_max);
+            break;
+        case 'show-gallery':
+            MapStore.emit('show-gallery');
+            loadGallery(payload.lat, payload.lon);
             break;
     }
 

@@ -77,10 +77,13 @@ var MapView = React.createClass({
     render: function() {
         "use strict";
         var map = this.map;
-        var marker = this.state.markers.map(function(i) {
+        var markers = this.state.markers;
+        var marker = markers.map(function(i) {
             return i.map(function(j) {
                 if(j.image_count > 0) {
-                    return (<Marker lat={j.avg_lat} lon={j.avg_lon} size={(Math.log(j.image_count) + 5) * 7} text={j.image_count} map={map} />);
+                    var lat = markers.indexOf(i);
+                    var lon = i.indexOf(j);
+                    return (<Marker lat={lat} lon={lon} avg_lat={j.avg_lat} avg_lon={j.avg_lon} size={(Math.log(j.image_count) + 5) * 7} text={j.image_count} map={map} />);
                 } else {
                     return false;
                 }

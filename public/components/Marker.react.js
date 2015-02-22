@@ -12,13 +12,21 @@ var Marker = React.createClass({
 
     componentDidMount: function () {
         "use strict";
+        var lat = this.props.lat;
+        var lon = this.props.lon;
         this.setState({
-            marker: L.marker([this.props.lat, this.props.lon], {
+            marker: L.marker([this.props.avg_lat, this.props.avg_lon], {
                 icon: L.divIcon({
-                    html: '<div class="image_count_child">' + this.props.text + '</div>',
+                    html: '<div class="image_count_child" data-toggle="modal" data-target="#myModal">' + this.props.text + '</div>',
                     iconSize: [this.props.size, this.props.size],
                     className: 'image_count'
                 })
+            }).on('click', function () {
+                Dispatcher.dispatch({
+                    eventName: 'show-gallery',
+                    lat: lat,
+                    lon: lon
+                });
             })
         }, function () {
             this.state.marker.addTo(this.props.map)
