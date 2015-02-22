@@ -39,7 +39,12 @@ var MapView = React.createClass({
             });
         });
 
-        MapStore.on('refresh-markers', this.refreshMarkers);        
+        MapStore.on('refresh-markers', this.refreshMarkers);      
+        Dispatcher.dispatch({
+            eventName: 'zoom-map',
+            bounds: that.getBounds(),
+            zoom: that.map.getZoom()
+        });
     },
 
     componentWillUnmount: function () {

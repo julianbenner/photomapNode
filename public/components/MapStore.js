@@ -3,7 +3,7 @@ var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 var $ = require('jquery');
 
-var zoom = 14;
+var zoom = 12;
 var rasterSize = function() { return 480/Math.pow(2,zoom); };
 
 var markers = [];
