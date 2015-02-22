@@ -19,9 +19,12 @@ var FileListItem = React.createClass({
             'list-group-item': true,
             'active': this.props.selected
         });
+        var aStyle = {
+            backgroundColor: this.props.lon == '' || this.props.lon == null || this.props.lat == '' || this.props.lat == null ? '#fee' : ''
+        };
 
         return (
-            <a href="#" className={classes} onClick={this.toggleEdit}>
+            <a href="#" className={classes} style={aStyle} onClick={this.toggleEdit}>
                 {this.props.index} - {this.props.name}
                 <span className="small">{this.props.lat}, {this.props.lon}</span>
             </a>

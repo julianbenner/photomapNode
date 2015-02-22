@@ -4,7 +4,7 @@ var router = express.Router();
 function get_image_list(lat_min, lat_max, lon_min, lon_max, callback) {
     var connection = require('../routes/Database').Get();
 
-    var query = 'SELECT name FROM ' +
+    var query = 'SELECT id, name FROM ' +
         'photomap_image WHERE lat BETWEEN '+connection.escape(lat_min)+' AND '+connection.escape(lat_max)+' AND lon BETWEEN '+connection.escape(lon_min)+' AND '+connection.escape(lon_max);
     connection.query(
         query, function(err, rows, fields) {

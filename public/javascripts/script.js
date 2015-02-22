@@ -1,6 +1,8 @@
 var token = 'pk.eyJ1IjoianVsaWFuYmVubmVyIiwiYSI6Imo3VGM4QVkifQ.69vtm3yG3cQWalRZM0tdYA';
 
 var map = L.map('map').setView([48.7, 9.05], 12);
+marker_array = [];
+show_circles(map);
 
 var gl = L.mapboxGL({
 	accessToken: token,
@@ -14,23 +16,40 @@ map.on('moveend', function(e) {
 	show_circles(map);
 });
 
-marker_array = [];
 
-function create_circle(lat, lon, text, size) {
+function create_circle(lat, lon, text, size, id) {
+	var content = '';
+	if (size != 35) {
+		content = '<div class="image_count_child">' + text + '</div>';
+	} else {
+		content = '<div class="image_count_child"><img src="/image/' + id + '/tiny"/></div>';
+	}
 	return L.marker([lat, lon], {
-		icon: L.divIcon({
-			html: '<div class="image_count_child">' + text + '</div>',
+		module._initPaths();con: L.divIcon({
+			html: content,
 			iconSize: [size, size],
 			className: 'image_count'
 		})
 	});
 }
 
+currentGallery = {}; // global variable for storing gallery JSON
+
 function jsonToGallery(input) {
+	currentGallery = input;
+	drawGallery();
+}
+
+function drawGallery() {
 	$('#gallery-view').html('');
-	input.forEach(function(item) {
-		$('#gallery-view').append($('<a></a>').text(item.name).attr('href', '/images/' + item.name).append($('<br/>')));
+	currentGallery.forEach(function(item) {
+		$('#gallery-view').append($('<a></a>').attr('onClick', 'displayImage(' + item.id + ')'). /*attr('href', '/image/' + item.id).*/ attr('style', 'margin: 5px; display: inline-block').append($('<img/>').attr('src', '/image/' + item.id + '/thumb')));
 	});
+}
+
+function displayImage(id) {
+	$('#gallery-view').html('');
+	$('#gallery-view').append($('<img/>').attr('src', '/image/' + id));
 }
 
 function draw_raster_block(lat_min, lat_max, lon_min, lon_max) {
@@ -56,7 +75,9 @@ function draw_raster_block(lat_min, lat_max, lon_min, lon_max) {
 			}
 		});
 		if (image_count > 0) {
-			var circleMarker = create_circle(avg_lat, avg_lon, image_count, (Math.log(image_count) + 5) * 7);
+			var circleMarker;
+			if (image_count > 1) {
+				circleMarker = create_circle(avg_lat, avg_lon, image_count, (Math.log(image_count) + 5) * 7);
 			marker_array.push(circleMarker);
 			circleMarker.addTo(map);
 			$('.image_count').last().attr("data-toggle", "modal").attr("data-target", "#myModal").click(function() {
@@ -65,13 +86,27 @@ function draw_raster_block(lat_min, lat_max, lon_min, lon_max) {
 					jsonToGallery(data2);
 				});
 			});
+			} else {
+				$.getJSON("get_image_list/" + lat_min + "," + lat_max + "," + lon_min + "," + lon_max, {}).
+				success(function(data2) {
+					circleMarker = create_circle(avg_lat, avg_lon, image_count, (Math.log(image_count) + 5) * 7, data2[0].id);
+			marker_array.push(circleMarker);
+			circleMarker.addTo(map);
+			$('.image_count').last().attr("data-toggle", "modal").attr("data-target", "#myModal").click(function() {
+				$.getJSON("get_image_list/" + lat_min + "," + lat_max + "," + lon_min + "," + lon_max, {}).
+				success(function(data2) {
+					jsonToGallery(data2);
+				});
+			});
+				});
+			}
 		}
 	});
 }
 
 function show_circles() {
-	raster_hor = 2;
-	raster_ver = 2;
+	raster_hor = 5;
+	raster_ver = 3;
 	bounds = map.getBounds();
 	map_lat_min = bounds._southWest.lat;
 	map_lon_min = bounds._southWest.lng;

@@ -6,9 +6,9 @@ module.exports = Database;
 
 Database.Init = function() {
 	Database.db = mysql.createConnection({
-		host: '10.8.0.1',
-		port: 33061,
-		user: 'banane',
+		host: '127.0.0.1',
+		port: 3306,
+		user: 'root',
 		password: 'banane',
 		database: 'photomap'
 	});
