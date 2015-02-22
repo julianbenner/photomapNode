@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var L = require('leaflet');
+require('mapbox.js');
 var Dispatcher = require('./Dispatcher.js');
 
 var Marker = React.createClass({

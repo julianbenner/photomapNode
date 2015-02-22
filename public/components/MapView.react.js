@@ -1,11 +1,14 @@
 var React = require('react/addons');
-var L = require('leaflet');
+require('mapbox.js');
 var Marker = require('./Marker.react');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
 
+"use strict";
+
 var MapView = React.createClass({
     getInitialState: function () {
+        "use strict";
         return {
             markers: []
         };
@@ -13,16 +16,10 @@ var MapView = React.createClass({
 
     componentDidMount: function () {
         "use strict";
-        var map = this.map = L.map(this.getDOMNode(), {
-            minZoom: 2,
-            maxZoom: 20,
-            layers: [
-                L.tileLayer(
-                    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    {attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'})
-            ],
-            attributionControl: false,
-        }).setView([48.7, 9.05], 12);
+        L.mapbox.accessToken = this.props.token;
+
+        var map = this.map = L.mapbox.map(this.getDOMNode(), 'examples.map-i86nkdio')
+            .setView([48.7, 9.05], 12);
 
         var that = this;
         map.on('moveend', function() {
@@ -78,6 +75,7 @@ var MapView = React.createClass({
     },
 
     render: function() {
+        "use strict";
         var map = this.map;
         var marker = this.state.markers.map(function(i) {
             return i.map(function(j) {
@@ -90,7 +88,6 @@ var MapView = React.createClass({
         });
 
         return (
-
             <div id='map'>
                 {marker}        
             </div>

@@ -4,7 +4,7 @@ var FileList = require('./components/FileList.react');
 var MapView = require('./components/MapView.react');
 
 React.render(
-  <MapView />,
+  <MapView token="pk.eyJ1IjoianVsaWFuYmVubmVyIiwiYSI6Imo3VGM4QVkifQ.69vtm3yG3cQWalRZM0tdYA" />,
   document.getElementById('container-map')
 );
 

@@ -9,13 +9,17 @@ var rasterSize = function() { return 480/Math.pow(2,zoom); };
 var markers = [];
 
 function loadMarker(lat, lon) {
+    "use strict";
     $.getJSON("get_image_count/" + lat*rasterSize() + "," + ((lat+1) * rasterSize()) + "," + lon*rasterSize() + "," + ((lon + 1) * rasterSize()), function(data) {
-        markers[lat][lon] = data;
-        MapStore.emit('refresh-markers');
+        if (typeof markers[lat] !== 'undefined') {
+            markers[lat][lon] = data;
+            MapStore.emit('refresh-markers');
+        }
     });
 }
 
 function loadMarkers(lat_min, lat_max, lon_min, lon_max) {
+    "use strict";
     var latRasterElements = Math.ceil((lat_max - lat_min) / rasterSize());
     var lonRasterElements = Math.ceil((lon_max - lon_min) / rasterSize());
 
