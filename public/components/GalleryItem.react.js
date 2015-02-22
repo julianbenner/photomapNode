@@ -16,11 +16,19 @@ var GalleryItem = React.createClass({
     componentWillUnmount: function () {
     },
 
+    selectImage: function () {
+      "use strict";
+      Dispatcher.dispatch({
+          eventName: 'select-image',
+          id: this.props.id
+      });
+    },
+
     render: function() {
         "use strict";
         var imagePath = "/image/" + this.props.id + "/thumb";
         return (
-            <div>
+            <div className="thumbnail" onClick={this.selectImage}>
               <img src={imagePath} />
             </div>
         );

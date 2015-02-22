@@ -10,25 +10,40 @@ var Gallery = React.createClass({
     getInitialState: function () {
         "use strict";
         return {
-          images: []
+          displayImage: false,
+          images: [],
+          image: 0
         };
     },
 
     componentDidMount: function () {
         "use strict";
-        MapStore.on('show-gallery', this.show);
+        MapStore.on('select-image', this.selectImage);
+        MapStore.on('show-gallery', this.showGallery);
         MapStore.on('refresh-gallery', this.refreshGallery);
     },
 
     componentWillUnmount: function () {
         "use strict";
-        MapStore.removeListener('show-gallery', this.show);
+        MapStore.removeListener('select-image', this.selectImage);
+        MapStore.removeListener('show-gallery', this.showGallery);
         MapStore.removeListener('refresh-gallery', this.refreshGallery);
     },
 
-    show: function () {
+    selectImage: function () {
         "use strict";
-        $(this.getDOMNode()).modal('toggle');
+        this.setState({
+          displayImage: true,
+          image: MapStore.getSelectedImage()
+        });
+    },
+
+    showGallery: function () {
+        "use strict";
+        this.setState({
+          displayImage: false
+        });
+        $(this.getDOMNode()).modal('show');
     },
 
     refreshGallery: function () {
@@ -40,25 +55,29 @@ var Gallery = React.createClass({
 
     render: function() {
         "use strict";
-        var images = [];
-        images = this.state.images.map(function (image) {
-          return (<GalleryItem id={image.id} key={image.id} />);
-        });
+        var content, title;
+        if (this.state.displayImage) {
+          var path = "/image/" + this.state.image;
+          content = (<img src={path} />);
+          title = "Image " + this.state.image;
+        } else {
+          content = this.state.images.map(function (thumb) {
+            return (<GalleryItem id={thumb.id} key={thumb.id} />);
+          });
+          title = "Gallery";
+        }
 
         return (
             <div className="modal fade">
-              <div classNameName="modal-dialog">
+              <div className="modal-dialog large_modal">
                 <div className="modal-content">
                   <div className="modal-header">
+                    <button type="button" className="close" onClick={this.showGallery}><span aria-hidden="true">Gallery</span></button>
                     <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 className="modal-title">Modal title</h4>
+                    <h4>{title}</h4>
                   </div>
                   <div className="modal-body">
-                    {images}
-                  </div>
-                  <div className="modal-footer">
-                    <button type="button" className="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-primary">Save changes</button>
+                    {content}
                   </div>
                 </div>
               </div>

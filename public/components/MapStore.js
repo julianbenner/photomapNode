@@ -8,6 +8,7 @@ var rasterSize = function() { return 480/Math.pow(2,zoom); };
 
 var markers = [];
 var gallery = [];
+var selectedImage = 0;
 
 function loadMarker(lat, lon) {
     "use strict";
@@ -59,6 +60,10 @@ var MapStore = assign({}, EventEmitter.prototype, {
 
     getGallery: function () {
         return gallery;
+    },
+
+    getSelectedImage: function () {
+        return selectedImage;
     }
 });
 
@@ -75,6 +80,10 @@ Dispatcher.register(function (payload) {
         case 'show-gallery':
             MapStore.emit('show-gallery');
             loadGallery(payload.lat, payload.lon);
+            break;
+        case 'select-image':
+            selectedImage = payload.id;
+            MapStore.emit('select-image');
             break;
     }
 
