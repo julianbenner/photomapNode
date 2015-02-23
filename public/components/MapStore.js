@@ -53,6 +53,22 @@ function loadGallery(lat, lon) {
     });
 }
 
+function prevImage() {
+    if (selectedImage === 0) {
+        selectedImage = gallery.length - 1;
+    } else {
+        selectedImage = selectedImage - 1;
+    }
+}
+
+function nextImage() {
+    if (selectedImage === gallery.length - 1) {
+        selectedImage = 0;
+    } else {
+        selectedImage = selectedImage + 1;
+    }
+}
+
 var MapStore = assign({}, EventEmitter.prototype, {
     getMarkers: function () {
         return markers;
@@ -63,7 +79,11 @@ var MapStore = assign({}, EventEmitter.prototype, {
     },
 
     getSelectedImage: function () {
-        return selectedImage;
+        return gallery[selectedImage];
+    },
+
+    getImage: function (i) {
+        return gallery[i];
     }
 });
 
@@ -83,6 +103,14 @@ Dispatcher.register(function (payload) {
             break;
         case 'select-image':
             selectedImage = payload.id;
+            MapStore.emit('select-image');
+            break;
+        case 'prev-image':
+            prevImage();
+            MapStore.emit('select-image');
+            break;
+        case 'next-image':
+            nextImage();
             MapStore.emit('select-image');
             break;
     }

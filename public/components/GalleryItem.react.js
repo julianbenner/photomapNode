@@ -26,7 +26,7 @@ var GalleryItem = React.createClass({
 
     render: function() {
         "use strict";
-        var imagePath = "/image/" + this.props.id + "/thumb";
+        var imagePath = "/image/" + MapStore.getImage(this.props.id).id + "/thumb";
         return (
             <div className="thumbnail" onClick={this.selectImage}>
               <img src={imagePath} />
