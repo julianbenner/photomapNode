@@ -1,7 +1,7 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-var Gallery = require('./Gallery.react');
+var Overlay = require('./Overlay.react');
 var MapView = require('./MapView.react');
 
 "use strict";
@@ -23,7 +23,7 @@ var Application = React.createClass({
         return (
             <div className="container" id="container-map">
             <MapView token={this.props.token} />
-            <Gallery />
+            <Overlay />
             </div>
         );
     }

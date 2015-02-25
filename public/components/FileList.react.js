@@ -2,6 +2,7 @@ var FileListItem = require('./FileListItem.react');
 var FileListEdit = require('./FileListEdit.react');
 var $ = require('jquery');
 var React = require('react/addons');
+var MapStore = require('./MapStore.js');
 var FileStore = require('./FileStore.js');
 var Dispatcher = require('./Dispatcher.js');
 
@@ -16,14 +17,23 @@ var FileList = React.createClass({
     },
 
     componentDidMount: function () {
-        FileStore.on('files-changed', this.showPage);
+        FileStore.on('files-changed', this.filesChanged);
         Dispatcher.dispatch({
-            eventName: 'load-files'
+            eventName: 'load-files',
+            fileIndex: this.props.preselected
         });
     },
 
     componentWillUnmount: function () {
-        FileStore.removeListener('files-changed', this.showPage);
+        FileStore.removeListener('files-changed', this.filesChanged);
+    },
+
+    filesChanged: function () {
+        this.setState({
+            page: FileStore.getSelectedFilePage()
+        }, function () {
+            this.showPage();
+        });
     },
 
     showPage: function () {

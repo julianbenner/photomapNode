@@ -8,6 +8,14 @@ var _files = [];
 var _fileIndex = 0;
 
 var FileStore = assign({}, EventEmitter.prototype, {
+    getSelectedFilePage: function () {
+        for(var i = 0; i != _files.length; i++) {
+            if (_files[i].id == _fileIndex) {
+                return Math.ceil(i / pageSize);
+            }
+        }
+    },
+
     getPageContent: function (page) {
         var pageContent = _files.slice((page-1)*pageSize, page*pageSize);
         return pageContent;
@@ -34,6 +42,10 @@ Dispatcher.register(function (payload) {
         case 'load-files':
             $.getJSON( "/admin/list?page=" + 1 + "&amount=all", function( data ) {
               _files = data;
+              if (typeof payload.fileIndex !== 'undefined') {
+                _fileIndex = payload.fileIndex;            
+                _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true;
+              }
               FileStore.emit('files-changed');
             });
             break;
@@ -49,7 +61,7 @@ Dispatcher.register(function (payload) {
             var currentlySelected = _files[FileStore.getItemIdByDbId(_fileIndex)];
             if (typeof currentlySelected !== 'undefined')
                 _files[FileStore.getItemIdByDbId(_fileIndex)].selected = false;
-            _fileIndex = payload.fileIndex;
+            _fileIndex = payload.fileIndex;            
             _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true;
             FileStore.emit('files-changed');
             break;

@@ -19,32 +19,12 @@ var Gallery = React.createClass({
 
   componentDidMount: function () {
     "use strict";
-    MapStore.on('select-image', this.selectImage);
-    MapStore.on('show-gallery', this.showGallery);
     MapStore.on('refresh-gallery', this.refreshGallery);
   },
 
   componentWillUnmount: function () {
     "use strict";
-    MapStore.removeListener('select-image', this.selectImage);
-    MapStore.removeListener('show-gallery', this.showGallery);
     MapStore.removeListener('refresh-gallery', this.refreshGallery);
-  },
-
-  selectImage: function () {
-    "use strict";
-    this.setState({
-      displayImage: true,
-      image: MapStore.getSelectedImage()
-    });
-  },
-
-  showGallery: function () {
-    "use strict";
-    this.setState({
-      displayImage: false
-    });
-    $(this.getDOMNode()).modal('show');
   },
 
   refreshGallery: function () {
@@ -56,33 +36,10 @@ var Gallery = React.createClass({
 
   render: function() {
     "use strict";
-    var content, title;
-    if (this.state.displayImage) {
-      content = (<GalleryImage />);
-      title = "Image " + this.state.image.id;
-    } else {
-      content = this.state.images.map(function (thumb, i) {
-        return (<GalleryItem id={i} key={thumb.id} />);
-      });
-      title = "Gallery";
-    }
-
-    return (
-      <div className="modal fade">
-        <div className="modal-dialog large_modal">
-          <div className="modal-content">
-            <div className="modal-header">
-              <button type="button" className="close" onClick={this.showGallery}><span aria-hidden="true">Gallery</span></button>
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4>{title}</h4>
-            </div>
-            <div className="modal-body">
-              {content}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    var content = this.state.images.map(function (thumb, i) {
+      return (<GalleryItem id={i} key={thumb.id} />);
+    });
+    return (<div>{content}</div>);
   }
 });
 

@@ -9,6 +9,7 @@ var rasterSize = function() { return 480/Math.pow(2,zoom); };
 var markers = [];
 var gallery = [];
 var selectedImage = 0;
+var overlayMode = '';
 
 function loadMarker(lat, lon) {
     "use strict";
@@ -78,12 +79,20 @@ var MapStore = assign({}, EventEmitter.prototype, {
         return gallery;
     },
 
+    getSelectedImageId: function () {
+        return gallery[selectedImage].id;
+    },
+
     getSelectedImage: function () {
         return gallery[selectedImage];
     },
 
     getImage: function (i) {
         return gallery[i];
+    },
+
+    getOverlayMode: function () {
+        return overlayMode;
     }
 });
 
@@ -98,20 +107,27 @@ Dispatcher.register(function (payload) {
             loadMarkers(payload.bounds.lat_min, payload.bounds.lat_max, payload.bounds.lon_min, payload.bounds.lon_max);
             break;
         case 'show-gallery':
-            MapStore.emit('show-gallery');
+            MapStore.emit('show-overlay');
+            overlayMode = 'gallery';
             loadGallery(payload.lat, payload.lon);
+            MapStore.emit('update-overlay');
+            break;
+        case 'edit-image':
+            overlayMode = 'edit';
+            MapStore.emit('update-overlay');
             break;
         case 'select-image':
             selectedImage = payload.id;
-            MapStore.emit('select-image');
+            overlayMode = 'image';
+            MapStore.emit('update-overlay');
             break;
         case 'prev-image':
             prevImage();
-            MapStore.emit('select-image');
+            MapStore.emit('update-overlay');
             break;
         case 'next-image':
             nextImage();
-            MapStore.emit('select-image');
+            MapStore.emit('update-overlay');
             break;
     }
 

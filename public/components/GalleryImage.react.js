@@ -20,6 +20,13 @@ var GalleryImage = React.createClass({
       document.onkeydown = null;
     },
 
+    edit: function () {
+      "use strict";
+      Dispatcher.dispatch({
+          eventName: 'edit-image'
+      });
+    },
+
     onKeyDown: function (e) {
       "use strict";
       switch (e.keyCode) {
@@ -43,6 +50,7 @@ var GalleryImage = React.createClass({
         return (
           <div>
             <img src={path} />
+              <button type="button" className="btn btn-primary" onClick={this.edit}>Edit</button>
           </div>
         );
     }
