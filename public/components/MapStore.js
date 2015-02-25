@@ -109,7 +109,10 @@ Dispatcher.register(function (payload) {
         case 'show-gallery':
             MapStore.emit('show-overlay');
             overlayMode = 'gallery';
-            loadGallery(payload.lat, payload.lon);
+            if (typeof payload.lat !== 'undefined' && typeof payload.lon !== 'undefined')
+                loadGallery(payload.lat, payload.lon);
+            else
+                MapStore.emit('refresh-gallery');
             MapStore.emit('update-overlay');
             break;
         case 'edit-image':

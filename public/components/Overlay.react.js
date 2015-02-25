@@ -34,6 +34,25 @@ var Overlay = React.createClass({
     $(this.getDOMNode()).modal('show');
   },
 
+  hideOverlay: function () {
+    "use strict";    
+    $(this.getDOMNode()).modal('hide');
+  },
+
+  showGallery: function () {
+    "use strict";    
+    Dispatcher.dispatch({
+        eventName: 'show-gallery'
+    });
+  },
+
+  editImage: function () {
+    "use strict";
+    Dispatcher.dispatch({
+        eventName: 'edit-image'
+    });
+  },
+
   updateOverlay: function () {
     "use strict";
 
@@ -66,14 +85,30 @@ var Overlay = React.createClass({
 
   render: function() {
     "use strict";
+
+    var buttons = []
+    buttons.push(<div className="modal-control-btn modal-control-btn-right" onClick={this.hideOverlay}>Close</div>);
+
+    if (this.state.mode === 'image') {
+      buttons.push(<div className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
+      buttons.push(<div className="modal-control-btn modal-control-btn-left" onClick={this.editImage}>Edit</div>);
+    } else if (this.state.mode === 'edit') {
+      buttons.push(<div className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
+    }
+
     return (
       <div className="modal fade">
+        <div className="modal-control">
+          {buttons}
+        </div>
         <div className="modal-dialog large_modal">
+        <div className="modal-intermediate">
           <div className="modal-content">
             <div className="modal-body">
               {this.state.content}
             </div>
           </div>
+        </div>
         </div>
       </div>
     );

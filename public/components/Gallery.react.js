@@ -20,6 +20,7 @@ var Gallery = React.createClass({
   componentDidMount: function () {
     "use strict";
     MapStore.on('refresh-gallery', this.refreshGallery);
+    this.refreshGallery();
   },
 
   componentWillUnmount: function () {
