@@ -35,6 +35,11 @@ var MapView = React.createClass({
                 zoom: that.map.getZoom()
             });
         });
+        map.on('click', function() {
+            Dispatcher.dispatch({
+                eventName: 'click-map'
+            });
+        });
 
         MapStore.on('refresh-markers', this.refreshMarkers);      
         Dispatcher.dispatch({

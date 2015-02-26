@@ -96,6 +96,13 @@ var Overlay = React.createClass({
       buttons.push(<div className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
     }
 
+    var cx = React.addons.classSet;
+    var contentClasses = cx({
+      'modal-content': true,
+      'modal-content-dark': this.state.mode === 'gallery' || this.state.mode === 'image',
+      'modal-content-bright': this.state.mode === 'edit'
+    });
+
     return (
       <div className="modal fade">
         <div className="modal-control">
@@ -103,7 +110,7 @@ var Overlay = React.createClass({
         </div>
         <div className="modal-dialog large_modal">
         <div className="modal-intermediate">
-          <div className="modal-content">
+          <div className={contentClasses} >
             <div className="modal-body">
               {this.state.content}
             </div>

@@ -176,6 +176,9 @@ Dispatcher.register(function (payload) {
             nextImage();
             MapStore.emit('update-overlay');
             break;
+        case 'click-map':
+            MapStore.emit('click-map');
+            break;
     }
 
     return true;

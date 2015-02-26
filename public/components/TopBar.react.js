@@ -46,7 +46,7 @@ var TopBar = React.createClass({
         buttons.push(<li><DateRangePicker onApply={this.changeDate} onCancel={this.cancelDate} startDate="1/1/2014" endDate="3/1/2014">Date</DateRangePicker></li>);
 
         return (
-            <ul>
+            <ul className="navbar-nav nav">
                 {buttons}        
             </ul>
         );

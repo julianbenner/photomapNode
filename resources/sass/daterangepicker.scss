@@ -54,7 +54,7 @@
 }
 
 .daterangepicker .calendar th, .daterangepicker .calendar td {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: $font-family-base;
   white-space: nowrap;
   text-align: center;
   min-width: 32px;
@@ -80,7 +80,7 @@
 
 .daterangepicker .ranges .input-mini {
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: $border-radius-base;
   color: #555;
   display: block;
   font-size: 11px;
@@ -105,9 +105,7 @@
   color: #08c;
   padding: 3px 12px;
   margin-bottom: 8px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
+  border-radius: $border-radius-base;
   cursor: pointer;
 }
 
@@ -120,7 +118,7 @@
 .daterangepicker .calendar-date {
   border: 1px solid #ddd;
   padding: 4px;
-  border-radius: 4px;
+  border-radius: $border-radius-base;
   background: #fff;
 }
 
@@ -137,9 +135,7 @@
   left: 20px;
   padding: 4px;
   margin-top: 1px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  border-radius: $border-radius-base;
 }
 
 .daterangepicker.opensleft:before {
@@ -228,9 +224,7 @@
   text-align: center;
   width: 20px;
   height: 20px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  border-radius: $border-radius-base;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -248,33 +242,25 @@
 }
 
 .daterangepicker td.in-range {
-  background: #ebf4f8;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
+  background: $gray-lighter;
+  border-radius: $border-radius-base;
 }
 
 .daterangepicker td.start-date {
-  -webkit-border-radius: 4px 0 0 4px;
-  -moz-border-radius: 4px 0 0 4px;
-  border-radius: 4px 0 0 4px;
+  border-radius: $border-radius-base 0 0 $border-radius-base;
 }
 
 .daterangepicker td.end-date {
-  -webkit-border-radius: 0 4px 4px 0;
-  -moz-border-radius: 0 4px 4px 0;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 $border-radius-base $border-radius-base 0;
 }
 
 .daterangepicker td.start-date.end-date {
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;
+  border-radius: $border-radius-base;
 }
 
 .daterangepicker td.active, .daterangepicker td.active:hover {
-  background-color: #357ebd;
-  border-color: #3071a9;
+  background-color: $brand-primary;
+  border-color: $brand-primary;
   color: #fff;
 }
 

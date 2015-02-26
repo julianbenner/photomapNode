@@ -1,6 +1,5 @@
 var React = require('react');
 
-var FileList = require('./components/FileList.react');
 var Application = require('./components/Application.react');
 var TopBar = require('./components/TopBar.react');
 
@@ -12,9 +11,4 @@ React.render(
 React.render(
   <TopBar />,
   document.getElementById('reactTopBar')
-);
-
-React.render(
-  <FileList amount="5" />,
-  document.getElementById('file-list')
 );

@@ -40,7 +40,7 @@ var Gallery = React.createClass({
     var content = this.state.images.map(function (thumb, i) {
       return (<GalleryItem id={i} key={thumb.id} />);
     });
-    return (<div>{content}</div>);
+    return (<div className="galleryContainer">{content}</div>);
   }
 });
 
