@@ -42,8 +42,12 @@ var TopBar = React.createClass({
     render: function() {
         "use strict";
 
+        var currentDate = new Date();
+        var day = currentDate.getDate();
+        var month = currentDate.getMonth() + 1;
+        var year = currentDate.getFullYear();
         var buttons = [];
-        buttons.push(<li><DateRangePicker onApply={this.changeDate} onCancel={this.cancelDate} startDate="1/1/2014" endDate="3/1/2014">Date</DateRangePicker></li>);
+        buttons.push(<li><DateRangePicker onApply={this.changeDate} onCancel={this.cancelDate} startDate="01.01.1970" endDate={day + "." + month + "." + year} format="DD.MM.YYYY">Date</DateRangePicker></li>);
 
         return (
             <ul className="navbar-nav nav">
