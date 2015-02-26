@@ -11,26 +11,46 @@ var gallery = [];
 var selectedImage = 0;
 var overlayMode = '';
 
+var latMin = 0.0;
+var latMax = 0.0;
+var lonMin = 0.0;
+var lonMax = 0.0;
+
+var dateMin = null;
+var dateMax = null;
+
 function loadMarker(lat, lon) {
     "use strict";
-    $.getJSON("get_image_count/" + lat*rasterSize() + "," + ((lat+1) * rasterSize()) + "," + lon*rasterSize() + "," + ((lon + 1) * rasterSize()), function(data) {
-        if (typeof markers[lat] !== 'undefined') {
+    var latMin = lat*rasterSize();
+    var latMax =  ((lat+1) * rasterSize());
+    var lonMin = lon*rasterSize();
+    var lonMax =  ((lon+1) * rasterSize());
+
+    $.getJSON("get_image_count", {
+        latMin: latMin,
+        latMax: latMax,
+        lonMin: lonMin,
+        lonMax: lonMax,
+        dateMin: dateMin,
+        dateMax: dateMax
+    }).done(function(data) {
+        if (typeof markers[lat] !== 'undefined') { // make sure Marker row is initialized
             markers[lat][lon] = data;
             MapStore.emit('refresh-markers');
         }
     });
 }
 
-function loadMarkers(lat_min, lat_max, lon_min, lon_max) {
+function loadMarkers() {
     "use strict";
-    var latRasterElements = Math.ceil((lat_max - lat_min) / rasterSize());
-    var lonRasterElements = Math.ceil((lon_max - lon_min) / rasterSize());
+    var latRasterElements = Math.ceil((latMax - latMin) / rasterSize());
+    var lonRasterElements = Math.ceil((lonMax - lonMin) / rasterSize());
 
     var rasterBounds = function(deg) { return Math.floor(deg / rasterSize()); };
-    var latRasterStart = rasterBounds(lat_min);
-    var latRasterEnd = rasterBounds(lat_max);
-    var lonRasterStart = rasterBounds(lon_min);
-    var lonRasterEnd = rasterBounds(lon_max);
+    var latRasterStart = rasterBounds(latMin);
+    var latRasterEnd = rasterBounds(latMax);
+    var lonRasterStart = rasterBounds(lonMin);
+    var lonRasterEnd = rasterBounds(lonMax);
 
     for (var i = latRasterStart; i <= latRasterEnd; i = i + 1) {
         if (typeof markers[i] === 'undefined') {
@@ -47,8 +67,14 @@ function loadMarkers(lat_min, lat_max, lon_min, lon_max) {
 
 function loadGallery(lat, lon) {
     "use strict";
-    $.getJSON("get_image_list/" + lat*rasterSize() + "," + ((lat+1) * rasterSize()) + "," + lon*rasterSize() + "," + ((lon + 1) * rasterSize()), {}).
-    success(function (data) {
+    $.getJSON("get_image_list/", {
+        latMin: lat * rasterSize(),
+        latMax: ((lat+1) * rasterSize()),
+        lonMin: lon * rasterSize(),
+        lonMax: ((lon+1) * rasterSize()),
+        dateMin: dateMin,
+        dateMax: dateMax
+    }).done(function(data) {
         gallery = data;
         MapStore.emit('refresh-gallery');
     });
@@ -68,6 +94,10 @@ function nextImage() {
     } else {
         selectedImage = selectedImage + 1;
     }
+}
+
+function clearMarkers() {
+    markers = [];
 }
 
 var MapStore = assign({}, EventEmitter.prototype, {
@@ -99,12 +129,26 @@ var MapStore = assign({}, EventEmitter.prototype, {
 Dispatcher.register(function (payload) {
     switch (payload.eventName) {
         case 'drag-map':
-            loadMarkers(payload.bounds.lat_min, payload.bounds.lat_max, payload.bounds.lon_min, payload.bounds.lon_max);
+            latMin = payload.bounds.lat_min;
+            latMax = payload.bounds.lat_max;
+            lonMin = payload.bounds.lon_min;
+            lonMax = payload.bounds.lon_max;
+            loadMarkers();
             break;
         case 'zoom-map':
             zoom = payload.zoom;
-            markers = [];
-            loadMarkers(payload.bounds.lat_min, payload.bounds.lat_max, payload.bounds.lon_min, payload.bounds.lon_max);
+            clearMarkers();
+            latMin = payload.bounds.lat_min;
+            latMax = payload.bounds.lat_max;
+            lonMin = payload.bounds.lon_min;
+            lonMax = payload.bounds.lon_max;
+            loadMarkers();
+            break;
+        case 'change-date':
+            clearMarkers();
+            dateMin = payload.startDate === null ? null : payload.startDate.format('YYYY-M-D');
+            dateMax = payload.endDate === null ? null : payload.endDate.format('YYYY-M-D');
+            loadMarkers();
             break;
         case 'show-gallery':
             MapStore.emit('show-overlay');
