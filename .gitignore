@@ -3,3 +3,4 @@
 /.sass-cache/
 /npm-debug.log
 /.idea
+/public/javascripts/bundle.js
