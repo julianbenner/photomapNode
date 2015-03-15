@@ -2,5 +2,6 @@
 /bower_components/
 /.sass-cache/
 /npm-debug.log
-/.idea
+/.idea/
 /public/javascripts/bundle.js
+/public/images/Thumbs.db

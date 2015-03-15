@@ -1,6 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
+var is_production = function() {
+    try {
+        return express().get('env') === 'production';
+    } catch (e) {
+        return false;
+    }
+};
+
 function get_image_count(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, callback) {
     var connection = require('../routes/Database').Get();
     
@@ -16,11 +24,19 @@ function get_image_count(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, c
     '(SELECT COUNT(*) as image_count, SUM(lat) as slat, SUM(lon) as slon FROM ' +
     'photomap_image WHERE ' + constraints + ') t';
 
+    if (!is_production())
     console.log(query);
 
     connection.query(query, function(err, rows, fields) {
-        if (err) throw err;
-        callback(rows[0]);
+        if (err) {
+            if (is_production())
+                callback({"SUCCESS": false});
+            else
+                callback({"SUCCESS": false, "ERROR": err.code});
+        } else {
+            rows[0].SUCCESS = true;
+            callback(rows[0]);
+        }
     });
 }
 
