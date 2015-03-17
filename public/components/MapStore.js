@@ -35,8 +35,12 @@ function loadMarker(lat, lon) {
         dateMax: dateMax
     }).done(function(data) {
         if (typeof markers[lat] !== 'undefined') { // make sure Marker row is initialized
-            markers[lat][lon] = data;
-            MapStore.emit('refresh-markers');
+            if (data.SUCCESS === true) { // JSON should carry SUCCESS parameter
+                markers[lat][lon] = data; // puts the avg lat/lon and images count in the array
+                MapStore.emit('refresh-markers'); // refresh-markers assumes the connection is working and will remove warning symbols
+            } else {
+                MapStore.emit('connection-trouble'); // connection-trouble will trigger showing a warning symbol
+            }
         }
     });
 }

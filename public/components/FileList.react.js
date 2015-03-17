@@ -77,25 +77,29 @@ var FileList = React.createClass({
 
         return (
             <div>
-                <nav>
-                  <ul className="pagination">
-                    <li className={previousClass}>
-                        <a href="#" onClick={this.prevPage}>
-                            <span aria-hidden="true">&larr;</span>
-                        </a>
-                    </li>
-                    <li><span>{this.state.page + '/' + this.state.amount_of_pages}</span></li>
-                    <li className="next">
-                        <a href="#" onClick={this.nextPage}>
-                            <span aria-hidden="true">&rarr;</span>
-                        </a>
-                    </li>
-                  </ul>
-                </nav>
-                <div className="list-group">
-                    {items}
+                <div className="col-xs-6">
+                    <nav>
+                      <ul className="pagination">
+                        <li className={previousClass}>
+                            <a href="#" onClick={this.prevPage}>
+                                <span aria-hidden="true">&larr;</span>
+                            </a>
+                        </li>
+                        <li><span>{this.state.page + '/' + this.state.amount_of_pages}</span></li>
+                        <li className="next">
+                            <a href="#" onClick={this.nextPage}>
+                                <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </li>
+                      </ul>
+                    </nav>
+                    <div className="list-group">
+                        {items}
+                    </div>
                 </div>
-                <FileListEdit />
+                <div className="col-xs-6">
+                    <FileListEdit />
+                </div>
             </div>
             );
     }
