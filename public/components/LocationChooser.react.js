@@ -40,7 +40,11 @@ var LocationChooser = React.createClass({
         $(this.getDOMNode()).slideToggle("fast", function () {
             if (!thisComponent.state.initialized) {
                 var map = thisComponent.map = L.mapbox.map(thisComponent.getDOMNode(), 'examples.map-i86nkdio')
+<<<<<<< HEAD
                     .setView([thisComponent.props.lat, thisComponent.props.lon], 12);
+=======
+                    .setView([48.7, 9.05], 12);
+>>>>>>> 0baadadeb3ee9d337e96445d396d52a2024b4500
 
                 map.on('click', function(e) {
                     thisComponent.setLocation(e.latlng.lat, e.latlng.lng);
