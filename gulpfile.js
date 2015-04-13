@@ -6,8 +6,10 @@ var gulp = require('gulp'),
 	notify = require("gulp-notify");
 
 var config = {
+	output: './public',
 	sassPath: './resources/sass',
-	bowerDir: './bower_components'
+	bowerDir: './bower_components',
+	nodeDir: './node_modules'
 };
 
 gulp.task('css', function() {
@@ -15,15 +17,19 @@ gulp.task('css', function() {
 			style: 'compressed',
 			loadPath: [
 				'./resources/sass',
-				config.bowerDir + '/bootstrap-sass-official/assets/stylesheets',
-				config.bowerDir + '/fontawesome/scss',
+				config.nodeDir + '/bootstrap-sass/assets/stylesheets'
 			]
 		})
 		.on("error", notify.onError(function(error) {
 			return "Error: " + error.message;
 		}))
 		.pipe(autoprefix('last 2 version'))
-		.pipe(gulp.dest('./public/css'));
+		.pipe(gulp.dest(config.output + '/css'));
+});
+
+gulp.task('fonts', function() {
+   gulp.src(config.nodeDir + '/bootstrap-sass/assets/fonts/bootstrap/*.{ttf,woff,eof,svg}')
+   .pipe(gulp.dest(config.output + '/fonts'));
 });
 
 // Rerun the task when a file changes
@@ -31,4 +37,4 @@ gulp.task('watch', function() {
 	gulp.watch(config.sassPath + '/**/*.scss', ['css']);
 });
 
-gulp.task('default', ['css']);
+gulp.task('default', ['css', 'fonts']);

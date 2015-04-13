@@ -3,7 +3,6 @@ require('mapbox.js');
 var Marker = require('./Marker.react');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-
 "use strict";
 
 var MapView = React.createClass({
@@ -41,17 +40,24 @@ var MapView = React.createClass({
             });
         });
 
-        MapStore.on('refresh-markers', this.refreshMarkers);      
+        MapStore.on('refresh-markers', this.refreshMarkers);  
+        MapStore.on('viewport-change', this.viewportChange);
+
         Dispatcher.dispatch({
             eventName: 'zoom-map',
             bounds: that.getBounds(),
             zoom: that.map.getZoom()
         });
+
+        new L.Control.GeoSearch({
+    provider: new L.GeoSearch.Provider.Google()
+}).addTo(map);
     },
 
     componentWillUnmount: function () {
         "use strict";
         MapStore.removeListener('refresh-markers', this.refreshMarkers);
+        MapStore.removeListener('viewport-change', this.viewportChange);
     },
 
     getBounds: function () {
@@ -70,6 +76,12 @@ var MapView = React.createClass({
         this.setState({
             markers: MapStore.getMarkers()
         });
+    },
+
+    viewportChange: function () {
+        "use strict";
+    console.log('viewportChange');
+        this.map.setView(MapStore.getLatLon());
     },
 
     addMarker: function (lat, lon, size, text) {

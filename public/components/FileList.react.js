@@ -68,7 +68,7 @@ var FileList = React.createClass({
 
     render: function() {
         var items = this.state.items.map(function(itemChild) {
-            return (<FileListItem index={itemChild.id} name={itemChild.name} lat={itemChild.lat} lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected} />);
+            return (<FileListItem index={itemChild.id} key={itemChild.id} name={itemChild.name} lat={itemChild.lat} lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected} />);
         });
 
         var previousClass = React.addons.classSet({
@@ -76,7 +76,7 @@ var FileList = React.createClass({
         });
 
         return (
-            <div>
+            <div id="fileListContainer">
                 <div className="col-xs-6">
                     <nav>
                       <ul className="pagination">
@@ -97,8 +97,8 @@ var FileList = React.createClass({
                         {items}
                     </div>
                 </div>
-                <div className="col-xs-6">
-                    <FileListEdit />
+                <div className="col-xs-6" id="fileListEditColumn">
+                    <FileListEdit token={this.props.token} />
                 </div>
             </div>
             );

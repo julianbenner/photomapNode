@@ -16,8 +16,23 @@ var latMax = 0.0;
 var lonMin = 0.0;
 var lonMax = 0.0;
 
+var _lat;
+var _lon;
+
 var dateMin = null;
 var dateMax = null;
+
+function geosearch(query) {
+    (new google.maps.Geocoder()).geocode({address: query}, function(data) {
+        if (data.length > 0) {
+            var result = data[0];
+            _lat = result.geometry.location.lat();
+            _lon = result.geometry.location.lng();
+            console.log('result ' + _lat + ' ' + _lon);
+            MapStore.emit('viewport-change');
+        }
+    });
+}
 
 function loadMarker(lat, lon) {
     "use strict";
@@ -127,6 +142,10 @@ var MapStore = assign({}, EventEmitter.prototype, {
 
     getOverlayMode: function () {
         return overlayMode;
+    },
+
+    getLatLon: function () {
+    return L.latLng(_lat, _lon);
     }
 });
 
@@ -182,6 +201,9 @@ Dispatcher.register(function (payload) {
             break;
         case 'click-map':
             MapStore.emit('click-map');
+            break;
+        case 'geosearch':
+            geosearch(payload.query);
             break;
     }
 

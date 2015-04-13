@@ -6,6 +6,7 @@ var pageSize = 10;
 
 var _files = [];
 var _fileIndex = 0;
+var _location = {lat: null, lon: null};
 
 var FileStore = assign({}, EventEmitter.prototype, {
     getSelectedFilePage: function () {
@@ -34,6 +35,10 @@ var FileStore = assign({}, EventEmitter.prototype, {
 
     getAmountOfPages: function () {
         return Math.ceil(_files.length / pageSize);
+    },
+
+    getLocation: function () {
+        return _location;
     }
 });
 
@@ -64,6 +69,13 @@ Dispatcher.register(function (payload) {
             _fileIndex = payload.fileIndex;            
             _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true;
             FileStore.emit('files-changed');
+            break;
+        case 'toggle-location-chooser':
+            FileStore.emit('toggle-location-chooser');
+            break;
+        case 'change-location':
+            _location = {lat: payload.lat, lon: payload.lon};
+            FileStore.emit('location-changed');
             break;
     }
 

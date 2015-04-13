@@ -77,7 +77,7 @@ var Overlay = React.createClass({
 
       case 'edit':
         this.setState({
-          content: (<FileList preselected={MapStore.getSelectedImageId()} />)
+          content: (<FileList token={this.props.token} preselected={MapStore.getSelectedImageId()} />)
         });
         break;
     }
@@ -87,13 +87,13 @@ var Overlay = React.createClass({
     "use strict";
 
     var buttons = []
-    buttons.push(<div className="modal-control-btn modal-control-btn-right" onClick={this.hideOverlay}>Close</div>);
+    buttons.push(<div key="overlayClose" className="modal-control-btn modal-control-btn-right" onClick={this.hideOverlay}>Close</div>);
 
     if (this.state.mode === 'image') {
-      buttons.push(<div className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
-      buttons.push(<div className="modal-control-btn modal-control-btn-left" onClick={this.editImage}>Edit</div>);
+      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
+      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left" onClick={this.editImage}>Edit</div>);
     } else if (this.state.mode === 'edit') {
-      buttons.push(<div className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
+      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
     }
 
     var cx = React.addons.classSet;
