@@ -77,7 +77,7 @@ var Overlay = React.createClass({
 
       case 'edit':
         this.setState({
-          content: (<FileList preselected={MapStore.getSelectedImageId()} />)
+          content: (<FileList token={this.props.token} preselected={MapStore.getSelectedImageId()} />)
         });
         break;
     }

@@ -1,6 +1,7 @@
 var React = require('react');
 var FileStore = require('./FileStore.js');
 var Dispatcher = require('./Dispatcher.js');
+var LocationChooser = require('./LocationChooser.react');
 
 var FileListEdit = React.createClass({
     getInitialState: function() {
@@ -15,10 +16,12 @@ var FileListEdit = React.createClass({
 
     componentDidMount: function () {
         FileStore.on('files-changed', this.loadContent);
+        FileStore.on('location-changed', this.changeLocation);
     },
 
     componentWillUnmount: function () {
         FileStore.removeListener('files-changed', this.loadContent);
+        FileStore.removeListener('location-changed', this.changeLocation);
     },
 
 
@@ -60,27 +63,50 @@ var FileListEdit = React.createClass({
         });
     },
 
+    toggleLocationChooser: function () {
+      Dispatcher.dispatch({
+          eventName: 'toggle-location-chooser'
+      });
+    },
+
+    changeLocation: function () {
+      var location = FileStore.getLocation();
+      this.setState({
+        lat: location.lat,
+        lon: location.lon
+      });
+    },
+
     render: function() {
         var content;
 
         if (this.state.name === null) {
-            content = <div>No file selected</div>;
+            return <div>No file selected</div>;
         } else {
-            content = (
-            <div>
+            return (
+            <div id="fileListEdit">
                 <span>{this.state.dbid}</span>
               <div className="input-group">
                   <span className="input-group-addon">File</span>
                   <input id="inputName" type="text" className="form-control" placeholder="File name" value={this.state.name} onChange={this.handleChange} />
               </div>
-              <div className="input-group">
-                  <span className="input-group-addon">Lat</span>
-                  <input id="inputLat"  type="text" className="form-control" placeholder="Latitude" value={this.state.lat} onChange={this.handleChange} />
+              <div id="latLonRow">
+                <div id="latLonRowInput">
+                  <div className="input-group" className="latLonRowInputInput">
+                      <span className="input-group-addon">Lat</span>
+                      <input id="inputLat"  type="text" className="form-control" placeholder="Latitude" value={this.state.lat} onChange={this.handleChange} />
+                  </div>
+                  <div className="input-group" className="latLonRowInputInput">
+                      <span className="input-group-addon">Lon</span>
+                      <input id="inputLon"  type="text" className="form-control" placeholder="Longitude" value={this.state.lon} onChange={this.handleChange} />
+                  </div>
+                </div>
+                <div id="latLonRowButton" className="input-group-addon" onClick={this.toggleLocationChooser}>
+                  <span className="fa fa-map-marker fa-lg"></span>
+                </div>
+                <div className="clearBoth"></div>
               </div>
-              <div className="input-group">
-                  <span className="input-group-addon">Lon</span>
-                  <input id="inputLon"  type="text" className="form-control" placeholder="Longitude" value={this.state.lon} onChange={this.handleChange} />
-              </div>
+              <LocationChooser token={this.props.token} />
               <div className="input-group">
                   <span className="input-group-addon">Date</span>
                   <input id="inputDate"  type="text" className="form-control" placeholder="Date" value={this.state.date} onChange={this.handleChange} />
@@ -88,10 +114,6 @@ var FileListEdit = React.createClass({
               <button type="button" className="btn btn-primary" onClick={this.save}>Save</button>
             </div>);
         }
-        return (<div>
-            {content}
-            </div>
-        );
     }
 });
 

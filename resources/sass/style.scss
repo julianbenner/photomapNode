@@ -1,6 +1,6 @@
 @import "_variables";
 @import "font-awesome";
-@import "_bootstrap";
+@import "bootstrap";
 @import "daterangepicker";
 
 html, body {
@@ -183,4 +183,40 @@ body {
 
 .fullWidth {
     width: 100%;
+}
+
+#fileListEdit, #fileListEditColumn, #fileListContainer {
+  height: 100%;
+}
+
+#locationChooser {
+  height: 40%;
+  display: none;
+}
+
+#latLonRow {
+  position: relative;
+}
+
+#latLonRowInput {
+  float: left;
+  width: calc(100% - 40px);
+}
+
+.latLonRowInputInput {
+  float: left;
+  width: 50%;
+  display: table;
+}
+
+#latLonRowButton {
+  float: left;
+  width: 40px;
+  position: absolute;
+  right: 0;
+  height: 100%;
+}
+
+.clearBoth {
+  clear: both;
 }

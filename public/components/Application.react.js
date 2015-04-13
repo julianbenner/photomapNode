@@ -23,7 +23,7 @@ var Application = React.createClass({
         return (
             <div className="container" id="container-map">
             <MapView token={this.props.token} />
-            <Overlay />
+            <Overlay token={this.props.token} />
             </div>
         );
     }

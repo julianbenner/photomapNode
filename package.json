@@ -33,8 +33,10 @@
     "serve-favicon": "~2.2.0"
   },
   "devDependencies": {
+    "bootstrap-sass": "^3.3.4",
     "browserify": "^9.0.3",
     "envify": "^3.3.0",
+    "font-awesome": "^4.3.0",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^1.0.0",
     "gulp-bower": "0.0.10",

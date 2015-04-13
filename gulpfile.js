@@ -7,7 +7,8 @@ var gulp = require('gulp'),
 
 var config = {
 	sassPath: './resources/sass',
-	bowerDir: './bower_components'
+	bowerDir: './bower_components',
+	nodeDir: './node_modules'
 };
 
 gulp.task('css', function() {
@@ -16,7 +17,7 @@ gulp.task('css', function() {
 			loadPath: [
 				'./resources/sass',
 				config.bowerDir + '/bootstrap-sass-official/assets/stylesheets',
-				config.bowerDir + '/fontawesome/scss',
+				config.nodeDir + '/font-awesome/scss',
 			]
 		})
 		.on("error", notify.onError(function(error) {

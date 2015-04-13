@@ -76,7 +76,7 @@ var FileList = React.createClass({
         });
 
         return (
-            <div>
+            <div id="fileListContainer">
                 <div className="col-xs-6">
                     <nav>
                       <ul className="pagination">
@@ -97,8 +97,8 @@ var FileList = React.createClass({
                         {items}
                     </div>
                 </div>
-                <div className="col-xs-6">
-                    <FileListEdit />
+                <div className="col-xs-6" id="fileListEditColumn">
+                    <FileListEdit token={this.props.token} />
                 </div>
             </div>
             );
