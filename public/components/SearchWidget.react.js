@@ -1,8 +1,6 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-require('./lib/l.control.geosearch.js');
-require('./lib/l.geosearch.provider.google.js');
 
 "use strict";
 
@@ -14,14 +12,17 @@ var SearchWidget = React.createClass({
 
     componentDidMount: function () {
         "use strict";     
-        //MapStore.on('connection-trouble', this.showConnectionWarning);
-        //MapStore.on('refresh-markers', this.hideConnectionWarning);
+
+        var url = "https://maps.googleapis.com/maps/api/js?v=3&callback=onLoadGoogleApiCallback&sensor=false";
+        var script = document.createElement('script');
+        script.id = 'load_google_api';
+        script.type = "text/javascript";
+        script.src = url;
+        document.body.appendChild(script);
     },
 
     componentWillUnmount: function () {
         "use strict";
-        //MapStore.removeListener('connection-trouble', this.showConnectionWarning);
-        //MapStore.removeListener('refresh-markers', this.hideConnectionWarning);
     },
 
     search: function () {

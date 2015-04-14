@@ -117,6 +117,15 @@ body {
     justify-content: space-between;
 }
 
+#galleryImageContainer {
+  height: 100%;
+  text-align: center;
+}
+
+#galleryImage {
+  height: 100%;
+}
+
 .modal-content-dark {
     background-color: rgba($gray-base,0.8);
 }

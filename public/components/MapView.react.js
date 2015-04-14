@@ -48,10 +48,6 @@ var MapView = React.createClass({
             bounds: that.getBounds(),
             zoom: that.map.getZoom()
         });
-
-        new L.Control.GeoSearch({
-    provider: new L.GeoSearch.Provider.Google()
-}).addTo(map);
     },
 
     componentWillUnmount: function () {

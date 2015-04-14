@@ -41,8 +41,8 @@ var GalleryImage = React.createClass({
         "use strict";
         var path = "/image/" + MapStore.getSelectedImage().id;
         return (
-          <div>
-            <img src={path} />
+          <div id="galleryImageContainer">
+            <img src={path} id="galleryImage" />
           </div>
         );
     }
