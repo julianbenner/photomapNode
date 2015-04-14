@@ -102,19 +102,11 @@ var FileListEdit = React.createClass({
                   </div>
                 </div>
                 <div id="latLonRowButton" className="input-group-addon" onClick={this.toggleLocationChooser}>
-<<<<<<< HEAD
                   <span className="glyphicon glyphicon-map-marker"></span>
                 </div>
                 <div className="clearBoth"></div>
               </div>
               <LocationChooser token={this.props.token} lat={this.state.lat} lon={this.state.lon} />
-=======
-                  <span className="fa fa-map-marker fa-lg"></span>
-                </div>
-                <div className="clearBoth"></div>
-              </div>
-              <LocationChooser token={this.props.token} />
->>>>>>> 0baadadeb3ee9d337e96445d396d52a2024b4500
               <div className="input-group">
                   <span className="input-group-addon">Date</span>
                   <input id="inputDate"  type="text" className="form-control" placeholder="Date" value={this.state.date} onChange={this.handleChange} />

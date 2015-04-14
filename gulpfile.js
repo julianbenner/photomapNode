@@ -17,12 +17,7 @@ gulp.task('css', function() {
 			style: 'compressed',
 			loadPath: [
 				'./resources/sass',
-<<<<<<< HEAD
 				config.nodeDir + '/bootstrap-sass/assets/stylesheets'
-=======
-				config.bowerDir + '/bootstrap-sass-official/assets/stylesheets',
-				config.nodeDir + '/font-awesome/scss',
->>>>>>> 0baadadeb3ee9d337e96445d396d52a2024b4500
 			]
 		})
 		.on("error", notify.onError(function(error) {
