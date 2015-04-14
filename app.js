@@ -35,6 +35,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use('/get_image_count', count);
 app.use('/get_image_list', require('./routes/list'));
+app.use('/get_folder_content', require('./routes/folder'));
 app.use('/admin', require('./routes/admin')());
 app.use('/image', require('./routes/image'));
 

@@ -3,6 +3,7 @@ var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
 var DateRangePicker = require('react-bootstrap-daterangepicker');
 var SearchWidget = require('./SearchWidget.react');
+var FolderWidget = require('./FolderWidget.react');
 
 "use strict";
 
@@ -69,7 +70,8 @@ var TopBar = React.createClass({
         var year = currentDate.getFullYear();
         var buttons = [];
         buttons.push(<li key="dateRangePicker"><DateRangePicker onApply={this.changeDate} onCancel={this.cancelDate} startDate="01.01.1970" endDate={day + "." + month + "." + year} format="DD.MM.YYYY">Date</DateRangePicker></li>);
-        buttons.push(<SearchWidget />);
+        buttons.push(<SearchWidget key="searchWidget" />);
+        buttons.push(<FolderWidget key="folderWidget" />)
 
         if (this.state.connectionWarningVisible) {
             buttons.push(<li key="connectionWarning"><div>Sorry, connection trouble</div></li>);

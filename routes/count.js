@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+var NodeCache = require('node-cache');
+var cacheInstance = new NodeCache();
+
 var is_production = function() {
     try {
         return express().get('env') === 'production';

@@ -22,8 +22,6 @@ function get_image_list(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, ca
 }
 
 router.get('/', function(req, res, next) {
-
-  //res.send(req.params.lat_min + req.params.lon_max);
     get_image_list(req.query.latMin, req.query.latMax, req.query.lonMin, req.query.lonMax, req.query.dateMin, req.query.dateMax, function(data) { res.json(data); });
 });
 
