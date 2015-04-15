@@ -4,10 +4,6 @@ html
     title=title
     link(href='/css/style.css', rel='stylesheet')
 
-    script(src='/javascripts/jquery.js')
-    script(src='/javascripts/bootstrap.js')
-
-
   body(class=(isMap ? 'body-map' : ''))
     nav.navbar.navbar-default.navbar-fixed-top
       div.container
@@ -15,11 +11,6 @@ html
           a.navbar-brand(href='/') Photomap
         div.navbar-collapse
           ul.navbar-nav.nav#reactTopBar
-            li
-              a#popoverExampleTwo(data-placement='bottom') Date
-              div#popoverExampleTwoHiddenContent(style='display:none')
-                div
-                  b asd
           ul.navbar-nav.nav.navbar-right
             if(user)
               li.dropdown

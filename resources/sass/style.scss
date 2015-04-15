@@ -38,9 +38,7 @@ body {
 }
 
 .image_count {
-    //background: rgba(102, 153, 187, 0.9);
     background: rgba($brand-primary, 0.9);
-    //border: 3px solid rgba(255, 255, 255, 0.1);
     color: #fff;
     font-weight: bold;
     text-align: center;
@@ -101,6 +99,7 @@ body {
 .modal-control-btn-left {
     float: left;
 }
+
 .modal-control-btn-right {
     float: right;
 }
@@ -143,47 +142,50 @@ body {
   position: relative;
   display: block;
   padding: 10px 15px;
+  :hover, :focus {
+    text-decoration: none;
+    background-color: #e6e6e6;
+  }
 }
-.nav > li > div:hover,
-.nav > li > div:focus {
-  text-decoration: none;
-  background-color: #e6e6e6;
-}
+
 .nav > li.disabled > div {
   color: #999999;
+  :hover, :focus {
+    color: #999999;
+    text-decoration: none;
+    background-color: transparent;
+    cursor: not-allowed;
+  }
 }
-.nav > li.disabled > div:hover,
-.nav > li.disabled > div:focus {
-  color: #999999;
-  text-decoration: none;
-  background-color: transparent;
-  cursor: not-allowed;
-}
+
 .navbar-nav > li > div {
   padding-top: 10px;
   padding-bottom: 10px;
   line-height: 21px;
 }
+
 .navbar-default .navbar-nav > li > div {
   color: #ffffff;
+  :hover, :focus {
+    color: #ffffff;
+    background-color: #090909;
+  }
 }
-.navbar-default .navbar-nav > li > div:hover,
-.navbar-default .navbar-nav > li > div:focus {
-  color: #ffffff;
-  background-color: #090909;
-}
+
 .navbar-default .navbar-nav > .active > div,
 .navbar-default .navbar-nav > .active > div:hover,
 .navbar-default .navbar-nav > .active > div:focus {
   color: #ffffff;
   background-color: #090909;
 }
+
 .navbar-default .navbar-nav > .disabled > div,
 .navbar-default .navbar-nav > .disabled > div:hover,
 .navbar-default .navbar-nav > .disabled > div:focus {
   color: #cccccc;
   background-color: transparent;
 }
+
 @media (min-width: 768px) {
   .navbar-nav > li > div {
     padding-top: 14.5px;
