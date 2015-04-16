@@ -1,8 +1,7 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-var GalleryItem = require('./GalleryItem.react');
-var GalleryImage = require('./GalleryImage.react');
+var GalleryItem = require('./GalleryItem.jsx');
 require('bootstrap');
 
 "use strict";
@@ -11,9 +10,7 @@ var Gallery = React.createClass({
   getInitialState: function () {
     "use strict";
     return {
-      displayImage: false,
-      images: [],
-      image: 0
+      images: []
     };
   },
 
@@ -37,7 +34,7 @@ var Gallery = React.createClass({
 
   render: function() {
     "use strict";
-    var content = this.state.images.map(function (thumb, i) {
+    const content = this.state.images.map(function (thumb, i) {
       return (<GalleryItem id={i} key={thumb.id} />);
     });
     return (<div className="galleryContainer">{content}</div>);
@@ -45,3 +42,5 @@ var Gallery = React.createClass({
 });
 
 module.exports = Gallery;
+
+// TODO make closable with ESC

@@ -1,6 +1,6 @@
 var React = require('react/addons');
 require('mapbox.js');
-var Marker = require('./Marker.react');
+var Marker = require('./Marker.jsx');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
 "use strict";

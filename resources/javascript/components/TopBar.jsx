@@ -2,8 +2,8 @@ var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
 var DateRangePicker = require('react-bootstrap-daterangepicker');
-var SearchWidget = require('./SearchWidget.react');
-var FolderWidget = require('./FolderWidget.react');
+var SearchWidget = require('./SearchWidget.jsx');
+var FolderWidget = require('./FolderWidget.jsx');
 
 "use strict";
 
@@ -64,11 +64,12 @@ var TopBar = React.createClass({
     render: function() {
         "use strict";
 
-        var currentDate = new Date();
-        var day = currentDate.getDate();
-        var month = currentDate.getMonth() + 1;
-        var year = currentDate.getFullYear();
-        var buttons = [];
+        const currentDate = new Date();
+        const day = currentDate.getDate();
+        const month = currentDate.getMonth() + 1;
+        const year = currentDate.getFullYear();
+
+        const buttons = [];
 
         buttons.push(<li key="dateRangePicker"><DateRangePicker onApply={this.changeDate} onCancel={this.cancelDate} startDate="01.01.1970" endDate={day + "." + month + "." + year} format="DD.MM.YYYY">Date</DateRangePicker></li>);
         buttons.push(<SearchWidget key="searchWidget" />);

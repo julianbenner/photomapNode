@@ -1,9 +1,9 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-var Gallery = require('./Gallery.react');
-var GalleryImage = require('./GalleryImage.react');
-var FileList = require('./FileList.react');
+var Gallery = require('./Gallery.jsx');
+var GalleryImage = require('./GalleryImage.jsx');
+var FileList = require('./FileList.jsx');
 require('bootstrap');
 
 "use strict";

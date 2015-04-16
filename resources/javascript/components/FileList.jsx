@@ -1,5 +1,5 @@
-var FileListItem = require('./FileListItem.react');
-var FileListEdit = require('./FileListEdit.react');
+var FileListItem = require('./FileListItem.jsx');
+var FileListEdit = require('./FileListEdit.jsx');
 var $ = require('jquery');
 var React = require('react/addons');
 var MapStore = require('./MapStore.js');

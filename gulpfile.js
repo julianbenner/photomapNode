@@ -7,11 +7,7 @@ var gulp = require('gulp'),
 	notify = require("gulp-notify"),
 	browserify = require('browserify'),
 	reactify = require('reactify'),
-	watchify = require('watchify'),
-	uglify = require('gulp-uglify'),
 	source = require('vinyl-source-stream'),
-	buffer = require('vinyl-buffer'),
-  notify = require('gulp-notify'),
   es = require('event-stream'),
   concat = require('gulp-concat');
 
@@ -59,7 +55,7 @@ gulp.task('fonts', function() {
 
 // Rerun the task when a file changes
 gulp.task('watch', function() {
-  gulp.watch(config.scriptsDir + '/' + "**/*.js", ['react']);
+  gulp.watch(config.scriptsDir + '/' + "**/*.jsx", ['react']);
 	gulp.watch(config.sassDir + '/**/*.scss', ['css']);
 });
 

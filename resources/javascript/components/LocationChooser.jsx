@@ -1,6 +1,6 @@
 var React = require('react/addons');
 require('mapbox.js');
-var Marker = require('./Marker.react');
+var Marker = require('./Marker.jsx');
 var Dispatcher = require('./Dispatcher.js');
 var FileStore = require('./FileStore.js');
 

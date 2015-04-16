@@ -1,8 +1,8 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-var Overlay = require('./Overlay.react');
-var MapView = require('./MapView.react');
+var Overlay = require('./Overlay.jsx');
+var MapView = require('./MapView.jsx');
 
 "use strict";
 

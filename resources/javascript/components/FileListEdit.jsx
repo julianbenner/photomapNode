@@ -1,7 +1,7 @@
 var React = require('react');
 var FileStore = require('./FileStore.js');
 var Dispatcher = require('./Dispatcher.js');
-var LocationChooser = require('./LocationChooser.react');
+var LocationChooser = require('./LocationChooser.jsx');
 
 var FileListEdit = React.createClass({
     getInitialState: function() {

@@ -1,7 +1,7 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-var FolderWidgetFolder = require('./FolderWidgetFolder.react');
+var FolderWidgetFolder = require('./FolderWidgetFolder.jsx');
 
 "use strict";
 
