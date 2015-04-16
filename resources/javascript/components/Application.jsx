@@ -1,32 +1,29 @@
+"use strict";
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
 var Overlay = require('./Overlay.jsx');
 var MapView = require('./MapView.jsx');
 
-"use strict";
-
 var Application = React.createClass({
-    getInitialState: function () {
-        "use strict";
-        return {};
-    },
+  getInitialState: function () {
+    return {};
+  },
 
-    componentDidMount: function () {
-    },
+  componentDidMount: function () {
+  },
 
-    componentWillUnmount: function () {
-    },
+  componentWillUnmount: function () {
+  },
 
-    render: function() {
-        "use strict";
-        return (
-            <div className="container" id="container-map">
-                <MapView token={this.props.token} />
-                <Overlay token={this.props.token} />
-            </div>
-        );
-    }
+  render: function () {
+    return (
+      <div className="container" id="container-map">
+        <MapView token={this.props.token}/>
+        <Overlay token={this.props.token}/>
+      </div>
+    );
+  }
 });
 
 module.exports = Application;

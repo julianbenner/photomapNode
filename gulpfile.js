@@ -1,62 +1,96 @@
 // Basic Gulp File
 //
 var gulp = require('gulp'),
-	sass = require('gulp-ruby-sass'),
-	gutil = require('gulp-util'),
-	autoprefix = require('gulp-autoprefixer'),
-	notify = require("gulp-notify"),
-	browserify = require('browserify'),
-	reactify = require('reactify'),
-	source = require('vinyl-source-stream'),
+  sass = require('gulp-ruby-sass'),
+  gutil = require('gulp-util'),
+  autoprefix = require('gulp-autoprefixer'),
+  notify = require("gulp-notify"),
+  browserify = require('browserify'),
+  reactify = require('reactify'),
+  watchify = require('watchify'),
+  source = require('vinyl-source-stream'),
   es = require('event-stream'),
-  concat = require('gulp-concat');
+  concat = require('gulp-concat'),
+  es6ify = require('es6ify');
 
 var config = {
-	output: './public',
-	sassDir: './resources/sass',
-	bowerDir: './bower_components',
-	nodeDir: './node_modules',
+  output: './public',
+  sassDir: './resources/sass',
+  bowerDir: './bower_components',
+  nodeDir: './node_modules',
 
-	scriptsDir: './resources/javascript',
-	buildDir: './public/javascripts',
-	mainScript: 'main.js'
+  scriptsDir: './resources/javascript',
+  buildDir: './public/javascripts',
+  mainScript: 'main.js'
 };
 
-gulp.task('react', function() {
-  return browserify({entries: [config.scriptsDir + '/' + config.mainScript], debug: true})
-    .transform(reactify)
-    .bundle()
-    .pipe(source(config.mainScript))
-    .pipe(gulp.dest(config.buildDir))
-    .pipe(notify("Bundling done"));
-});
+var requireFiles = config.nodeDir + '/react/react.js';
 
-gulp.task('css', function() {
-	var appCss = sass(config.sassDir + '/style.scss', {
-			style: 'compressed',
-			loadPath: [
-				'./resources/sass',
-				config.nodeDir + '/bootstrap-sass/assets/stylesheets'
-			]
-		}).on('error', gutil.log);
-	var mapboxCss = gulp.src(config.nodeDir + '/mapbox.js/theme/style.css');
+function handleErrors() {
+  var args = Array.prototype.slice.call(arguments);
+  notify.onError({
+    title: "Compile Error",
+    message: "<%= error.message %>"
+  }).apply(this, args);
+  this.emit('end'); // Keep gulp from hanging on this task
+}
+
+function compileScripts(watch) {
+  gutil.log('Starting browserify');
+
+  var entryFile = config.scriptsDir + '/' + config.mainScript;
+  es6ify.traceurOverrides = {experimental: true};
+
+  var bundler;
+  bundler = browserify({ debug: true, entries: [entryFile]});
+  if (watch) {
+    bundler = watchify(bundler);
+  }
+
+  bundler.require(requireFiles);
+  bundler.transform(reactify);
+  bundler.transform(es6ify.configure(/.jsx/));
+
+  var rebundle = function () {
+    bundler.bundle()
+      .on('error', function (err) { console.error(err) })
+      .pipe(source(config.mainScript))
+      .pipe(gulp.dest(config.buildDir))
+      .pipe(notify("Bundling done"));
+  };
+
+  bundler.on('update', rebundle);
+  return rebundle();
+}
+
+gulp.task('css', function () {
+  var appCss = sass(config.sassDir + '/style.scss', {
+    style: 'compressed',
+    loadPath: [
+      './resources/sass',
+      config.nodeDir + '/bootstrap-sass/assets/stylesheets'
+    ]
+  }).on('error', gutil.log);
+  var mapboxCss = gulp.src(config.nodeDir + '/mapbox.js/theme/style.css');
 
   return es.concat(appCss, mapboxCss)
     .pipe(concat('style.css'))
     .pipe(autoprefix('last 10 version'))
-		.pipe(gulp.dest(config.output + '/css'))
+    .pipe(gulp.dest(config.output + '/css'))
     .pipe(notify("SASS done"));
 });
 
-gulp.task('fonts', function() {
-	gulp.src(config.nodeDir + '/bootstrap-sass/assets/fonts/bootstrap/*.{ttf,woff,eof,svg}')
-		.pipe(gulp.dest(config.output + '/fonts'));
+gulp.task('fonts', function () {
+  gulp.src(config.nodeDir + '/bootstrap-sass/assets/fonts/bootstrap/*.{ttf,woff,eof,svg}')
+    .pipe(gulp.dest(config.output + '/fonts'));
 });
 
 // Rerun the task when a file changes
-gulp.task('watch', function() {
-  gulp.watch(config.scriptsDir + '/' + "**/*.jsx", ['react']);
-	gulp.watch(config.sassDir + '/**/*.scss', ['css']);
+gulp.task('watch', function () {
+  //gulp.watch(config.scriptsDir + '/' + "**/*.jsx", ['react']);
+  compileScripts(true);
+
+  gulp.watch(config.sassDir + '/**/*.scss', ['css']);
 });
 
 gulp.task('default', ['css', 'fonts']);

@@ -3,10 +3,6 @@
   "version": "0.0.2",
   "private": false,
   "main": "public/main.js",
-  "scripts": {
-    "start": "watchify -o public/javascripts/bundle.js -v -d .",
-    "build": "node_modules\\.bin\\browserify . | node_modules\\.bin\\uglifyjs -cm > public/javascripts/bundle.min.js"
-  },
   "dependencies": {
     "body-parser": "~1.10.2",
     "bootstrap": "^3.3.2",
@@ -29,7 +25,7 @@
     "object-assign": "^2.0.0",
     "passport": "^0.2.1",
     "passport-local": "^1.0.0",
-    "react": "^0.13.0",
+    "react": "^0.13.1",
     "react-bootstrap-daterangepicker": "^0.2.2",
     "serve-favicon": "~2.2.0"
   },
@@ -37,6 +33,7 @@
     "bootstrap-sass": "^3.3.4",
     "browserify": "latest",
     "envify": "^3.3.0",
+    "es6ify": "^1.6.0",
     "event-stream": "^3.3.0",
     "font-awesome": "^4.3.0",
     "gulp": "latest",
@@ -53,16 +50,5 @@
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",
     "watchify": "latest"
-  },
-  "browserify": {
-    "options": {
-      "browserifyOptions": {
-        "debug": true
-      }
-    },
-    "transform": [
-      "reactify",
-      "envify"
-    ]
   }
 }

@@ -1,5 +1,4 @@
 var React = require('react');
-var FileStore = require('./FileStore.js');
 var Dispatcher = require('./Dispatcher.js');
 
 var FileListItem = React.createClass({
@@ -15,11 +14,11 @@ var FileListItem = React.createClass({
     },
 
     render: function() {
-        var classes = React.addons.classSet({
+        const classes = React.addons.classSet({
             'list-group-item': true,
             'active': this.props.selected
         });
-        var aStyle = {
+        const aStyle = {
             backgroundColor: this.props.lon == '' || this.props.lon == null || this.props.lat == '' || this.props.lat == null ? '#fee' : ''
         };
 

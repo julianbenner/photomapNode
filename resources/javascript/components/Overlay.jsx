@@ -1,3 +1,4 @@
+"use strict";
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
@@ -6,11 +7,8 @@ var GalleryImage = require('./GalleryImage.jsx');
 var FileList = require('./FileList.jsx');
 require('bootstrap');
 
-"use strict";
-
 var Overlay = React.createClass({
   getInitialState: function () {
-    "use strict";
     return {
       content: (<div />),
       mode: ""
@@ -18,45 +16,38 @@ var Overlay = React.createClass({
   },
 
   componentDidMount: function () {
-    "use strict";
     MapStore.on('update-overlay', this.updateOverlay);
     MapStore.on('show-overlay', this.showOverlay);
   },
 
   componentWillUnmount: function () {
-    "use strict";
     MapStore.removeListener('update-overlay', this.updateOverlay);
     MapStore.removeListener('show-overlay', this.showOverlay);
   },
 
   showOverlay: function () {
-    "use strict";    
     $(this.getDOMNode()).modal('show');
   },
 
   hideOverlay: function () {
-    "use strict";    
     $(this.getDOMNode()).modal('hide');
   },
 
   showGallery: function () {
-    "use strict";    
     Dispatcher.dispatch({
-        eventName: 'show-gallery'
+      eventName: 'show-gallery'
     });
   },
 
   editImage: function () {
-    "use strict";
     Dispatcher.dispatch({
-        eventName: 'edit-image'
+      eventName: 'edit-image'
     });
   },
 
   updateOverlay: function () {
-    "use strict";
+    const mode = MapStore.getOverlayMode();
 
-    var mode = MapStore.getOverlayMode();
     this.setState({
       mode: mode
     });
@@ -77,27 +68,30 @@ var Overlay = React.createClass({
 
       case 'edit':
         this.setState({
-          content: (<FileList token={this.props.token} preselected={MapStore.getSelectedImageId()} />)
+          content: (<FileList token={this.props.token} preselected={MapStore.getSelectedImageId()}/>)
         });
         break;
     }
   },
 
-  render: function() {
-    "use strict";
+  render: function () {
+    const buttons = [];
 
-    var buttons = []
-    buttons.push(<div key="overlayClose" className="modal-control-btn modal-control-btn-right" onClick={this.hideOverlay}>Close</div>);
+    buttons.push(<div key="overlayClose" className="modal-control-btn modal-control-btn-right"
+                      onClick={this.hideOverlay}>Close</div>);
 
     if (this.state.mode === 'image') {
-      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
-      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left" onClick={this.editImage}>Edit</div>);
+      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
+                        onClick={this.showGallery}>Gallery</div>);
+      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left" onClick={this.editImage}>
+        Edit</div>);
     } else if (this.state.mode === 'edit') {
-      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right" onClick={this.showGallery}>Gallery</div>);
+      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
+                        onClick={this.showGallery}>Gallery</div>);
     }
 
-    var cx = React.addons.classSet;
-    var contentClasses = cx({
+    const cx = React.addons.classSet;
+    const contentClasses = cx({
       'modal-content': true,
       'modal-content-dark': this.state.mode === 'gallery' || this.state.mode === 'image',
       'modal-content-bright': this.state.mode === 'edit'
@@ -109,13 +103,13 @@ var Overlay = React.createClass({
           {buttons}
         </div>
         <div className="modal-dialog large_modal">
-        <div className="modal-intermediate">
-          <div className={contentClasses} >
-            <div className="modal-body">
-              {this.state.content}
+          <div className="modal-intermediate">
+            <div className={contentClasses}>
+              <div className="modal-body">
+                {this.state.content}
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     );
