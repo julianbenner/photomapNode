@@ -9,11 +9,11 @@ var GalleryImage = React.createClass({
   },
 
   componentDidMount: function () {
-    document.onkeydown = this.onKeyDown;
+    document.addEventListener('keydown', this.onKeyDown);
   },
 
   componentWillUnmount: function () {
-    document.onkeydown = null;
+    document.removeEventListener('keydown', this.onKeyDown);
   },
 
   onKeyDown: function (e) {

@@ -1,119 +1,132 @@
 @import "_variables";
+
 $icon-font-path: "bootstrap-sass/assets/fonts/bootstrap/";
 @import "bootstrap-sprockets";
 @import "bootstrap";
 @import "daterangepicker";
 
 html, body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 #container-map {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  padding: 0;
 }
 
 #map, #app {
-    width: auto;
-    height: 100%;
+  width: auto;
+  height: 100%;
 }
 
 body {
-    padding-top: 70px;
-    background-image: url(/images/background.jpg);
+  padding-top: 70px;
+  background-image: url(/images/background.jpg);
 }
 
 .body-map {
-    padding-top: 50px;
+  padding-top: 50px;
 }
 
 .login-form {
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 330px;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 330px;
 }
 
 .image_count {
-    background: rgba($brand-primary, 0.9);
-    color: #fff;
-    font-weight: bold;
-    text-align: center;
-    border-radius: 50%;
-    transition: all .1s ease-in-out;
+  background: rgba($brand-primary, 0.9);
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+  border-radius: 50%;
+  transition: all .1s ease-in-out;
 }
 
 .image_count:hover {
-    background: rgba(112, 163, 197, 0.9);
+  background: rgba(112, 163, 197, 0.9);
 }
 
 .image_count_child {
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
-    display: block;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  display: block;
 }
 
 .large_modal {
-    margin: 25px !important;
-    margin-top: 75px !important;
-    width: auto;
-    position: absolute !important;
-    top: 0; left: 0; right: 0; bottom: 0;
+  margin: 25px !important;
+  margin-top: 75px !important;
+  width: auto;
+  position: absolute !important;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .thumbnail {
-    display: inline-block;
-    margin: 5px;
+  display: inline-block;
+  margin: 5px;
 }
 
 .modal, .modal-intermediate, .modal-content {
-    height: 100%;
+  height: 100%;
 }
 
 .modal-control {
-    background: rgba(20,20,20,0.7) !important;
-    color: #eee;
-    height: 50px;
-    top: 0; left: 0; right: 0;
-    width: 100%;
-    position: fixed;
-    line-height: 50px;
+  background: rgba(20, 20, 20, 0.85) !important;
+  color: #eee;
+  height: 50px;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  position: fixed;
+  line-height: 50px;
 }
 
 .modal-control-btn {
-    cursor: hand;
-    height: 100%;
-    padding-left: 20px;
-    padding-right: 20px;
+  cursor: hand;
+  height: 100%;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .modal-control-btn:hover {
-    color: #fff;
-    background-color: rgba(255,255,255,0.03);
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.03);
 }
 
 .modal-control-btn-left {
-    float: left;
+  float: left;
 }
 
 .modal-control-btn-right {
-    float: right;
+  float: right;
+}
+
+.modal-control-btn-center {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 20em;
+  text-align: center;
 }
 
 .modal-body {
-    height: 100%;
-    width: 100%;
-    overflow-y: auto;
+  height: 100%;
+  width: 100%;
+  overflow-y: auto;
 }
 
 .galleryContainer {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
 #galleryImageContainer {
@@ -126,16 +139,16 @@ body {
 }
 
 .modal-content-dark {
-    background-color: rgba($gray-base,0.8);
+  background-color: rgba($gray-base, 0.8);
 }
 
 .modal-content-bright {
-    background-color: rgba($body-bg,0.8);
+  background-color: rgba($body-bg, 0.8);
 }
 
 .thumbnail {
-    padding: 2px;
-    border-radius: 2px;
+  padding: 2px;
+  border-radius: 2px;
 }
 
 .nav > li > div {
@@ -194,7 +207,7 @@ body {
 }
 
 .fullWidth {
-    width: 100%;
+  width: 100%;
 }
 
 #fileListEdit, #fileListEditColumn, #fileListContainer {

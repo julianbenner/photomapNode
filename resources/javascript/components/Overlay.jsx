@@ -11,18 +11,29 @@ var Overlay = React.createClass({
   getInitialState: function () {
     return {
       content: (<div />),
-      mode: ""
+      mode: "",
+      title: ""
     };
   },
 
   componentDidMount: function () {
     MapStore.on('update-overlay', this.updateOverlay);
     MapStore.on('show-overlay', this.showOverlay);
+    document.addEventListener('keydown', this.onKeyDown);
   },
 
   componentWillUnmount: function () {
     MapStore.removeListener('update-overlay', this.updateOverlay);
     MapStore.removeListener('show-overlay', this.showOverlay);
+    document.removeEventListener('keydown', this.onKeyDown);
+  },
+
+  onKeyDown: function (e) {
+    switch (e.keyCode) {
+      case 27: // ESC
+        this.hideOverlay();
+        break;
+    }
   },
 
   showOverlay: function () {
@@ -55,7 +66,8 @@ var Overlay = React.createClass({
     switch (mode) {
       case 'gallery':
         this.setState({
-          content: (<Gallery />)
+          content: (<Gallery />),
+          title: 'Gallery'
         });
         break;
 
@@ -63,12 +75,18 @@ var Overlay = React.createClass({
         this.setState({
           image: MapStore.getSelectedImage(),
           content: (<GalleryImage />)
+        }, () => {
+          if (this.state.image)
+            this.setState({
+              title: this.state.image.name
+            });
         });
         break;
 
       case 'edit':
         this.setState({
-          content: (<FileList token={this.props.token} preselected={MapStore.getSelectedImageId()}/>)
+          content: (<FileList token={this.props.token} preselected={MapStore.getSelectedImageId()}/>),
+          title: 'Editor'
         });
         break;
     }
@@ -83,12 +101,15 @@ var Overlay = React.createClass({
     if (this.state.mode === 'image') {
       buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
                         onClick={this.showGallery}>Gallery</div>);
-      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left" onClick={this.editImage}>
+      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left"
+                        onClick={this.editImage}>
         Edit</div>);
     } else if (this.state.mode === 'edit') {
       buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
                         onClick={this.showGallery}>Gallery</div>);
     }
+
+    buttons.push(<div className="modal-control-btn modal-control-btn-center">{this.state.title}</div>)
 
     const cx = React.addons.classSet;
     const contentClasses = cx({
