@@ -59,12 +59,14 @@ var TopBar = React.createClass({
 
     const buttons = [];
 
+    buttons.push(<SearchWidget key="searchWidget"/>);
+    buttons.push(<FolderWidget key="folderWidget"/>);
     buttons.push(<li key="dateRangePicker"><DateRangePicker onApply={this.changeDate} onCancel={this.cancelDate}
                                                             startDate="01.01.1970"
                                                             endDate={day + "." + month + "." + year}
-                                                            format="DD.MM.YYYY">Date</DateRangePicker></li>);
-    buttons.push(<SearchWidget key="searchWidget"/>);
-    buttons.push(<FolderWidget key="folderWidget"/>);
+                                                            format="DD.MM.YYYY">
+      <span className="glyphicon glyphicon-calendar" aria-hidden="true"></span>
+    </DateRangePicker></li>);
 
     if (this.state.connectionWarningVisible) {
       buttons.push(<li key="connectionWarning">

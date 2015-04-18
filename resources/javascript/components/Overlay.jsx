@@ -50,6 +50,10 @@ var Overlay = React.createClass({
     });
   },
 
+  downloadImage: function () {
+    window.location.href = './image/' + this.state.image.id + '/down';
+  },
+
   editImage: function () {
     Dispatcher.dispatch({
       eventName: 'edit-image'
@@ -96,17 +100,18 @@ var Overlay = React.createClass({
     const buttons = [];
 
     buttons.push(<div key="overlayClose" className="modal-control-btn modal-control-btn-right"
-                      onClick={this.hideOverlay}>Close</div>);
+                      onClick={this.hideOverlay}><span className="glyphicon glyphicon-remove" aria-hidden="true"></span></div>);
 
     if (this.state.mode === 'image') {
       buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
-                        onClick={this.showGallery}>Gallery</div>);
+                        onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
+      buttons.push(<div key="overlayDownload" className="modal-control-btn modal-control-btn-right"
+                        onClick={this.downloadImage}><span className="glyphicon glyphicon-download" aria-hidden="true"></span></div>);
       buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left"
-                        onClick={this.editImage}>
-        Edit</div>);
+                        onClick={this.editImage}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></div>);
     } else if (this.state.mode === 'edit') {
       buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
-                        onClick={this.showGallery}>Gallery</div>);
+                        onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
     }
 
     buttons.push(<div className="modal-control-btn modal-control-btn-center">{this.state.title}</div>)

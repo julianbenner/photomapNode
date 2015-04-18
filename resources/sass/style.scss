@@ -160,6 +160,12 @@ body {
     background-color: #e6e6e6;
   }
 }
+.nav > li > div
+  :hover {
+    text-decoration: none;
+    background-color: #e6e6e6;
+  }
+
 
 .nav > li.disabled > div {
   color: #999999;
