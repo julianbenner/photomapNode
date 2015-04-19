@@ -98,7 +98,9 @@ function loadGallery(lat, lon, callback) {
     lonMin: (lon * rasterSize())-180,
     lonMax: (((lon + 1) * rasterSize()))-180,
     dateMin: dateMin,
-    dateMax: dateMax
+    dateMax: dateMax,
+    folderFilter: JSON.stringify(folderFilter),
+    folderFilteringEnabled: folderFilteringEnabled
   }).done(function (data) {
     callback(data);
   });

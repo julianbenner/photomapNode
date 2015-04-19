@@ -34,6 +34,7 @@ body {
 
 .btn-navbar-toggle {
   color: $navbar-default-link-color;
+  padding: 10px 18px 6px 18px; // default is 10,18,10,18, but it doesn't center
   :focus {
     color: $navbar-default-link-hover-color
   }
@@ -54,7 +55,11 @@ body {
 }
 
 .navbar-form {
-  margin: 0 !important;
+  // otherwise, search field is shifted
+  @media(max-width: 768px)
+  {
+    margin: 0 !important;
+  }
 }
 
 .body-map {
@@ -328,6 +333,18 @@ body {
 
 .folder {
   list-style: none;
+  padding-left: 1em;
+}
+
+.folderName {
+  float: left;
+  height: 2.5em;
+  line-height: 2.5em;
+  width: 100%;
+
+  label {
+    margin-left: 1em;
+  }
 }
 
 .folderItem {

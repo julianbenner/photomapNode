@@ -15,7 +15,8 @@ class Folder {
     this.toggleCheck = this.toggleCheck.bind(this);
   }
 
-  toggleFold() {
+  toggleFold(e) {
+    e.stopPropagation(); // when + is clicked, prevent row from being checked
     if (!this.explored && !this.unfolded) {
       this.explore(() => {
         this.unfolded = !this.unfolded;
@@ -46,8 +47,9 @@ class Folder {
 
   toggleCheck() {
     this.selected = !this.selected;
-    console.log(this);
-  }
+    Dispatcher.dispatch({
+      eventName: 'folder-structure-changed'
+    });  }
 
   toJSON() {
     const folder = {name: this.name, selected: this.selected, content: []};
@@ -71,8 +73,8 @@ class Folder {
       });
     }
     const folderKey = this.name; // TODO
-
-    return <li key={folderKey}><input type="checkbox" onChange={this.toggleCheck} /><label onClick={this.toggleFold}>{name[name.length - 1]}</label><ul>{subfolders}</ul></li>;
+    const foldElement = this.unfolded ? '-' : '+';
+    return <li key={folderKey}><span className="folderName" onClick={this.toggleCheck}><a onClick={this.toggleFold}>{foldElement}</a><input readonly type="checkbox" checked={this.selected} /><label>{name[name.length - 1]}</label></span><ul className="folder">{subfolders}</ul></li>;
   }
 }
 

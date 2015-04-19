@@ -101,7 +101,7 @@ function compare_fs_to_db(folder, callback) {
       files.forEach(function (item) {
         if (fs.lstatSync(path.join(imagePath, folder, item)).isDirectory()) {
           if (folder === '')
-            compare_fs_to_db(item); // path join yields backslashes with windows
+            compare_fs_to_db(item);
           else
             compare_fs_to_db(folder + '/' + item); // path join yields backslashes with windows
         } else {
