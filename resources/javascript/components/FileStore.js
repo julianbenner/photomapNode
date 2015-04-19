@@ -12,9 +12,10 @@ var FileStore = assign({}, EventEmitter.prototype, {
   getSelectedFilePage: function () {
     for (var i = 0; i != _files.length; i++) {
       if (_files[i].id == _fileIndex) {
-        return Math.ceil(i / pageSize);
+        return Math.ceil((i+1) / pageSize);
       }
     }
+    return 1;
   },
 
   getPageContent: function (page) {
@@ -38,6 +39,11 @@ var FileStore = assign({}, EventEmitter.prototype, {
 
   getLocation: function () {
     return _location;
+  },
+
+  doFullScan: function () {
+    $.getJSON('/admin/fullscan', function () {
+    });
   }
 });
 
@@ -48,7 +54,9 @@ Dispatcher.register(function (payload) {
         _files = data;
         if (typeof payload.fileIndex !== 'undefined') {
           _fileIndex = payload.fileIndex;
-          _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true;
+          const currentlySelectedId = FileStore.getItemIdByDbId(_fileIndex);
+          if (typeof _files[currentlySelectedId] !== 'undefined')
+            _files[currentlySelectedId].selected = true;
         }
         FileStore.emit('files-changed');
       });
@@ -75,6 +83,9 @@ Dispatcher.register(function (payload) {
     case 'change-location':
       _location = {lat: payload.lat, lon: payload.lon};
       FileStore.emit('location-changed');
+      break;
+    case 'files-full-scan':
+      doFullScan();
       break;
   }
 

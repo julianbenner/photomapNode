@@ -3,17 +3,15 @@ var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 
 var SearchWidget = React.createClass({
+  propTypes: {
+    token: React.PropTypes.string.isRequired
+  },
+
   getInitialState: function () {
     return {value: ""};
   },
 
   componentDidMount: function () {
-    var url = "https://maps.googleapis.com/maps/api/js?v=3&callback=onLoadGoogleApiCallback&sensor=false";
-    var script = document.createElement('script');
-    script.id = 'load_google_api';
-    script.type = "text/javascript";
-    script.src = url;
-    document.body.appendChild(script);
   },
 
   componentWillUnmount: function () {
@@ -22,6 +20,7 @@ var SearchWidget = React.createClass({
   search: function () {
     Dispatcher.dispatch({
       eventName: 'geosearch',
+      token: this.props.token,
       query: this.state.value
     });
   },
@@ -39,14 +38,14 @@ var SearchWidget = React.createClass({
   render: function () {
     return (
       <li className="navbar-form" role="search" key="searchWidget">
-            <span className="input-group add-on">
-              <input onKeyPress={this.keypress} type="text" className="form-control" placeholder="Search"
-                     id="locationQuery" value={this.state.value} onChange={this.handleChange}></input>
-              <div className="input-group-btn">
-                <button className="btn btn-default" onClick={this.search}><i className="glyphicon glyphicon-search"></i>
-                </button>
-              </div>
-            </span>
+        <span className="input-group add-on">
+          <input onKeyPress={this.keypress} type="text" className="form-control" placeholder="Search"
+                 id="locationQuery" value={this.state.value} onChange={this.handleChange}></input>
+          <div className="input-group-btn">
+            <button className="btn btn-default" onClick={this.search}><span className="glyphicon glyphicon-search"></span>
+            </button>
+          </div>
+        </span>
       </li>
     );
   }

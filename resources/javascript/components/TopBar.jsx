@@ -2,25 +2,23 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-var DateRangePicker = require('react-bootstrap-daterangepicker');
+var DateRangePicker = require('./DateRangePicker.jsx');
 var SearchWidget = require('./SearchWidget.jsx');
 var FolderWidget = require('./FolderWidget.jsx');
 
 var TopBar = React.createClass({
+  propTypes: {
+    token: React.PropTypes.string.isRequired
+  },
+
   getInitialState: function () {
-    return {
-      connectionWarningVisible: false
-    };
+    return {};
   },
 
   componentDidMount: function () {
-    MapStore.on('connection-trouble', this.showConnectionWarning);
-    MapStore.on('refresh-markers', this.hideConnectionWarning);
   },
 
   componentWillUnmount: function () {
-    MapStore.removeListener('connection-trouble', this.showConnectionWarning);
-    MapStore.removeListener('refresh-markers', this.hideConnectionWarning);
   },
 
   changeDate: function (event, picker) {
@@ -40,14 +38,14 @@ var TopBar = React.createClass({
   },
 
   showConnectionWarning: function () {
-    this.setState({
-      connectionWarningVisible: true
-    });
   },
 
   hideConnectionWarning: function () {
-    this.setState({
-      connectionWarningVisible: false
+  },
+
+  openAdminInterface: function () {
+    Dispatcher.dispatch({
+      eventName: 'edit-image'
     });
   },
 
@@ -59,20 +57,16 @@ var TopBar = React.createClass({
 
     const buttons = [];
 
-    buttons.push(<SearchWidget key="searchWidget"/>);
+    buttons.push(<SearchWidget token={this.props.token} key="searchWidget"/>);
     buttons.push(<FolderWidget key="folderWidget"/>);
-    buttons.push(<li key="dateRangePicker"><DateRangePicker onApply={this.changeDate} onCancel={this.cancelDate}
+    buttons.push(<DateRangePicker key="dateRangePicker" onApply={this.changeDate} onCancel={this.cancelDate}
                                                             startDate="01.01.1970"
                                                             endDate={day + "." + month + "." + year}
                                                             format="DD.MM.YYYY">
       <span className="glyphicon glyphicon-calendar" aria-hidden="true"></span>
-    </DateRangePicker></li>);
-
-    if (this.state.connectionWarningVisible) {
-      buttons.push(<li key="connectionWarning">
-        <div>Sorry, connection trouble</div>
-      </li>);
-    }
+    </DateRangePicker>);
+    buttons.push(<li key="admin" className="hiddenOnMobile"><a
+      onClick={this.openAdminInterface}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></a></li>);
 
     return (
       <ul className="navbar-nav nav">

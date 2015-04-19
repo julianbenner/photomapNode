@@ -2,33 +2,42 @@ var React = require('react');
 var Dispatcher = require('./Dispatcher.js');
 
 var FileListItem = React.createClass({
-    getInitialState: function() {
-        return {};
-    },
+  propTypes: {
+    index: React.PropTypes.number.isRequired,
+    lat: React.PropTypes.number,
+    lon: React.PropTypes.number,
+    name: React.PropTypes.string
+  },
 
-    toggleEdit: function () {
-        Dispatcher.dispatch({
-            eventName: 'select-file',
-            fileIndex: this.props.index
-        });
-    },
+  getInitialState: function () {
+    return {};
+  },
 
-    render: function() {
-        const classes = React.addons.classSet({
-            'list-group-item': true,
-            'active': this.props.selected
-        });
-        const aStyle = {
-            backgroundColor: this.props.lon == '' || this.props.lon == null || this.props.lat == '' || this.props.lat == null ? '#fee' : ''
-        };
+  toggleEdit: function () {
+    Dispatcher.dispatch({
+      eventName: 'select-file',
+      fileIndex: this.props.index
+    });
+  },
 
-        return (
-            <a href="#" className={classes} style={aStyle} onClick={this.toggleEdit}>
-                {this.props.index} - {this.props.name}
-                <span className="small">{this.props.lat}, {this.props.lon}</span>
-            </a>
-        );
-    }
+  render: function () {
+    const classes = React.addons.classSet({
+      'list-group-item': true,
+      'active': this.props.selected
+    });
+    const aStyle = {
+      backgroundColor: this.props.lon == '' || this.props.lon == null || this.props.lat == '' || this.props.lat == null ? '#fee' : ''
+    };
+    const path = "/image/" + this.props.index + '/tiny';
+
+    return (
+      <a href="#" className={classes} style={aStyle} onClick={this.toggleEdit}>
+        <img src={path} />
+        {this.props.index} - {this.props.name}
+        <span className="small">{this.props.lat}, {this.props.lon}</span>
+      </a>
+    );
+  }
 });
 
 module.exports = FileListItem;

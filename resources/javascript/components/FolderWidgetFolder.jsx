@@ -40,21 +40,22 @@ var FolderWidgetFolder = React.createClass({
   render: function () {
     "use strict";
 
-    var indent = Array(parseInt(this.props.indent) + 1).join("-");
     var name = this.props.root.split("/");
-    var content = [(<li key="root" onClick={this.toggle}>{indent + name[name.length - 1]}</li>)];
+    if (name[0] === '') name[0] = '/';
+    var header = [(<input type="checkbox" name={this.props.root} />),(<label htmlFor={this.props.root} onClick={this.toggle}>{name[name.length - 1]}</label>)];
+    var content = [];
     if (this.state.unfolded)
       content = content.concat(this.state.content.map((item, i) => {
         if (item.type == 'folder') {
           var folderRoot = this.props.root + "/" + item.name;
-          return (<FolderWidgetFolder key={i} root={folderRoot} indent={parseInt(this.props.indent) + 1}/>);
+          return (<FolderWidgetFolder key={i} root={folderRoot} />);
         } else {
           return;//(<li key={i}>{item.name}</li>);
         }
       }));
 
     return (
-      <div>{content}</div>
+      <li><span className="folderItem">{header}</span><ul className="folder">{content}</ul></li>
     );
   }
 });

@@ -42,7 +42,7 @@ function compileScripts(watch) {
   es6ify.traceurOverrides = {experimental: true};
 
   var bundler;
-  bundler = browserify({ debug: true, entries: [entryFile]});
+  bundler = browserify({ debug: true, entries: [es6ify.runtime]}).add(entryFile);
   if (watch) {
     bundler = watchify(bundler);
   }

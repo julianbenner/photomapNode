@@ -31,10 +31,12 @@ var LocationChooser = React.createClass({
   },
 
   toggle: function () {
-    $(this.getDOMNode()).slideToggle("fast", () => {
+    $(React.findDOMNode(this)).slideToggle("fast", () => {
       if (!this.state.initialized) {
-        var map = this.map = L.mapbox.map(this.getDOMNode(), 'examples.map-i86nkdio')
-          .setView([this.props.lat, this.props.lon], 12);
+        const initialLat = this.props.lat || 50;
+        const initialLon = this.props.lon || 8;
+        var map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
+          .setView([initialLat, initialLon], 12);
 
         map.on('click', (e) => {
           this.setLocation(e.latlng.lat, e.latlng.lng);

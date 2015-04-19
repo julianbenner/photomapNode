@@ -5,12 +5,17 @@ var MapStore = require('./MapStore.js');
 var Gallery = require('./Gallery.jsx');
 var GalleryImage = require('./GalleryImage.jsx');
 var FileList = require('./FileList.jsx');
+var classNames = require('classnames')
 require('bootstrap');
 
 var Overlay = React.createClass({
+  propTypes: {
+    token: React.PropTypes.string.isRequired
+  },
+
   getInitialState: function () {
     return {
-      content: (<div />),
+      contentMode: 'empty',
       mode: "",
       title: ""
     };
@@ -37,11 +42,11 @@ var Overlay = React.createClass({
   },
 
   showOverlay: function () {
-    $(this.getDOMNode()).modal('show');
+    $(React.findDOMNode(this)).modal('show');
   },
 
   hideOverlay: function () {
-    $(this.getDOMNode()).modal('hide');
+    $(React.findDOMNode(this)).modal('hide');
   },
 
   showGallery: function () {
@@ -60,6 +65,18 @@ var Overlay = React.createClass({
     });
   },
 
+  triggerPrevImage: function () {
+    Dispatcher.dispatch({
+      eventName: 'prev-image'
+    });
+  },
+
+  triggerNextImage: function () {
+    Dispatcher.dispatch({
+      eventName: 'next-image'
+    });
+  },
+
   updateOverlay: function () {
     const mode = MapStore.getOverlayMode();
 
@@ -70,7 +87,7 @@ var Overlay = React.createClass({
     switch (mode) {
       case 'gallery':
         this.setState({
-          content: (<Gallery />),
+          contentMode: 'gallery',
           title: 'Gallery'
         });
         break;
@@ -78,7 +95,7 @@ var Overlay = React.createClass({
       case 'image':
         this.setState({
           image: MapStore.getSelectedImage(),
-          content: (<GalleryImage />)
+          contentMode: 'galleryImage'
         }, () => {
           if (this.state.image)
             this.setState({
@@ -88,12 +105,21 @@ var Overlay = React.createClass({
         break;
 
       case 'edit':
+        const fileListMode = this.state.mode === 'image' // if mode was note image, we assume, there is no preselected file
+          ? 'filelistPresel'
+          : 'filelist';
         this.setState({
-          content: (<FileList token={this.props.token} preselected={MapStore.getSelectedImageId()}/>),
+          contentMode: fileListMode,
           title: 'Editor'
         });
         break;
     }
+
+    this.setState({
+      mode: mode
+    });
+
+    this.showOverlay();
   },
 
   render: function () {
@@ -107,17 +133,39 @@ var Overlay = React.createClass({
                         onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
       buttons.push(<div key="overlayDownload" className="modal-control-btn modal-control-btn-right"
                         onClick={this.downloadImage}><span className="glyphicon glyphicon-download" aria-hidden="true"></span></div>);
-      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left"
+      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left hiddenOnMobile"
                         onClick={this.editImage}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></div>);
     } else if (this.state.mode === 'edit') {
       buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
                         onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
     }
 
-    buttons.push(<div className="modal-control-btn modal-control-btn-center">{this.state.title}</div>)
+    const titleContent = this.state.mode === 'image'
+      ?(<div key="overlayCenter" className="modal-control-btn-center">
+      <span className="imageNavButton imageNavButtonLeft" onClick={this.triggerPrevImage}><span className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></span>
+      <span className="hiddenOnMobile">{this.state.title}</span>
+      <span className="imageNavButton imageNavButtonRight" onClick={this.triggerNextImage}><span className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></span>
+    </div>)
+      :(<div key="overlayCenter" className="modal-control-btn-center"><span id="overlayTitle">{this.state.title}</span></div>);
 
-    const cx = React.addons.classSet;
-    const contentClasses = cx({
+    buttons.push(titleContent);
+
+    const content = () => {
+      switch (this.state.contentMode) {
+        case 'empty':
+          return <div key="overlayBodyEmpty" />;
+        case 'gallery':
+          return <Gallery key="overlayBodyGallery" />;
+        case 'galleryImage':
+          return <GalleryImage key="overlayBodyGalleryImage" />;
+        case 'filelistPresel':
+          return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={MapStore.getSelectedImageId()}/>;
+        case 'filelist':
+          return <FileList key="overlayBodyFilelist" token={this.props.token} />;
+      }
+    };
+
+    const contentClasses = classNames({
       'modal-content': true,
       'modal-content-dark': this.state.mode === 'gallery' || this.state.mode === 'image',
       'modal-content-bright': this.state.mode === 'edit'
@@ -132,7 +180,7 @@ var Overlay = React.createClass({
           <div className="modal-intermediate">
             <div className={contentClasses}>
               <div className="modal-body">
-                {this.state.content}
+                {content()}
               </div>
             </div>
           </div>

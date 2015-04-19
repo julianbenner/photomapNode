@@ -1,3 +1,4 @@
+'use strict';
 var Dispatcher = require('./Dispatcher.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
@@ -24,12 +25,15 @@ var _lon;
 var dateMin = null;
 var dateMax = null;
 
-function geosearch(query) {
-  (new google.maps.Geocoder()).geocode({address: query}, function (data) {
-    if (data.length > 0) {
-      var result = data[0];
-      _lat = result.geometry.location.lat();
-      _lon = result.geometry.location.lng();
+var folderFilter = {};
+var folderFilteringEnabled = false;
+
+function geosearch(query, token) {
+  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+    if (data.features.length > 0) {
+      var result = data.features[0];
+      _lat = result.center[1];
+      _lon = result.center[0];
       console.log('result ' + _lat + ' ' + _lon);
       MapStore.emit('viewport-change');
     }
@@ -38,10 +42,10 @@ function geosearch(query) {
 
 function loadMarker(lat, lon) {
   "use strict";
-  var latMin = lat * rasterSize();
-  var latMax = ((lat + 1) * rasterSize());
-  var lonMin = lon * rasterSize();
-  var lonMax = ((lon + 1) * rasterSize());
+  var latMin = (lat * rasterSize())-90;
+  var latMax = (((lat + 1) * rasterSize()))-90;
+  var lonMin = (lon * rasterSize())-180;
+  var lonMax = (((lon + 1) * rasterSize()))-180;
 
   $.getJSON("get_image_count", {
     latMin: latMin,
@@ -49,31 +53,29 @@ function loadMarker(lat, lon) {
     lonMin: lonMin,
     lonMax: lonMax,
     dateMin: dateMin,
-    dateMax: dateMax
+    dateMax: dateMax,
+    folderFilter: JSON.stringify(folderFilter),
+    folderFilteringEnabled: folderFilteringEnabled
   }).done(function (data) {
     if (typeof markers[lat] !== 'undefined') { // make sure Marker row is initialized
       if (data.SUCCESS === true) { // JSON should carry SUCCESS parameter
         markers[lat][lon] = data; // puts the avg lat/lon and images count in the array
         MapStore.emit('refresh-markers'); // refresh-markers assumes the connection is working and will remove warning symbols
       } else {
-        MapStore.emit('connection-trouble'); // connection-trouble will trigger showing a warning symbol
+        //MapStore.emit('connection-trouble'); // connection-trouble will trigger showing a warning symbol
       }
     }
   });
 }
 
 function loadMarkers() {
-  "use strict";
-  var latRasterElements = Math.ceil((latMax - latMin) / rasterSize());
-  var lonRasterElements = Math.ceil((lonMax - lonMin) / rasterSize());
-
   var rasterBounds = function (deg) {
     return Math.floor(deg / rasterSize());
   };
-  var latRasterStart = rasterBounds(latMin);
-  var latRasterEnd = rasterBounds(latMax);
-  var lonRasterStart = rasterBounds(lonMin);
-  var lonRasterEnd = rasterBounds(lonMax);
+  var latRasterStart = rasterBounds(latMin+90);
+  var latRasterEnd = rasterBounds(latMax+90);
+  var lonRasterStart = rasterBounds(lonMin+180);
+  var lonRasterEnd = rasterBounds(lonMax+180);
 
   for (var i = latRasterStart; i <= latRasterEnd; i = i + 1) {
     if (typeof markers[i] === 'undefined') {
@@ -88,18 +90,17 @@ function loadMarkers() {
   }
 }
 
-function loadGallery(lat, lon) {
+function loadGallery(lat, lon, callback) {
   "use strict";
   $.getJSON("get_image_list/", {
-    latMin: lat * rasterSize(),
-    latMax: ((lat + 1) * rasterSize()),
-    lonMin: lon * rasterSize(),
-    lonMax: ((lon + 1) * rasterSize()),
+    latMin: (lat * rasterSize())-90,
+    latMax: (((lat + 1) * rasterSize()))-90,
+    lonMin: (lon * rasterSize())-180,
+    lonMax: (((lon + 1) * rasterSize()))-180,
     dateMin: dateMin,
     dateMax: dateMax
   }).done(function (data) {
-    gallery = data;
-    MapStore.emit('refresh-gallery');
+    callback(data);
   });
 }
 
@@ -124,6 +125,12 @@ function clearMarkers() {
 }
 
 var MapStore = assign({}, EventEmitter.prototype, {
+  getSingleImage: function (lat, lon, callback) {
+    loadGallery(lat, lon, function (data) {
+      callback(data);
+    });
+  },
+
   getMarkers: function () {
     return markers;
   },
@@ -133,7 +140,11 @@ var MapStore = assign({}, EventEmitter.prototype, {
   },
 
   getSelectedImageId: function () {
-    return gallery[selectedImage].id;
+    if (typeof gallery[selectedImage] !== 'undefined') {
+    return gallery[selectedImage].id; }
+    else {
+    return 0;
+    }
   },
 
   getSelectedImage: function () {
@@ -171,6 +182,12 @@ Dispatcher.register(function (payload) {
       lonMax = payload.bounds.lon_max;
       loadMarkers();
       break;
+    case 'filter-by-folder':
+      clearMarkers();
+      folderFilter = payload.folders;
+      folderFilteringEnabled = true;
+      loadMarkers();
+      break;
     case 'change-date':
       clearMarkers();
       dateMin = payload.startDate === null ? null : payload.startDate.format('YYYY-M-D');
@@ -181,7 +198,10 @@ Dispatcher.register(function (payload) {
       MapStore.emit('show-overlay');
       overlayMode = 'gallery';
       if (typeof payload.lat !== 'undefined' && typeof payload.lon !== 'undefined')
-        loadGallery(payload.lat, payload.lon);
+        loadGallery(payload.lat, payload.lon, function (data) {
+          gallery = data;
+          MapStore.emit('refresh-gallery');
+        });
       else
         MapStore.emit('refresh-gallery');
       MapStore.emit('update-overlay');
@@ -207,7 +227,10 @@ Dispatcher.register(function (payload) {
       MapStore.emit('click-map');
       break;
     case 'geosearch':
-      geosearch(payload.query);
+      geosearch(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      break;
+    case 'folder-structure-changed':
+      MapStore.emit('update-folder-list');
       break;
   }
 

@@ -5,6 +5,10 @@ $icon-font-path: "bootstrap-sass/assets/fonts/bootstrap/";
 @import "bootstrap";
 @import "daterangepicker";
 
+.daterangepicker {
+  overflow: scroll;
+}
+
 html, body {
   height: 100%;
   width: 100%;
@@ -26,6 +30,31 @@ html, body {
 body {
   padding-top: 70px;
   background-image: url(/images/background.jpg);
+}
+
+.btn-navbar-toggle {
+  color: $navbar-default-link-color;
+  :focus {
+    color: $navbar-default-link-hover-color
+  }
+  @media(min-width: 768px)
+  {
+    display: none;
+  }
+}
+
+#reactTopBar {
+  margin-left: 5px !important;
+  margin-right: 5px !important;
+  @media(min-width: 768px)
+  {
+    display: block;
+    visibility: visible;
+  }
+}
+
+.navbar-form {
+  margin: 0 !important;
 }
 
 .body-map {
@@ -135,7 +164,33 @@ body {
 }
 
 #galleryImage {
-  height: 100%;
+  max-height: 100%;
+  max-width: 100%;
+  height: auto;
+}
+
+.imageNavButton {
+  padding: 0 20px;
+  display: inline-block;
+  :hover, :focus {
+    color: #ffffff;
+    background-color: #090909;
+  }
+}
+
+.imageNavButtonLeft {
+  float: left;
+}
+
+.imageNavButtonRight {
+  float: right;
+}
+
+.hiddenOnMobile {
+  @media(max-width: 768px)
+  {
+    display: none !important;
+  }
 }
 
 .modal-content-dark {
@@ -149,6 +204,10 @@ body {
 .thumbnail {
   padding: 2px;
   border-radius: 2px;
+
+  @media (max-width: 768px) {
+    width: 42%;
+  }
 }
 
 .nav > li > div {
@@ -212,6 +271,13 @@ body {
   }
 }
 
+.navItemTitle {
+  @media (min-width: 768px) {
+    display: none;
+  }
+  margin-left: 2em;
+}
+
 .fullWidth {
   width: 100%;
 }
@@ -250,4 +316,22 @@ body {
 
 .clearBoth {
   clear: both;
+}
+
+#folderDropdown {
+  @media (max-width: 768px) {
+    position: relative !important;
+    float: none !important;
+  }
+  padding: 5px;
+}
+
+.folder {
+  list-style: none;
+}
+
+.folderItem {
+  :hover {
+    background: rgba($brand-primary, 0.1);
+  }
 }

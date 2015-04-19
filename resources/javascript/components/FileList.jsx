@@ -5,6 +5,7 @@ var React = require('react/addons');
 var MapStore = require('./MapStore.js');
 var FileStore = require('./FileStore.js');
 var Dispatcher = require('./Dispatcher.js');
+var classNames = require('classnames');
 
 var FileList = React.createClass({
   getInitialState: function () {
@@ -12,7 +13,7 @@ var FileList = React.createClass({
       items: [],
       currently_selected: 0,
       page: 1,
-      amount_of_pages: 1
+      amountOfPages: 1
     };
   },
 
@@ -40,7 +41,7 @@ var FileList = React.createClass({
     const pageContent = FileStore.getPageContent(this.state.page);
     this.setState({
       items: pageContent,
-      amount_of_pages: FileStore.getAmountOfPages()
+      amountOfPages: FileStore.getAmountOfPages()
     });
   },
 
@@ -55,15 +56,22 @@ var FileList = React.createClass({
   },
 
   nextPage: function () {
-    this.setState({
-      page: this.state.page + 1
-    }, () => {
-      this.showPage(this.state.page);
-    });
+    if (this.state.page < this.state.amountOfPages)
+      this.setState({
+        page: this.state.page + 1
+      }, () => {
+        this.showPage(this.state.page);
+      });
   },
 
   selectItem: function () {
 
+  },
+
+  triggerFullScan: function () {
+    Dispatcher.dispatch({
+      eventName: 'files-full-scan'
+    })
   },
 
   render: function () {
@@ -72,8 +80,11 @@ var FileList = React.createClass({
                             lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected}/>);
     });
 
-    const previousClass = React.addons.classSet({
+    const previousClass = classNames({
       'disabled': this.state.page === 1
+    });
+    const nextClass = classNames({
+      'disabled': this.state.page === this.state.amountOfPages
     });
 
     return (
@@ -86,8 +97,8 @@ var FileList = React.createClass({
                   <span aria-hidden="true">&larr;</span>
                 </a>
               </li>
-              <li><span>{this.state.page + '/' + this.state.amount_of_pages}</span></li>
-              <li className="next">
+              <li><span>{this.state.page + '/' + this.state.amountOfPages}</span></li>
+              <li className={nextClass}>
                 <a href="#" onClick={this.nextPage}>
                   <span aria-hidden="true">&rarr;</span>
                 </a>
@@ -97,6 +108,7 @@ var FileList = React.createClass({
           <div className="list-group">
             {items}
           </div>
+          <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan</button>
         </div>
         <div className="col-xs-6" id="fileListEditColumn">
           <FileListEdit token={this.props.token}/>

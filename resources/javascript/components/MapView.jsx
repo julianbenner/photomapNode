@@ -15,7 +15,7 @@ var MapView = React.createClass({
   componentDidMount: function () {
     L.mapbox.accessToken = this.props.token;
 
-    const map = this.map = L.mapbox.map(this.getDOMNode(), 'examples.map-i86nkdio')
+    const map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
       .setView([48.7, 9.05], 12);
 
     map.on('moveend', () => {
@@ -81,8 +81,9 @@ var MapView = React.createClass({
   render: function () {
     const map = this.map;
     const markers = this.state.markers;
-    const marker = markers.map((i) => {
-      return i.map((j) => {
+
+    const marker = markers.map(i => {
+      return i.map(j => {
         if (j.image_count > 0) {
           const lat = markers.indexOf(i);
           const lon = i.indexOf(j);

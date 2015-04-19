@@ -1,11 +1,18 @@
+'use strict';
 var express = require('express');
 var path = require('path');
 var passport = require('passport');
+var fs = require('fs');
+var gm = require('gm');
+var ExifImage = require('exif').ExifImage;
+
+var databaseName = 'photomap_image';
+var imagePath = 'images';
 
 function get_list_of_images(amount, page, callback) {
   var connection = require('../routes/Database').Get();
 
-  var use_limit = amount === 'all' ? false : true;
+  var use_limit = amount !== 'all';
 
   page = parseInt(page);
   page = isNaN(page) ? 1 : page;
@@ -15,7 +22,7 @@ function get_list_of_images(amount, page, callback) {
   var start_from = connection.escape(amount * (page - 1));
   amount = connection.escape(amount);
 
-  var query = 'SELECT * FROM photomap_image ORDER BY path,name' + (use_limit ? ' LIMIT ' + start_from + ', ' + amount : '');
+  var query = 'SELECT * FROM ' + databaseName + ' ORDER BY path,name' + (use_limit ? ' LIMIT ' + start_from + ', ' + amount : '');
   console.log(query);
   connection.query(
     query,
@@ -42,6 +49,93 @@ function edit_image(id, name, lat, lon, date, callback) {
 
 function user_is_admin(request) {
   return true; // TODO
+}
+
+function checkIfFileInDb(folder, file, callback) {
+  var connection = require('../routes/Database').Get();
+
+  const query = 'SELECT EXISTS(SELECT * FROM `' + databaseName + '` WHERE `path` = ' + connection.escape(folder) + ' AND `name` = ' + connection.escape(file) + ') as `exists`';
+  console.log(query);
+  connection.query(query, function(err, result) {
+    if (err) {
+      return {success: false};
+    } else {
+      const answer = {success: true, file: folder + '/' + file, exists: result[0]['exists']};
+      if (!answer.exists) {
+        callback();
+      }
+      return answer;
+    }
+  });
+}
+
+function addImage(folder, image, lat, lon) {
+  var connection = require('../routes/Database').Get();
+
+  if (image !== 'Thumbs.db') { // TODO
+    let columns, content;
+    if (typeof lat !== 'undefined' && typeof lon !== 'undefined') {
+      columns = 'name, path, lat, lon';
+      content = ', ' + connection.escape(lat) + ',' + connection.escape(lon);
+    } else {
+      columns = 'name, path';
+      content = '';
+    }
+    const query = 'INSERT INTO `' + databaseName + '` (' + columns + ') VALUES (' + connection.escape(image) + ',' + connection.escape(folder) + content + ')';
+    console.log(query);
+    connection.query(query, function (err, result) {
+      if (err) {
+        console.err(err);
+      } else {
+        //console.log(result);
+      }
+    });
+  }
+}
+
+function compare_fs_to_db(folder, callback) {
+  fs.readdir(imagePath + '/' + folder, function (err, files) {
+    if (err) {
+
+    } else {
+      files.forEach(function (item) {
+        if (fs.lstatSync(path.join(imagePath, folder, item)).isDirectory()) {
+          if (folder === '')
+            compare_fs_to_db(item); // path join yields backslashes with windows
+          else
+            compare_fs_to_db(folder + '/' + item); // path join yields backslashes with windows
+        } else {
+          let lat, lon;
+          try {
+            new ExifImage({ image : path.join(imagePath, folder, item) }, function (error, exifData) {
+              if (error)
+                console.log('Error: '+error.message);
+              else {
+                const gps = exifData.gps;
+                if (typeof gps.GPSLongitude !== 'undefined' && typeof gps.GPSLatitude !== 'undefined') {
+                  lat = gps.GPSLatitude[0] + gps.GPSLatitude[1] / 60 + gps.GPSLatitude[2] / (60 * 60);
+                  lat = lat * (gps.GPSLatitudeRef === 'N' ? 1 : -1);
+                  lon = gps.GPSLongitude[0] + gps.GPSLongitude[1] / 60 + gps.GPSLongitude[2] / (60 * 60);
+                  lon = lon * (gps.GPSLongitudeRef === 'E' ? 1 : -1);
+                }
+                console.log(exifData); // Do something with your data!
+              }
+            });
+          } catch (error) {
+            console.log('Error: ' + error.message);
+          }
+          checkIfFileInDb(folder, item, function () {
+            addImage(folder, item, lat, lon);
+          });
+        }
+      });
+    }
+  });
+}
+
+function full_scan(callback) {
+  compare_fs_to_db('');
+  callback();
 }
 
 module.exports = function admin() {
@@ -96,6 +190,16 @@ module.exports = function admin() {
       get_list_of_images(req.query.amount, req.query.page, function(result) {
         res.json(result);
       });
+    } else {
+      res.sendStatus(401);
+    }
+  });
+
+  router.get('/fullscan', function(req, res) {
+    if (user_is_admin(req)) {
+      full_scan(function (data) {
+        res.json(data);
+      })
     } else {
       res.sendStatus(401);
     }

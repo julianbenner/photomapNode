@@ -12,6 +12,6 @@ React.render(
 );
 
 React.render(
-  <TopBar />,
+  <TopBar token="pk.eyJ1IjoianVsaWFuYmVubmVyIiwiYSI6Imo3VGM4QVkifQ.69vtm3yG3cQWalRZM0tdYA" />,
   document.getElementById('reactTopBar')
 );

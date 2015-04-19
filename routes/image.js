@@ -6,26 +6,55 @@ var fileSystem = require('fs');
 var path = require('path');
 var gm = require('gm');
 
+var Promise = require('promise');
+
 function get_image(id, callback) {
   var connection = require('../routes/Database').Get();
   var query =
-    'SELECT name FROM ' +
+    'SELECT name, path FROM ' +
     'photomap_image WHERE id=' + connection.escape(id);
 
-  connection.query(query,
-    function (err, rows, fields) {
-      if (err) throw err;
-      callback(path.join('images', rows[0].name));
-    }
-  );
+    connection.query(query,
+      function (err, rows, fields) {
+        try {
+          if (err || !rows[0]) throw err;
+          callback(path.join('images', rows[0].path || '', rows[0].name));
+        } catch(e) {
+          callback('');
+        }
+      }
+    );
 }
 
 router.get('/:id/thumb', function (req, res, next) {
+  try {
+    get_image(req.params.id, function (data) {
+      if (data === '') {
+        var readStream = fileSystem.createReadStream('blank.png');
+        readStream.pipe(res);
+      }
+      var filePath = data;
+      if (!gm)
+        console.err("Could not run GraphicksMagic");
+      gm(filePath).resize(200)
+        .stream(function (err, stdout, stderr) {
+          if (err) return next(err);
+          res.set('Content-Type', 'image/jpeg');
+          stdout.pipe(res);
+
+          stdout.on('error', next);
+        });
+    });
+  } catch(e) {
+    sendBlank(res);
+  }
+});
+
+// tiny: 40 width/height
+router.get('/:id/tiny', function (req, res, next) {
   get_image(req.params.id, function (data) {
     var filePath = data;
-    if (!gm)
-      console.err("Could not run GraphicksMagic");
-    gm(filePath).resize(200)
+    gm(filePath).resize('40^', '40^')
       .stream(function (err, stdout, stderr) {
         if (err) return next(err);
         res.set('Content-Type', 'image/jpeg');
@@ -36,18 +65,33 @@ router.get('/:id/thumb', function (req, res, next) {
   });
 });
 
-// tiny: 40 width
-router.get('/:id/tiny', function (req, res, next) {
+// small: 600 longest edge
+router.get('/:id/small', function (req, res, next) {
   get_image(req.params.id, function (data) {
-    var filePath = data;
-    gm(filePath).resize(40)
-      .stream(function (err, stdout, stderr) {
-        if (err) return next(err);
-        res.set('Content-Type', 'image/jpeg');
-        stdout.pipe(res);
+    const filePath = data;
+    const file = gm(filePath);
 
-        stdout.on('error', next);
-      });
+    const longestEdge = 600;
+
+    var promiseHeight = new Promise(function (resolve, reject) {
+      getImageDimension(file, 'height', function (result) {
+        resolve(result);
+      })
+    });
+
+    var promiseWidth = new Promise(function (resolve, reject) {
+      getImageDimension(file, 'width', function (result) {
+        resolve(result);
+      })
+    });
+
+    Promise.all([promiseHeight, promiseWidth]).then(function (result) {
+      if (result[0] > longestEdge && result[1] > longestEdge) {
+        imageResize(file, longestEdge + '>', null, res, next);
+      } else {
+        imageOriginal(filePath, res, next);
+      }
+    });
   });
 });
 
@@ -57,22 +101,30 @@ router.get('/:id/medium', function (req, res, next) {
     var filePath = data;
     var file = gm(filePath);
 
-    var height = 1000;
+    const height = 1000;
 
-    if (getImageHeight(file) > height) {
-      imageResize(file, null, height, res, next);
-    } else {
-      imageOriginal(filePath, res, next);
-    }
+    var promiseHeight = new Promise(function (resolve, reject) {
+      getImageDimension(file, 'height', function (result) {
+        resolve(result);
+      })
+    });
+
+    Promise.all([promiseHeight]).then(function (result) {
+      if (result[0] > height) {
+        imageResize(file, null, height, res, next);
+      } else {
+        imageOriginal(filePath, res, next);
+      }
+    });
   });
 });
 
-function getImageHeight(image) {
+function getImageDimension(image, dimension, callback) {
   image.size(function (err, value) {
-    if (value.height) {
-      return value.height;
+    if (value[dimension]) {
+      callback(value[dimension]);
     } else {
-      return 0;
+      callback(0);
     }
   });
 }
@@ -83,13 +135,21 @@ router.get('/:id/huge', function (req, res, next) {
     var filePath = data;
     var file = gm(filePath);
 
-    var height = 2000;
+    const height = 2000;
 
-    if (getImageHeight(file) > height) {
-      imageResize(file, null, height, res, next);
-    } else {
-      imageOriginal(filePath, res, next);
-    }
+    var promiseHeight = new Promise(function (resolve, reject) {
+      getImageDimension(file, 'height', function (result) {
+        resolve(result);
+      })
+    });
+
+    Promise.all([promiseHeight]).then(function (result) {
+      if (result[0] > height) {
+        imageResize(file, null, height, res, next);
+      } else {
+        imageOriginal(filePath, res, next);
+      }
+    });
   });
 });
 
@@ -99,9 +159,18 @@ router.get('/:id/down', function (req, res, next) {
   });
 });
 
+function sendBlank(res) {
+  var readStream = fileSystem.createReadStream('blank.png');
+  readStream.pipe(res);
+}
+
 router.get('/:id', function (req, res, next) {
   get_image(req.params.id, function (data) {
-    imageOriginal(data, res, next);
+    if (data !== '') {
+      imageOriginal(data, res, next);
+    } else {
+      sendBlank(res);
+    }
   });
 });
 
