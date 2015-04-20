@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express');
 var router = express.Router();
 
@@ -5,8 +6,15 @@ var http = require('http');
 var fileSystem = require('fs');
 var path = require('path');
 var gm = require('gm');
+var fs = require('fs');
 
 var Promise = require('promise');
+var murmur = require('murmurhash-js');
+
+// path relative to node root where the images are stored
+const imageFolder = 'images';
+// path relative to node root where the cache is stored
+const cacheFolder = 'cache';
 
 function get_image(id, callback) {
   var connection = require('../routes/Database').Get();
@@ -18,7 +26,7 @@ function get_image(id, callback) {
       function (err, rows, fields) {
         try {
           if (err || !rows[0]) throw err;
-          callback(path.join('images', rows[0].path || '', rows[0].name));
+          callback(path.join(imageFolder, rows[0].path || '', rows[0].name));
         } catch(e) {
           callback('');
         }
@@ -73,23 +81,42 @@ router.get('/:id/small', function (req, res, next) {
 
     const longestEdge = 600;
 
-    var promiseHeight = new Promise(function (resolve, reject) {
-      getImageDimension(file, 'height', function (result) {
-        resolve(result);
-      })
-    });
+    const cacheHash = murmur(filePath + longestEdge + 'longest');
+    const cachedPath = path.join(cacheFolder, cacheHash.toString());
 
-    var promiseWidth = new Promise(function (resolve, reject) {
-      getImageDimension(file, 'width', function (result) {
-        resolve(result);
-      })
-    });
+    fs.stat(cachedPath, function(err, stat) {
+      if(err == null) {
+        // cache file already exists
+        imageOriginal(cachedPath, res, next);
+      } else if(err.code == 'ENOENT') {
+        var promiseHeight = new Promise(function (resolve, reject) {
+          getImageDimension(file, 'height', function (result) {
+            resolve(result);
+          })
+        });
 
-    Promise.all([promiseHeight, promiseWidth]).then(function (result) {
-      if (result[0] > longestEdge && result[1] > longestEdge) {
-        imageResize(file, longestEdge + '>', null, res, next);
+        var promiseWidth = new Promise(function (resolve, reject) {
+          getImageDimension(file, 'width', function (result) {
+            resolve(result);
+          })
+        });
+
+        Promise.all([promiseHeight, promiseWidth]).then(function (result) {
+          if (result[0] > longestEdge && result[1] > longestEdge) {
+            file.resize(longestEdge + '>', null).write(cachedPath, function () {
+              res.set('Content-Type', 'image/jpeg');
+              fs.createReadStream(cachedPath).pipe(res);
+            });
+          } else {
+            file.write(cachedPath, function () {
+              res.set('Content-Type', 'image/jpeg');
+              fs.createReadStream(cachedPath).pipe(res);
+            });
+          }
+        });
       } else {
-        imageOriginal(filePath, res, next);
+        console.log('Error checking for file existence: ', err.code);
+        sendBlank(res);
       }
     });
   });
