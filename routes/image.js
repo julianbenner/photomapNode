@@ -9,219 +9,185 @@ var gm = require('gm');
 var fs = require('fs');
 
 var Promise = require('promise');
-var murmur = require('murmurhash-js');
+var murmur = require('murmurhash-js'); // TODO change
+
+const connectionObject = require('../routes/Database').Get();
 
 // path relative to node root where the images are stored
 const imageFolder = 'images';
 // path relative to node root where the cache is stored
 const cacheFolder = 'cache';
 
-function get_image(id, callback) {
-  var connection = require('../routes/Database').Get();
-  var query =
-    'SELECT name, path FROM ' +
-    'photomap_image WHERE id=' + connection.escape(id);
+function promiseGetImage(id) {
+  const promise = new Promise(function (resolve, reject) {
+    const query =
+      'SELECT name, path FROM ' +
+      'photomap_image WHERE id=' + connectionObject.escape(id);
 
-    connection.query(query,
-      function (err, rows, fields) {
-        try {
-          if (err || !rows[0]) throw err;
-          callback(path.join(imageFolder, rows[0].path || '', rows[0].name));
-        } catch(e) {
-          callback('');
-        }
+    connectionObject.query(query, function (err, rows) {
+      if (err) {
+        reject(err);
+      } else if (!rows[0] || !rows[0].name) {
+        reject(new Error('Empty result.'));
+      } else {
+        resolve(path.join(imageFolder, rows[0].path || '', rows[0].name));
       }
-    );
+    });
+  });
+
+  return promise;
 }
 
-router.get('/:id/thumb', function (req, res, next) {
-  try {
-    get_image(req.params.id, function (data) {
-      if (data === '') {
-        var readStream = fileSystem.createReadStream('blank.png');
-        readStream.pipe(res);
+function promiseFileExists(path) {
+  return new Promise(function (resolve, reject) {
+    fs.stat(path, function(err, stat) {
+      if (err === null) { // cached file exists
+        resolve(true);
+      } else if (err.code == 'ENOENT') { // cached file does not exist
+        resolve(false);
+      } else { // some other error happened
+        reject(err);
       }
-      var filePath = data;
-      if (!gm)
-        console.err("Could not run GraphicksMagic");
-      gm(filePath).resize(200)
-        .stream(function (err, stdout, stderr) {
-          if (err) return next(err);
-          res.set('Content-Type', 'image/jpeg');
-          stdout.pipe(res);
-
-          stdout.on('error', next);
-        });
     });
-  } catch(e) {
+  });
+}
+
+function deliverFile(id, mode, res, next) {
+  promiseGetImage(id).then(function onResolve(result) {
+    if (result !== '') {
+      if (mode === 'download') {
+        res.download(result);
+      } else if (mode === 'send') {
+        res.sendFile(result, {root: '.'});
+      } else {
+        throw new Error('Invalid delivery mode.');
+      }
+    } else {
+      throw new Error('Database result was empty.');
+    }
+  }).catch(function (err) {
+    console.log('Error delivering image: ' + err.message);
     sendBlank(res);
-  }
-});
-
-// tiny: 40 width/height
-router.get('/:id/tiny', function (req, res, next) {
-  get_image(req.params.id, function (data) {
-    var filePath = data;
-    gm(filePath).resize('40^', '40^')
-      .stream(function (err, stdout, stderr) {
-        if (err) return next(err);
-        res.set('Content-Type', 'image/jpeg');
-        stdout.pipe(res);
-
-        stdout.on('error', next);
-      });
   });
-});
+}
 
-// small: 600 longest edge
-router.get('/:id/small', function (req, res, next) {
-  get_image(req.params.id, function (data) {
-    const filePath = data;
-    const file = gm(filePath);
-
-    const longestEdge = 600;
-
-    const cacheHash = murmur(filePath + longestEdge + 'longest');
-    const cachedPath = path.join(cacheFolder, cacheHash.toString());
-
-    fs.stat(cachedPath, function(err, stat) {
-      if(err == null) {
-        // cache file already exists
-        imageOriginal(cachedPath, res, next);
-      } else if(err.code == 'ENOENT') {
-        var promiseHeight = new Promise(function (resolve, reject) {
-          getImageDimension(file, 'height', function (result) {
-            resolve(result);
-          })
-        });
-
-        var promiseWidth = new Promise(function (resolve, reject) {
-          getImageDimension(file, 'width', function (result) {
-            resolve(result);
-          })
-        });
-
-        Promise.all([promiseHeight, promiseWidth]).then(function (result) {
-          if (result[0] > longestEdge && result[1] > longestEdge) {
-            file.resize(longestEdge + '>', null).write(cachedPath, function () {
-              res.set('Content-Type', 'image/jpeg');
-              fs.createReadStream(cachedPath).pipe(res);
-            });
-          } else {
-            file.write(cachedPath, function () {
-              res.set('Content-Type', 'image/jpeg');
-              fs.createReadStream(cachedPath).pipe(res);
-            });
-          }
-        });
+function promiseImageDimension (file, parameter) {
+  return new Promise(function (resolve, reject) {
+    getImageDimension(file, parameter, function (err, result) {
+      if (err) {
+        reject(err);
       } else {
-        console.log('Error checking for file existence: ', err.code);
-        sendBlank(res);
-      }
-    });
-  });
-});
-
-// medium: 1000 height
-router.get('/:id/medium', function (req, res, next) {
-  get_image(req.params.id, function (data) {
-    var filePath = data;
-    var file = gm(filePath);
-
-    const height = 1000;
-
-    var promiseHeight = new Promise(function (resolve, reject) {
-      getImageDimension(file, 'height', function (result) {
         resolve(result);
-      })
-    });
-
-    Promise.all([promiseHeight]).then(function (result) {
-      if (result[0] > height) {
-        imageResize(file, null, height, res, next);
-      } else {
-        imageOriginal(filePath, res, next);
       }
     });
   });
-});
+}
+
+function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWidth, res, next) {
+  let cachedPath;
+  let file;
+  let height, width;
+  let fileAlreadyDelivered = false;
+
+  promiseGetImage(id).then(function onResolve(result) {
+    const filePath = result;
+    file = gm(filePath);
+
+    const cacheHash = murmur(filePath + heightComparator + widthComparator + 'longest');
+    cachedPath = path.join(cacheFolder, cacheHash.toString());
+
+    // promise determines whether the cached file already exists
+    return promiseFileExists(cachedPath);
+  }).then(function onResolve(result) {
+    if (result) { // file exists
+      fileAlreadyDelivered = true;
+      imageOriginal(cachedPath, res, next);
+    } else { // file needs to be generated
+      return promiseImageDimension(file, 'height');
+    }
+  }).then(function onResolve(result) {
+    if (!fileAlreadyDelivered) {
+      height = result;
+      return promiseImageDimension(file, 'width');
+    }
+  }).then(function onResolve(result) {
+    if (!fileAlreadyDelivered) {
+      width = result;
+
+      const heightComparisonHolds = heightComparator !== null && height > heightComparator;
+      const widthComparisonHolds = widthComparator !== null && width > widthComparator;
+      const deliverFile = (heightComparisonHolds || widthComparisonHolds)
+        ? file.resize(gmWidth, gmHeight)
+        : file;
+
+      deliverFile.write(cachedPath, function () {
+        res.set('Content-Type', 'image/jpeg');
+        fs.createReadStream(cachedPath).pipe(res);
+      });
+    }
+  }).catch(function (err) {
+    console.log('Error delivering image: ' + err.message);
+    sendBlank(res);
+  });
+}
 
 function getImageDimension(image, dimension, callback) {
   image.size(function (err, value) {
-    if (value[dimension]) {
-      callback(value[dimension]);
+    if (err) {
+      callback(err);
+    } else if (value && value[dimension]) {
+      callback(err, value[dimension]);
     } else {
-      callback(0);
+      callback(new Error('Could not retreive image dimensions.'));
     }
   });
 }
-
-// huge: 2000 height
-router.get('/:id/huge', function (req, res, next) {
-  get_image(req.params.id, function (data) {
-    var filePath = data;
-    var file = gm(filePath);
-
-    const height = 2000;
-
-    var promiseHeight = new Promise(function (resolve, reject) {
-      getImageDimension(file, 'height', function (result) {
-        resolve(result);
-      })
-    });
-
-    Promise.all([promiseHeight]).then(function (result) {
-      if (result[0] > height) {
-        imageResize(file, null, height, res, next);
-      } else {
-        imageOriginal(filePath, res, next);
-      }
-    });
-  });
-});
-
-router.get('/:id/down', function (req, res, next) {
-  get_image(req.params.id, function (data) {
-    res.download(data);
-  });
-});
 
 function sendBlank(res) {
   var readStream = fileSystem.createReadStream('blank.png');
   readStream.pipe(res);
 }
 
-router.get('/:id', function (req, res, next) {
-  get_image(req.params.id, function (data) {
-    if (data !== '') {
-      imageOriginal(data, res, next);
-    } else {
-      sendBlank(res);
-    }
-  });
+router.get('/:id/thumb', function (req, res, next) {
+  const width = 200;
+
+  deliverCachedFile(req.params.id, null, width, null, width, res, next);
 });
 
-function imageResize(file, width, height, res, next) {
-  file.resize(width, height)
-    .stream(function (err, stdout, stderr) {
-      if (err) return next(err);
-      res.set('Content-Type', 'image/jpeg');
-      stdout.pipe(res);
+// tiny: 40 width/height
+router.get('/:id/tiny', function (req, res, next) {
+  const longestEdge = 40;
 
-      stdout.on('error', next);
-    });
-}
+  deliverCachedFile(req.params.id, longestEdge, longestEdge, null, longestEdge + '>', res, next);
+});
 
-function imageOriginal(filePath, res, next) {
-  var stat = fileSystem.statSync(filePath);
+// small: 600 longest edge
+router.get('/:id/small', function (req, res, next) {
+  const longestEdge = 600;
 
-  res.writeHead(200, {
-    'Content-Type': 'image/jpeg',
-    'Content-Length': stat.size
-  });
+  deliverCachedFile(req.params.id, longestEdge, longestEdge, null, longestEdge + '>', res, next);
+});
 
-  var readStream = fileSystem.createReadStream(filePath);
-  readStream.pipe(res);
-}
+// medium: 1000 height
+router.get('/:id/medium', function (req, res, next) {
+  const height = 1000;
+
+  deliverCachedFile(req.params.id, height, null, height, null, res, next);
+});
+
+// huge: 2000 height
+router.get('/:id/huge', function (req, res, next) {
+  const height = 2000;
+
+  deliverCachedFile(req.params.id, height, null, height, null, res, next);
+});
+
+router.get('/:id/down', function (req, res, next) {
+  deliverFile(req.params.id, 'download', res, next);
+});
+
+router.get('/:id', function (req, res, next) {
+  deliverFile(req.params.id, 'send', res, next);
+});
 
 module.exports = router;
