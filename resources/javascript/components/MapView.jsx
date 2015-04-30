@@ -16,7 +16,7 @@ var MapView = React.createClass({
     L.mapbox.accessToken = this.props.token;
 
     const map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
-      .setView([48.7, 9.05], 12);
+      .setView([51, 9.5], 6);
 
     map.on('moveend', () => {
       Dispatcher.dispatch({
@@ -90,7 +90,7 @@ var MapView = React.createClass({
           return (
             <Marker lat={lat} lon={lon}
                     avg_lat={j.avg_lat} avg_lon={j.avg_lon}
-                    size={(Math.log(j.image_count) + 5) * 7}
+                    size={(Math.log(j.image_count) + 13) * 7}
                     text={j.image_count} map={map}/>);
         }
         return false;

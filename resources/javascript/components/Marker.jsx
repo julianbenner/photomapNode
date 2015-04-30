@@ -32,7 +32,7 @@ var Marker = React.createClass({
         style = '';
         content = this.props.text;
       } else {
-        style = 'style="background-image:url(image/' + val + '/tiny);top:0;transform:none;height:100%;-webkit-clip-path:circle(16px)"';
+        style = 'style="background-image:url(image/' + val + '/tiny);top:0;transform:none;height:100%;-webkit-clip-path:circle(20px)"';
         content = '';
       }
       const html = '<div class="image_count_child" ' + style + ' data-toggle="modal" data-target="#myModal">' + content + '</div>';
