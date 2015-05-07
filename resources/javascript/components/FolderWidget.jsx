@@ -2,7 +2,6 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
-var FolderWidgetFolder = require('./FolderWidgetFolder.jsx');
 
 class Folder {
   constructor(name) {
@@ -13,6 +12,7 @@ class Folder {
     this.content = [];
     this.toggleFold = this.toggleFold.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
+    this.setSelected = this.setSelected.bind(this);
   }
 
   toggleFold(e) {
@@ -45,11 +45,22 @@ class Folder {
     });
   }
 
+  setSelected(selected) {
+    this.selected = selected;
+    this.content.forEach(child => {
+      if (typeof child !== 'undefined')
+        if (typeof child.setSelected !== 'undefined')
+          child.setSelected(selected);
+    });
+  }
+
   toggleCheck() {
-    this.selected = !this.selected;
+    const newStatus = !this.selected;
+    this.setSelected(newStatus);
     Dispatcher.dispatch({
       eventName: 'folder-structure-changed'
-    });  }
+    });
+  }
 
   toJSON() {
     const folder = {name: this.name, selected: this.selected, content: []};
@@ -120,7 +131,10 @@ var FolderWidget = React.createClass({
       <li><a className="dropdown-toggle" onClick={this.toggleList}><span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span><span className="navItemTitle">Folders</span></a>
         <ul id="folderDropdown" className="dropdown-menu folder">
           {content}
-          <li><button type="button" className="btn btn-default" onClick={this.applyFolderFilter}>Apply</button></li>
+          <div className="dropdown-buttons">
+            <input type="button" value="Apply" onClick={this.applyFolderFilter} className="btn btn-primary" />
+            <input type="button" value="Reset" onClick={this.resetFolderFilter} className="btn" />
+          </div>
         </ul>
       </li>
     );

@@ -323,12 +323,20 @@ body {
   clear: both;
 }
 
-#folderDropdown {
+.dropdown-menu {
   @media (max-width: 768px) {
     position: relative !important;
     float: none !important;
   }
-  padding: 5px;
+  padding: 10px;
+}
+
+.dropdown-buttons {
+  white-space: nowrap;
+}
+
+.dateInput {
+  width: 100%;
 }
 
 .folder {
@@ -337,18 +345,30 @@ body {
 }
 
 .folderName {
-  float: left;
+  display: inline-block;
   height: 2.5em;
   line-height: 2.5em;
   width: 100%;
+  white-space: nowrap;
+
+  :hover, :focus {
+    background-color: rgba($brand-primary, 0.1);
+  }
+
+  a {
+    font-size: 1.5em;
+    display: inline-block;
+    width: 1.5em;
+    text-align: center;
+    border-right: 1px solid #eee;
+    text-decoration: none;
+
+    :hover {
+      background-color: rgba($brand-primary, 0.15);
+    }
+  }
 
   label {
     margin-left: 1em;
-  }
-}
-
-.folderItem {
-  :hover {
-    background: rgba($brand-primary, 0.1);
   }
 }

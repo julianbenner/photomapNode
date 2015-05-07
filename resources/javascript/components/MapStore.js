@@ -6,7 +6,7 @@ var $ = require('jquery');
 
 var zoom = 12;
 var rasterSize = function () {
-  return 480 / Math.pow(2, zoom);
+  return 360 / Math.pow(2, zoom);
 };
 
 var markers = [];
@@ -192,8 +192,9 @@ Dispatcher.register(function (payload) {
       break;
     case 'change-date':
       clearMarkers();
-      dateMin = payload.startDate === null ? null : payload.startDate.format('YYYY-M-D');
-      dateMax = payload.endDate === null ? null : payload.endDate.format('YYYY-M-D');
+      // date should be string 'YYYY-MM-DD'
+      dateMin = payload.startDate === null ? null : payload.startDate;
+      dateMax = payload.endDate === null ? null : payload.endDate;
       loadMarkers();
       break;
     case 'show-gallery':
