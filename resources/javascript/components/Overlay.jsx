@@ -2,11 +2,20 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
+var OverlayStore = require('./OverlayStore.js');
 var Gallery = require('./Gallery.jsx');
 var GalleryImage = require('./GalleryImage.jsx');
 var FileList = require('./FileList.jsx');
-var classNames = require('classnames')
+var Login = require('./Login.jsx');
+var classNames = require('classnames');
 require('bootstrap');
+
+function getOverlayState() {
+  return {
+    contentMode: OverlayStore.getOverlayMode(),
+    isVisible: OverlayStore.isVisible()
+  }
+}
 
 var Overlay = React.createClass({
   propTypes: {
@@ -23,14 +32,26 @@ var Overlay = React.createClass({
 
   componentDidMount: function () {
     MapStore.on('update-overlay', this.updateOverlay);
+    OverlayStore.on('change', this._onChange);
     MapStore.on('show-overlay', this.showOverlay);
     document.addEventListener('keydown', this.onKeyDown);
   },
 
   componentWillUnmount: function () {
     MapStore.removeListener('update-overlay', this.updateOverlay);
+    OverlayStore.removeListener('change', this._onChange);
     MapStore.removeListener('show-overlay', this.showOverlay);
     document.removeEventListener('keydown', this.onKeyDown);
+  },
+
+  _onChange: function () {
+    this.setState(getOverlayState(), () => {
+      if (this.state.isVisible) {
+        $(React.findDOMNode(this)).modal('show');
+      } else {
+        $(React.findDOMNode(this)).modal('hide');
+      }
+    });
   },
 
   onKeyDown: function (e) {
@@ -78,7 +99,7 @@ var Overlay = React.createClass({
   },
 
   updateOverlay: function () {
-    const mode = MapStore.getOverlayMode();
+    const mode = OverlayStore.getOverlayMode();
 
     this.setState({
       mode: mode
@@ -111,6 +132,13 @@ var Overlay = React.createClass({
         this.setState({
           contentMode: fileListMode,
           title: 'Editor'
+        });
+        break;
+
+      case 'login':
+        this.setState({
+          contentMode: 'login',
+          title: 'Login'
         });
         break;
     }
@@ -162,6 +190,8 @@ var Overlay = React.createClass({
           return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={MapStore.getSelectedImageId()}/>;
         case 'filelist':
           return <FileList key="overlayBodyFilelist" token={this.props.token} />;
+        case 'login':
+          return <Login />;
       }
     };
 

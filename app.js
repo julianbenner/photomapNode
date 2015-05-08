@@ -4,12 +4,29 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var flash = require('connect-flash');
 var passport = require('passport');
+var url = require('url');
 
 var count = require('./routes/count');
 
 require('./routes/Database').Init();
 
+var React = require('react/addons');
+//require('node-jsx').install({harmony: true, extension: '.jsx'});
+//bootstrap = require('bootstrap');
+//var ReactApp = React.createFactory(require('./resources/javascript/components/Application'));
+//var ReactTopBar = React.createFactory(require('./resources/javascript/components/TopBar'));
+//var ReactProps = React.createFactory(require('./resources/javascript/components/Props'));
+
 var app = express();
+
+app.get('/prerender', function(req, res) {
+    url.parse
+  res.render('index', {
+      react: React.renderToString(ReactApp({token: "pk.eyJ1IjoianVsaWFuYmVubmVyIiwiYSI6Imo3VGM4QVkifQ.69vtm3yG3cQWalRZM0tdYA"})),
+      topBar: React.renderToString(ReactTopBar({})),
+      props: React.renderToString(ReactProps({lat: 20.0}))
+    });
+});
 
 app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.json()); // get information from html forms
@@ -35,6 +52,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use('/get_image_count', count);
 app.use('/get_image_list', require('./routes/list'));
+app.use('/login', require('./routes/login'));
 app.use('/get_folder_content', require('./routes/folder'));
 app.use('/admin', require('./routes/admin')());
 app.use('/image', require('./routes/image'));
