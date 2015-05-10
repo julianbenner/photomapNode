@@ -67,6 +67,15 @@ var FileListEdit = React.createClass({
     });
   },
 
+  delete: function () {
+    Dispatcher.dispatch({
+      eventName: 'delete-file',
+      file: {
+        id: this.state.dbid
+      }
+    });
+  },
+
   toggleLocationChooser: function () {
     Dispatcher.dispatch({
       eventName: 'toggle-location-chooser'
@@ -121,6 +130,7 @@ var FileListEdit = React.createClass({
                    onChange={this.handleChange} />
           </div>
           <button type="button" className="btn btn-primary" onClick={this.save}>Save</button>
+          <button type="button" className="btn btn-danger" onClick={this.delete}>Delete</button>
         </div>);
     }
     return content1;
