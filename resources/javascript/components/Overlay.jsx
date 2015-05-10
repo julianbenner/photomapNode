@@ -12,7 +12,7 @@ require('bootstrap');
 
 function getOverlayState() {
   return {
-    contentMode: OverlayStore.getOverlayMode(),
+    mode: OverlayStore.getOverlayMode(),
     isVisible: OverlayStore.isVisible()
   }
 }
@@ -48,6 +48,7 @@ var Overlay = React.createClass({
     this.setState(getOverlayState(), () => {
       if (this.state.isVisible) {
         $(React.findDOMNode(this)).modal('show');
+        this.updateOverlay();
       } else {
         $(React.findDOMNode(this)).modal('hide');
       }
@@ -99,13 +100,7 @@ var Overlay = React.createClass({
   },
 
   updateOverlay: function () {
-    const mode = OverlayStore.getOverlayMode();
-
-    this.setState({
-      mode: mode
-    });
-
-    switch (mode) {
+    switch (this.state.mode) {
       case 'gallery':
         this.setState({
           contentMode: 'gallery',
@@ -115,7 +110,7 @@ var Overlay = React.createClass({
 
       case 'image':
         this.setState({
-          image: MapStore.getSelectedImage(),
+          image: OverlayStore.getSelectedImage(),
           contentMode: 'galleryImage'
         }, () => {
           if (this.state.image)
@@ -142,10 +137,6 @@ var Overlay = React.createClass({
         });
         break;
     }
-
-    this.setState({
-      mode: mode
-    });
 
     this.showOverlay();
   },
@@ -187,7 +178,7 @@ var Overlay = React.createClass({
         case 'galleryImage':
           return <GalleryImage key="overlayBodyGalleryImage" />;
         case 'filelistPresel':
-          return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={MapStore.getSelectedImageId()}/>;
+          return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={OverlayStore.getSelectedImageId()}/>;
         case 'filelist':
           return <FileList key="overlayBodyFilelist" token={this.props.token} />;
         case 'login':

@@ -2,6 +2,7 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
+var OverlayStore = require('./OverlayStore.js');
 var GalleryItem = require('./GalleryItem.jsx');
 require('bootstrap');
 
@@ -13,17 +14,17 @@ var Gallery = React.createClass({
   },
 
   componentDidMount: function () {
-    MapStore.on('refresh-gallery', this.refreshGallery);
+    OverlayStore.on('CHANGE', this.refreshGallery);
     this.refreshGallery();
   },
 
   componentWillUnmount: function () {
-    MapStore.removeListener('refresh-gallery', this.refreshGallery);
+    OverlayStore.removeListener('CHANGE', this.refreshGallery);
   },
 
   refreshGallery: function () {
     this.setState({
-      images: MapStore.getGallery()
+      images: OverlayStore.getGallery()
     });
   },
 

@@ -10,9 +10,6 @@ var rasterSize = function () {
 };
 
 var markers = [];
-var gallery = [];
-var selectedImage = 0;
-var overlayMode = '';
 
 var latMin = 0.0;
 var latMax = 0.0;
@@ -90,75 +87,39 @@ function loadMarkers() {
   }
 }
 
-function loadGallery(lat, lon, callback) {
-  "use strict";
-  $.getJSON("get_image_list/", {
-    latMin: (lat * rasterSize())-90,
-    latMax: (((lat + 1) * rasterSize()))-90,
-    lonMin: (lon * rasterSize())-180,
-    lonMax: (((lon + 1) * rasterSize()))-180,
-    dateMin: dateMin,
-    dateMax: dateMax,
-    folderFilter: JSON.stringify(folderFilter),
-    folderFilteringEnabled: folderFilteringEnabled
-  }).done(function (data) {
-    callback(data);
-  });
-}
-
-function prevImage() {
-  if (selectedImage === 0) {
-    selectedImage = gallery.length - 1;
-  } else {
-    selectedImage = selectedImage - 1;
-  }
-}
-
-function nextImage() {
-  if (selectedImage === gallery.length - 1) {
-    selectedImage = 0;
-  } else {
-    selectedImage = selectedImage + 1;
-  }
-}
-
 function clearMarkers() {
   markers = [];
 }
 
 var MapStore = assign({}, EventEmitter.prototype, {
+  getRasterSize: function () {
+    return rasterSize()
+  },
+
   getSingleImage: function (lat, lon, callback) {
     loadGallery(lat, lon, function (data) {
       callback(data);
     });
   },
 
+  getDateMin: function () {
+    return dateMin;
+  },
+
+  getDateMax: function () {
+    return dateMax;
+  },
+
+  getFolderFilter: function () {
+    return folderFilter;
+  },
+
+  getFolderFilteringEnabled: function () {
+    return folderFilteringEnabled;
+  },
+
   getMarkers: function () {
     return markers;
-  },
-
-  getGallery: function () {
-    return gallery;
-  },
-
-  getSelectedImageId: function () {
-    if (typeof gallery[selectedImage] !== 'undefined') {
-    return gallery[selectedImage].id; }
-    else {
-    return 0;
-    }
-  },
-
-  getSelectedImage: function () {
-    return gallery[selectedImage];
-  },
-
-  getImage: function (i) {
-    return gallery[i];
-  },
-
-  getOverlayMode: function () {
-    return overlayMode;
   },
 
   getLatLon: function () {
@@ -196,35 +157,6 @@ Dispatcher.register(function (payload) {
       dateMin = payload.startDate === null ? null : payload.startDate;
       dateMax = payload.endDate === null ? null : payload.endDate;
       loadMarkers();
-      break;
-    case 'show-gallery':
-      MapStore.emit('show-overlay');
-      overlayMode = 'gallery';
-      if (typeof payload.lat !== 'undefined' && typeof payload.lon !== 'undefined')
-        loadGallery(payload.lat, payload.lon, function (data) {
-          gallery = data;
-          MapStore.emit('refresh-gallery');
-        });
-      else
-        MapStore.emit('refresh-gallery');
-      MapStore.emit('update-overlay');
-      break;
-    case 'edit-image':
-      overlayMode = 'edit';
-      MapStore.emit('update-overlay');
-      break;
-    case 'select-image':
-      selectedImage = payload.id;
-      overlayMode = 'image';
-      MapStore.emit('update-overlay');
-      break;
-    case 'prev-image':
-      prevImage();
-      MapStore.emit('update-overlay');
-      break;
-    case 'next-image':
-      nextImage();
-      MapStore.emit('update-overlay');
       break;
     case 'click-map':
       MapStore.emit('click-map');

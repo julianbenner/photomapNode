@@ -1,3 +1,4 @@
+var ApplicationStore = require('./ApplicationStore');
 var Dispatcher = require('./Dispatcher.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
@@ -50,7 +51,7 @@ var FileStore = assign({}, EventEmitter.prototype, {
 Dispatcher.register(function (payload) {
   switch (payload.eventName) {
     case 'load-files':
-      $.getJSON("/admin/list?page=" + 1 + "&amount=all", function (data) {
+      $.getJSON("/admin/list?page=" + 1 + "&amount=all&token=" + ApplicationStore.getLoginToken(), function (data) {
         _files = data;
         if (typeof payload.fileIndex !== 'undefined') {
           _fileIndex = payload.fileIndex;

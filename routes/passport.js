@@ -13,6 +13,11 @@ var users = [{
   username: 'joe',
   password: 'birthday',
   email: 'joe@example.com'
+}, {
+  id: 3,
+  username: 'admin',
+  password: 'admin',
+  email: 'joe@example.com'
 }];
 
 passport.serializeUser(function(user, done) {

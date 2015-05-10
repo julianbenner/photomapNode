@@ -1,7 +1,7 @@
 "use strict";
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
-var MapStore = require('./MapStore.js');
+var OverlayStore = require('./OverlayStore.js');
 
 var GalleryItem = React.createClass({
   getInitialState: function () {
@@ -22,7 +22,7 @@ var GalleryItem = React.createClass({
   },
 
   render: function () {
-    const imagePath = "/image/" + MapStore.getImage(this.props.id).id + "/thumb";
+    const imagePath = "/image/" + OverlayStore.getImage(this.props.id).id + "/thumb";
     return (
       <div className="thumbnail" onClick={this.selectImage}>
         <img src={imagePath}/>

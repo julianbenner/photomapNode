@@ -2,7 +2,8 @@ var jwt = require('jwt-simple');
 var secret = 'xxx'; // TODO
 
 function validTokenAge (tokenTime) {
-  return (Math.floor(new Date()) - (decoded.time || 0)) < 60*60;
+  const currentTime = new Date();
+  return (Math.floor(currentTime) - (tokenTime || 0)) < 60*60;
 }
 
 module.exports = {

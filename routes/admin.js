@@ -3,13 +3,14 @@ var express = require('express');
 var path = require('path');
 var passport = require('passport');
 var fs = require('fs');
+var auth = require('./logic/auth');
 var gm = require('gm');
 var ExifImage = require('exif').ExifImage;
 
 var databaseName = 'photomap_image';
 var imagePath = 'images';
 
-function get_list_of_images(amount, page, callback) {
+function getListOfImages(amount, page, callback) {
   var connection = require('../routes/Database').Get();
 
   var use_limit = amount !== 'all';
@@ -47,8 +48,15 @@ function edit_image(id, name, lat, lon, date, callback) {
   callback();
 }
 
-function user_is_admin(request) {
-  return true; // TODO
+function userIsAdmin(request) {
+  if (typeof request.query === 'undefined') {
+    return false;
+  } else if (typeof request.query.token === 'undefined') {
+    return false;
+  } else if (auth.tokenToUser(request.query.token) === 'admin') {
+    return true;
+  }
+  return false; // TODO
 }
 
 function checkIfFileInDb(folder, file, callback) {
@@ -144,7 +152,7 @@ module.exports = function admin() {
   var relPath = '/admin';
 
   router.post('/edit', function(req, res) {
-    if (user_is_admin(req)) {
+    if (userIsAdmin(req)) {
       edit_image(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
         res.send('');
       });
@@ -186,8 +194,8 @@ module.exports = function admin() {
   });
 
   router.get('/list', function(req, res) {
-    if (user_is_admin(req)) {
-      get_list_of_images(req.query.amount, req.query.page, function(result) {
+    if (userIsAdmin(req)) {
+      getListOfImages(req.query.amount, req.query.page, function(result) {
         res.json(result);
       });
     } else {
@@ -196,7 +204,7 @@ module.exports = function admin() {
   });
 
   router.get('/fullscan', function(req, res) {
-    if (user_is_admin(req)) {
+    if (userIsAdmin(req)) {
       full_scan(function (data) {
         res.json(data);
       })

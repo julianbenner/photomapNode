@@ -1,7 +1,7 @@
 "use strict";
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
-var MapStore = require('./MapStore.js');
+var OverlayStore = require('./OverlayStore.js');
 var Hammer = require('hammerjs');
 
 var GalleryImage = React.createClass({
@@ -66,7 +66,7 @@ var GalleryImage = React.createClass({
       }
     };
 
-    const path = '/image/' + MapStore.getSelectedImage().id + '/' + size();
+    const path = '/image/' + OverlayStore.getSelectedImage().id + '/' + size();
     return (
       <div id="galleryImageContainer">
         <img src={path} id="galleryImage"/>
