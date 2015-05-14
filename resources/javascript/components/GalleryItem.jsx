@@ -22,12 +22,16 @@ var GalleryItem = React.createClass({
   },
 
   render: function () {
-    const imagePath = "/image/" + OverlayStore.getImage(this.props.id).id + "/thumb";
-    return (
-      <div className="thumbnail" onClick={this.selectImage}>
-        <img src={imagePath}/>
-      </div>
-    );
+    if (typeof OverlayStore.getImage(this.props.id) !== 'undefined') {
+      const imagePath = "/image/" + OverlayStore.getImage(this.props.id).id + "/thumb";
+      return (
+        <div className="thumbnail" onClick={this.selectImage}>
+          <img src={imagePath}/>
+        </div>
+      );
+    } else {
+      return (<div></div>);
+    }
   }
 });
 

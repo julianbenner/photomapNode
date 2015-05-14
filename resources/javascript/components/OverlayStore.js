@@ -11,21 +11,6 @@ var overlayVisible = false;
 var gallery = [];
 var selectedImage = 0;
 
-function loadGallery(lat, lon, callback) {
-  $.getJSON("get_image_list/", {
-    latMin: (lat * MapStore.getRasterSize())-90,
-    latMax: (((lat + 1) * MapStore.getRasterSize()))-90,
-    lonMin: (lon * MapStore.getRasterSize())-180,
-    lonMax: (((lon + 1) * MapStore.getRasterSize()))-180,
-    dateMin: MapStore.getDateMin(),
-    dateMax: MapStore.getDateMax(),
-    folderFilter: JSON.stringify(MapStore.getFolderFilter()),
-    folderFilteringEnabled: MapStore.getFolderFilteringEnabled()
-  }).done(function (data) {
-    callback(data);
-  });
-}
-
 function prevImage() {
   if (selectedImage === 0) {
     selectedImage = gallery.length - 1;
@@ -87,7 +72,7 @@ Dispatcher.register(function (payload) {
       break;
 
     case 'load-gallery':
-      loadGallery(payload.lat, payload.lon, function (data) {
+      MapStore.loadGallery(payload.lat, payload.lon, function (data) {
         gallery = data;
         OverlayStore.emit(CHANGE_EVENT);
       });

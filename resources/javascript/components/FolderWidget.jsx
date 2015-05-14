@@ -85,7 +85,7 @@ class Folder {
     }
     const folderKey = this.name; // TODO
     const foldElement = this.unfolded ? '-' : '+';
-    return <li key={folderKey}><span className="folderName" onClick={this.toggleCheck}><a onClick={this.toggleFold}>{foldElement}</a><input readonly type="checkbox" checked={this.selected} /><label>{name[name.length - 1]}</label></span><ul className="folder">{subfolders}</ul></li>;
+    return <li key={folderKey}><span className="folderName" onClick={this.toggleCheck}><a onClick={this.toggleFold}>{foldElement}</a><input readOnly type="checkbox" checked={this.selected} /><label>{name[name.length - 1]}</label></span><ul className="folder">{subfolders}</ul></li>;
   }
 }
 

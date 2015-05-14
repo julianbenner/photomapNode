@@ -3,6 +3,7 @@ var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
 var OverlayStore = require('./OverlayStore.js');
+var ApplicationStore = require('./ApplicationStore');
 var Gallery = require('./Gallery.jsx');
 var GalleryImage = require('./GalleryImage.jsx');
 var FileList = require('./FileList.jsx');
@@ -152,8 +153,9 @@ var Overlay = React.createClass({
                         onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
       buttons.push(<div key="overlayDownload" className="modal-control-btn modal-control-btn-right"
                         onClick={this.downloadImage}><span className="glyphicon glyphicon-download" aria-hidden="true"></span></div>);
-      buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left hiddenOnMobile"
-                        onClick={this.editImage}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></div>);
+      if (ApplicationStore.getUser() === 'admin')
+        buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left hiddenOnMobile"
+                          onClick={this.editImage}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></div>);
     } else if (this.state.mode === 'edit') {
       buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
                         onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);

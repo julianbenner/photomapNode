@@ -1,5 +1,6 @@
 var React = require('react');
 var Dispatcher = require('./Dispatcher.js');
+var classNames = require('classnames');
 
 var FileListItem = React.createClass({
   propTypes: {
@@ -21,7 +22,7 @@ var FileListItem = React.createClass({
   },
 
   render: function () {
-    const classes = React.addons.classSet({
+    const classes = classNames({
       'list-group-item': true,
       'active': this.props.selected
     });

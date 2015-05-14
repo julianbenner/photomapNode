@@ -92,12 +92,27 @@ function clearMarkers() {
 }
 
 var MapStore = assign({}, EventEmitter.prototype, {
+  loadGallery: function (lat, lon, callback) {
+    $.getJSON("get_image_list/", {
+      latMin: (lat * MapStore.getRasterSize())-90,
+      latMax: (((lat + 1) * MapStore.getRasterSize()))-90,
+      lonMin: (lon * MapStore.getRasterSize())-180,
+      lonMax: (((lon + 1) * MapStore.getRasterSize()))-180,
+      dateMin: MapStore.getDateMin(),
+      dateMax: MapStore.getDateMax(),
+      folderFilter: JSON.stringify(MapStore.getFolderFilter()),
+      folderFilteringEnabled: MapStore.getFolderFilteringEnabled()
+    }).done(function (data) {
+      callback(data);
+    });
+  },
+
   getRasterSize: function () {
     return rasterSize()
   },
 
   getSingleImage: function (lat, lon, callback) {
-    loadGallery(lat, lon, function (data) {
+    this.loadGallery(lat, lon, function (data) {
       callback(data);
     });
   },
