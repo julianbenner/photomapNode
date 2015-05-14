@@ -3,6 +3,7 @@ var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var OverlayStore = require('./OverlayStore.js');
 var Hammer = require('hammerjs');
+var config = require('../config_client');
 
 var GalleryImage = React.createClass({
   getInitialState: function () {
@@ -66,7 +67,7 @@ var GalleryImage = React.createClass({
       }
     };
 
-    const path = '/image/' + OverlayStore.getSelectedImage().id + '/' + size();
+    const path = '/' + config.imagePath + '/' + OverlayStore.getSelectedImage().id + '/' + size();
     return (
       <div id="galleryImageContainer">
         <img src={path} id="galleryImage"/>

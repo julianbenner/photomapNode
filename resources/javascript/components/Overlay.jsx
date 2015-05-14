@@ -10,6 +10,7 @@ var FileList = require('./FileList.jsx');
 var Login = require('./Login.jsx');
 var classNames = require('classnames');
 require('bootstrap');
+var config = require('../config_client');
 
 function getOverlayState() {
   return {
@@ -79,7 +80,7 @@ var Overlay = React.createClass({
   },
 
   downloadImage: function () {
-    window.location.href = './image/' + this.state.image.id + '/down';
+    window.location.href = './' + config.imagePath + '/' + this.state.image.id + '/down';
   },
 
   editImage: function () {

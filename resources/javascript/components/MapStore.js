@@ -3,11 +3,10 @@ var Dispatcher = require('./Dispatcher.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 var $ = require('jquery');
+var config = require('../config_client');
 
-var zoom = 12;
-var rasterSize = function () {
-  return 360 / Math.pow(2, zoom);
-};
+var zoom = config.initial.zoom;
+var rasterSize = function () { return config.rasterSize(zoom) };
 
 var markers = [];
 

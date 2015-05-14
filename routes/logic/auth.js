@@ -1,9 +1,11 @@
 var jwt = require('jwt-simple');
-var secret = 'xxx'; // TODO
+var config = require('../../config_server');
+
+var secret = config.secret;
 
 function validTokenAge (tokenTime) {
   const currentTime = new Date();
-  return (Math.floor(currentTime) - (tokenTime || 0)) < 60*60*1000;
+  return (Math.floor(currentTime) - (tokenTime || 0)) < config.tokenLifetime;
 }
 
 module.exports = {

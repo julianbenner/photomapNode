@@ -2,8 +2,7 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var path = require('path');
-
-var thisRoot = "images";
+var config = require('../config_server');
 
 function get_folder_content(root, callback) {
   fs.readdir(path.join(thisRoot, root), function (err, files) {
@@ -11,7 +10,7 @@ function get_folder_content(root, callback) {
       callback([]);
     } else {
       var folder = files.map(function (item) {
-        if (fs.lstatSync(path.join(thisRoot, root, item)).isDirectory()) {
+        if (fs.lstatSync(path.join(config.imagePath, root, item)).isDirectory()) {
           return ({name: item, type: "folder"});
         } else {
          // return /*({name: item, type: "file"})*/;

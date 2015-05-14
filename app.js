@@ -1,7 +1,6 @@
 var express = require('express');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
-var session = require('express-session');
 var flash = require('connect-flash');
 var passport = require('passport');
 var url = require('url');
@@ -11,23 +10,8 @@ var count = require('./routes/count');
 require('./routes/Database').Init();
 
 var React = require('react/addons');
-//require('node-jsx').install({harmony: true, extension: '.jsx'});
-//bootstrap = require('bootstrap');
-//var ReactApp = React.createFactory(require('./resources/javascript/components/Application'));
-//var ReactTopBar = React.createFactory(require('./resources/javascript/components/TopBar'));
-//var ReactProps = React.createFactory(require('./resources/javascript/components/Props'));
 
 var app = express();
-
-app.get('/prerender', function(req, res) {
-    url.parse
-  res.render('index', {
-      react: React.renderToString(ReactApp({token: "pk.eyJ1IjoianVsaWFuYmVubmVyIiwiYSI6Imo3VGM4QVkifQ.69vtm3yG3cQWalRZM0tdYA"})),
-      topBar: React.renderToString(ReactTopBar({})),
-      props: React.renderToString(ReactProps({lat: 20.0}))
-    });
-});
-
 app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({
@@ -35,11 +19,6 @@ app.use(bodyParser.urlencoded({
 }));
 
 require('./routes/passport');
-app.use(session({
-    secret: 'ilovescotchscotchyscotchscotch',
-    saveUninitialized: true,
-    resave: true
-})); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
 app.use(flash());

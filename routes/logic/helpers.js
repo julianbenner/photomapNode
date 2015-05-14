@@ -1,6 +1,7 @@
+'use strict';
 module.exports = {
   folderFilterToConstraint: function(folderFilter) {
-    var connection = require('../routes/Database').Get();
+    var connection = require('../../routes/Database').Get();
     const selected = folderFilter.selected === 'true' || folderFilter.selected === true;
     const thisConstraint = selected ? ' OR path = ' + connection.escape(folderFilter.name) : '';
     let childrenConstraint = '';
@@ -8,7 +9,7 @@ module.exports = {
       if (typeof folderFilter.content !== 'undefined')
         childrenConstraint = folderFilter.content.map(function (child) {
           if (typeof child !== 'undefined' && child !== '')
-            return folderFilterToConstraint(child);
+            return this.folderFilterToConstraint(child);
           else
             return '';
         }).join('');

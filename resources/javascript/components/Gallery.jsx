@@ -36,5 +36,3 @@ var Gallery = React.createClass({
 });
 
 module.exports = Gallery;
-
-// TODO make closable with ESC

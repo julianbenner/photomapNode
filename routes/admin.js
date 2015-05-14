@@ -6,9 +6,7 @@ var fs = require('fs');
 var auth = require('./logic/auth');
 var gm = require('gm');
 var ExifImage = require('exif').ExifImage;
-
-var databaseName = 'photomap_image';
-var imagePath = 'images';
+var config = require('../config_server');
 
 function getListOfImages(amount, page, callback) {
   var connection = require('../routes/Database').Get();
@@ -23,7 +21,7 @@ function getListOfImages(amount, page, callback) {
   var start_from = connection.escape(amount * (page - 1));
   amount = connection.escape(amount);
 
-  var query = 'SELECT * FROM ' + databaseName + ' ORDER BY path,name' + (use_limit ? ' LIMIT ' + start_from + ', ' + amount : '');
+  var query = 'SELECT * FROM ' + config.databaseName + ' ORDER BY path,name' + (use_limit ? ' LIMIT ' + start_from + ', ' + amount : '');
   console.log(query);
   connection.query(
     query,
@@ -89,7 +87,7 @@ function addImage(folder, image, lat, lon) {
       columns = 'name, path';
       content = '';
     }
-    const query = 'INSERT INTO `' + databaseName + '` (' + columns + ') VALUES (' + connection.escape(image) + ',' + connection.escape(folder) + content + ')';
+    const query = 'INSERT INTO `' + config.databaseName + '` (' + columns + ') VALUES (' + connection.escape(image) + ',' + connection.escape(folder) + content + ')';
     console.log(query);
     connection.query(query, function (err, result) {
       if (err) {
@@ -104,7 +102,7 @@ function addImage(folder, image, lat, lon) {
 function deleteImage(id, callback) {
   var connection = require('../routes/Database').Get();
 
-  const query = 'DELETE FROM `' + databaseName + '` WHERE id = ' + connection.escape(id);
+  const query = 'DELETE FROM `' + config.databaseName + '` WHERE id = ' + connection.escape(id);
   console.log(query);
   connection.query(query, function (err, result) {
     if (err) {
@@ -115,12 +113,12 @@ function deleteImage(id, callback) {
 }
 
 function compare_fs_to_db(folder, callback) {
-  fs.readdir(imagePath + '/' + folder, function (err, files) {
+  fs.readdir(config.imagePath + '/' + folder, function (err, files) {
     if (err) {
 
     } else {
       files.forEach(function (item) {
-        if (fs.lstatSync(path.join(imagePath, folder, item)).isDirectory()) {
+        if (fs.lstatSync(path.join(config.imagePath, folder, item)).isDirectory()) {
           if (folder === '')
             compare_fs_to_db(item);
           else
@@ -128,7 +126,7 @@ function compare_fs_to_db(folder, callback) {
         } else {
           let lat, lon;
           try {
-            new ExifImage({ image : path.join(imagePath, folder, item) }, function (error, exifData) {
+            new ExifImage({ image : path.join(config.imagePath, folder, item) }, function (error, exifData) {
               if (error)
                 console.log('Error: '+error.message);
               else {

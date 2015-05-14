@@ -10,19 +10,15 @@ var fs = require('fs');
 
 var Promise = require('promise');
 var murmur = require('murmurhash-js'); // TODO change
+var config = require('../config_server');
 
 const connectionObject = require('../routes/Database').Get();
-
-// path relative to node root where the images are stored
-const imageFolder = 'images';
-// path relative to node root where the cache is stored
-const cacheFolder = 'cache';
 
 function promiseGetImage(id) {
   const promise = new Promise(function (resolve, reject) {
     const query =
-      'SELECT name, path FROM ' +
-      'photomap_image WHERE id=' + connectionObject.escape(id);
+      'SELECT name, path FROM ' + config.databaseName +
+      ' WHERE id=' + connectionObject.escape(id);
 
     connectionObject.query(query, function (err, rows) {
       if (err) {
@@ -30,7 +26,7 @@ function promiseGetImage(id) {
       } else if (!rows[0] || !rows[0].name) {
         reject(new Error('Empty result.'));
       } else {
-        resolve(path.join(imageFolder, rows[0].path || '', rows[0].name));
+        resolve(path.join(config.imagePath, rows[0].path || '', rows[0].name));
       }
     });
   });
@@ -106,7 +102,7 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
     file = gm(filePath);
 
     const cacheHash = murmur(filePath + heightComparator + widthComparator + 'longest');
-    cachedPath = path.join(cacheFolder, cacheHash.toString());
+    cachedPath = path.join(config.cachePath, cacheHash.toString());
 
     // promise determines whether the cached file already exists
     return promiseFileExists(cachedPath);

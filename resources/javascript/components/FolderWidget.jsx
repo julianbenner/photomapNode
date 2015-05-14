@@ -127,7 +127,6 @@ var FolderWidget = React.createClass({
   },
 
   debugOutput: function () {
-    console.log('fgsfds:');
     var temp = this.state.folderStructure.toJSON();
     console.log(temp);
   },

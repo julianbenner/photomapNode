@@ -50,7 +50,7 @@ var FolderWidgetFolder = React.createClass({
           var folderRoot = this.props.root + "/" + item.name;
           return (<FolderWidgetFolder key={i} root={folderRoot} />);
         } else {
-          return;//(<li key={i}>{item.name}</li>);
+          return <div></div>;
         }
       }));
 

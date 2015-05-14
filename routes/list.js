@@ -3,6 +3,7 @@ var express = require('express');
 var router = express.Router();
 
 var helpers = require('./logic/helpers');
+var config = require('../config_server');
 
 function get_image_list(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, folderFilter, folderFilteringEnabled, callback) {
   var connection = require('../routes/Database').Get();
@@ -18,8 +19,8 @@ function get_image_list(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, fo
     constraints += ' AND (1=0' + helpers.folderFilterToConstraint(folderFilter) + ')';
   }
 
-  var query = 'SELECT id, name FROM ' +
-    'photomap_image WHERE ' + constraints;
+  var query = 'SELECT id, name FROM ' + config.databaseName +
+    ' WHERE ' + constraints;
   connection.query(
     query, function (err, rows, fields) {
       if (err) throw err;

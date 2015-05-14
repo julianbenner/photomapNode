@@ -6,6 +6,7 @@ var helpers = require('./logic/helpers');
 
 var NodeCache = require('node-cache');
 var cacheInstance = new NodeCache();
+var config = require('../config_server');
 
 var is_production = function () {
   try {
@@ -29,8 +30,8 @@ function get_image_count(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, f
   }
 
   var query = 'SELECT image_count, slat/image_count as avg_lat, slon/image_count as avg_lon FROM ' +
-    '(SELECT COUNT(*) as image_count, SUM(lat) as slat, SUM(lon) as slon FROM ' +
-    'photomap_image WHERE ' + constraints + ') t';
+    '(SELECT COUNT(*) as image_count, SUM(lat) as slat, SUM(lon) as slon FROM ' + config.databaseName +
+    ' WHERE ' + constraints + ') t';
 
   //if (!is_production())
     console.log(query);

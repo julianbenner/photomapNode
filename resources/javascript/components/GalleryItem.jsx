@@ -2,6 +2,7 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var OverlayStore = require('./OverlayStore.js');
+var config = require('../config_client');
 
 var GalleryItem = React.createClass({
   getInitialState: function () {
@@ -23,7 +24,7 @@ var GalleryItem = React.createClass({
 
   render: function () {
     if (typeof OverlayStore.getImage(this.props.id) !== 'undefined') {
-      const imagePath = "/image/" + OverlayStore.getImage(this.props.id).id + "/thumb";
+      const imagePath = '/' + config.imagePath + '/' + OverlayStore.getImage(this.props.id).id + '/thumb';
       return (
         <div className="thumbnail" onClick={this.selectImage}>
           <img src={imagePath}/>

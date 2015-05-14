@@ -4,6 +4,7 @@ require('mapbox.js');
 var Marker = require('./Marker.jsx');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
+var config = require('../config_client');
 
 var MapView = React.createClass({
   getInitialState: function () {
@@ -16,7 +17,7 @@ var MapView = React.createClass({
     L.mapbox.accessToken = this.props.token;
 
     const map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
-      .setView([48.7, 9.05], 8);
+      .setView([config.initial.lat, config.initial.lon], config.initial.zoom);
 
     map.on('moveend', () => {
       Dispatcher.dispatch({
@@ -90,7 +91,7 @@ var MapView = React.createClass({
           return (
             <Marker lat={lat} lon={lon}
                     avg_lat={j.avg_lat} avg_lon={j.avg_lon}
-                    size={(Math.log(j.image_count) + 5) * 7}
+                    size={config.circleSize(j.image_count)}
                     text={j.image_count} map={map}/>);
         }
         return false;
