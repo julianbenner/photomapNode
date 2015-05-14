@@ -70,6 +70,18 @@ Dispatcher.register(function (payload) {
         FileStore.emit('files-changed');
       });
       break;
+    case 'delete-file':
+      _files.splice(FileStore.getItemIdByDbId(_fileIndex), 1);
+      $.ajax({
+        url: '/admin/delete',
+        type: 'DELETE',
+        data: payload.file,
+        success: function (data) {
+          console.log(data);
+          FileStore.emit('files-changed');
+        }
+      });
+      break;
     case 'select-file':
       var currentlySelected = _files[FileStore.getItemIdByDbId(_fileIndex)];
       if (typeof currentlySelected !== 'undefined')

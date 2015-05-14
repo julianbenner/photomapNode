@@ -101,6 +101,19 @@ function addImage(folder, image, lat, lon) {
   }
 }
 
+function deleteImage(id, callback) {
+  var connection = require('../routes/Database').Get();
+
+  const query = 'DELETE FROM `' + databaseName + '` WHERE id = ' + connection.escape(id);
+  console.log(query);
+  connection.query(query, function (err, result) {
+    if (err) {
+      console.log(err);
+    }
+    callback(err, result);
+  });
+}
+
 function compare_fs_to_db(folder, callback) {
   fs.readdir(imagePath + '/' + folder, function (err, files) {
     if (err) {
@@ -155,6 +168,20 @@ module.exports = function admin() {
     if (userIsAdmin(req)) {
       edit_image(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
         res.send('');
+      });
+    } else {
+      res.sendStatus(401);
+    }
+  });
+
+  router.delete('/delete', function(req, res) {
+    if (user_is_admin(req)) {
+      deleteImage(req.body.id, function(err, result) {
+        if (err) {
+          res.sendStatus(400);
+        } else {
+          res.sendStatus(200);
+        }
       });
     } else {
       res.sendStatus(401);
