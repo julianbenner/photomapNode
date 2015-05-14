@@ -9,17 +9,16 @@ require('bootstrap');
 var Gallery = React.createClass({
   getInitialState: function () {
     return {
-      images: []
+      images: OverlayStore.getGallery()
     };
   },
 
   componentDidMount: function () {
-    OverlayStore.on('CHANGE', this.refreshGallery);
-    this.refreshGallery();
+    OverlayStore.on('change', this.refreshGallery);
   },
 
   componentWillUnmount: function () {
-    OverlayStore.removeListener('CHANGE', this.refreshGallery);
+    OverlayStore.removeListener('change', this.refreshGallery);
   },
 
   refreshGallery: function () {

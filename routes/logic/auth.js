@@ -3,7 +3,7 @@ var secret = 'xxx'; // TODO
 
 function validTokenAge (tokenTime) {
   const currentTime = new Date();
-  return (Math.floor(currentTime) - (tokenTime || 0)) < 60*60;
+  return (Math.floor(currentTime) - (tokenTime || 0)) < 60*60*1000;
 }
 
 module.exports = {

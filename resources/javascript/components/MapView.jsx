@@ -16,7 +16,7 @@ var MapView = React.createClass({
     L.mapbox.accessToken = this.props.token;
 
     const map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
-      .setView([48.7, 9.05], 12);
+      .setView([48.7, 9.05], 8);
 
     map.on('moveend', () => {
       Dispatcher.dispatch({

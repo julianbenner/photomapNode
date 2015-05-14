@@ -86,13 +86,16 @@ Dispatcher.register(function (payload) {
       OverlayStore.emit(CHANGE_EVENT);
       break;
 
+    case 'load-gallery':
+      loadGallery(payload.lat, payload.lon, function (data) {
+        gallery = data;
+        OverlayStore.emit(CHANGE_EVENT);
+      });
+      break;
+
     case 'show-gallery':
       overlayMode = 'gallery';
       overlayVisible = true;
-      if (typeof payload.lat !== 'undefined' && typeof payload.lon !== 'undefined')
-        loadGallery(payload.lat, payload.lon, function (data) {
-          gallery = data;
-        });
       OverlayStore.emit(CHANGE_EVENT);
       break;
 

@@ -45,7 +45,10 @@ var Marker = React.createClass({
           })
         }).on('click', () => {
           Dispatcher.dispatch({
-            eventName: 'show-gallery',
+            eventName: 'show-gallery'
+          });
+          Dispatcher.dispatch({
+            eventName: 'load-gallery',
             lat: lat,
             lon: lon
           });

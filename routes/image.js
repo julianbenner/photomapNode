@@ -71,6 +71,18 @@ function deliverFile(id, mode, res, next) {
   });
 }
 
+function imageOriginal(filePath, res, next) {
+  var stat = fileSystem.statSync(filePath);
+
+  res.writeHead(200, {
+    'Content-Type': 'image/jpeg',
+    'Content-Length': stat.size
+  });
+
+  var readStream = fileSystem.createReadStream(filePath);
+  readStream.pipe(res);
+}
+
 function promiseImageDimension (file, parameter) {
   return new Promise(function (resolve, reject) {
     getImageDimension(file, parameter, function (err, result) {
