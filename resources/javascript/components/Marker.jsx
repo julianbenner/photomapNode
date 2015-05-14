@@ -20,7 +20,10 @@ var Marker = React.createClass({
     const stylePromise = new Promise((resolve, reject) => {
       if (this.props.text == '1') {
         MapStore.getSingleImage(lat, lon, function (data) {
-          resolve(data[0].id);
+          if (typeof data[0] !== 'undefined')
+            resolve(data[0].id);
+          else
+            resolve('');
         })
       } else {
         resolve('')

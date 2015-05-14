@@ -37,8 +37,11 @@ class Folder {
       root: this.name
     }).done(data => {
       this.content = data.map(subfolder => {
-        if (subfolder !== null)
-          return new Folder(((this.name==='/')?'':this.name+'/') + subfolder.name);
+        if (subfolder !== null) {
+          const subfolderObject = new Folder(((this.name === '/') ? '' : this.name + '/') + subfolder.name)
+          if (this.selected) subfolderObject.selected = true;
+          return subfolderObject;
+        }
       });
       this.explored = true;
       callback();
@@ -63,12 +66,23 @@ class Folder {
   }
 
   toJSON() {
-    const folder = {name: this.name, selected: this.selected, content: []};
-    this.content.forEach(subfolder => {
-      if (typeof subfolder !== 'undefined') {
-        folder.content.push(subfolder.toJSON());
+    const folder = {
+      name: this.name === '/' ? '' : this.name,
+      selected: this.selected,
+      allSubfoldersSelected: false,
+      content: []
+    };
+    if (this.explored) {
+      this.content.forEach(subfolder => {
+        if (typeof subfolder !== 'undefined') {
+          folder.content.push(subfolder.toJSON());
+        }
+      });
+    } else {
+      if (this.selected) {
+        folder.allSubfoldersSelected = true;
       }
-    });
+    }
     return folder;
   }
 

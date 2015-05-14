@@ -2,20 +2,7 @@
 var express = require('express');
 var router = express.Router();
 
-function folderFilterToConstraint(folderFilter) {
-  var connection = require('../routes/Database').Get();
-  const selected = folderFilter.selected === 'true' || folderFilter.selected === true;
-  const thisConstraint = selected ? ' OR path = ' + connection.escape(folderFilter.name) : '';
-  let childrenConstraint = '';
-  if (typeof folderFilter.content !== 'undefined')
-    childrenConstraint = folderFilter.content.map(function (child) {
-      if (typeof child !== 'undefined' && child !== '')
-        return folderFilterToConstraint(child);
-      else
-        return '';
-    }).join('');
-  return thisConstraint + childrenConstraint;
-}
+var helpers = require('./logic/helpers');
 
 function get_image_list(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, folderFilter, folderFilteringEnabled, callback) {
   var connection = require('../routes/Database').Get();
@@ -28,7 +15,7 @@ function get_image_list(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, fo
   if (typeof dateMax !== 'undefined' && dateMax !== '')
     constraints += ' AND date < ' + connection.escape(dateMax);
   if (folderFilteringEnabled === true || folderFilteringEnabled === 'true') {
-    constraints += ' AND (1=0' + folderFilterToConstraint(folderFilter) + ')';
+    constraints += ' AND (1=0' + helpers.folderFilterToConstraint(folderFilter) + ')';
   }
 
   var query = 'SELECT id, name FROM ' +
