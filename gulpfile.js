@@ -42,11 +42,7 @@ function compileScripts(watch) {
   var entryFile = config.scriptsDir + '/' + config.mainScript;
   es6ify.traceurOverrides = {experimental: true};
 
-  var bundler;
-  /*
-  bundler = browserify({ debug: true, entries: [es6ify.runtime]}).add(entryFile);*/
-
-  bundler = browserify({ debug: true })
+  var bundler = browserify({ debug: true })
     .transform(babelify)
     .require(entryFile, { entry: true });
   if (watch) {
@@ -54,12 +50,6 @@ function compileScripts(watch) {
   }
 
   var rebundle = function () {
-    /*bundler.bundle()
-      .on('error', function (err) { console.error(err) })
-      .pipe(source(config.mainScript))
-      .pipe(gulp.dest(config.buildDir))
-      .pipe(notify("Bundling done"));*/
-
     bundler.bundle()
       .on("error", function (err) { console.log("Error: " + err.message); })
       .pipe(source(config.mainScript))
@@ -95,7 +85,6 @@ gulp.task('fonts', function () {
 
 // Rerun the task when a file changes
 gulp.task('watch', function () {
-  //gulp.watch(config.scriptsDir + '/' + "**/*.jsx", ['react']);
   compileScripts(true);
 
   gulp.watch(config.sassDir + '/**/*.scss', ['css']);
