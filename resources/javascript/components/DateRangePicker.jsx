@@ -8,6 +8,30 @@ var DateRangePicker = React.createClass({
     $("#dateDropdown").slideToggle();
   },
 
+  componentDidMount: function() {
+    // compatibiliy with legacy browsers such as Firefox
+    if ( $(React.findDOMNode(this.refs.dateInput)).prop('type') != 'date' ) {
+      jQuery.getScript("./javascripts/jquery-ui.min.js", function() {
+        $('[type="date"]').datepicker();
+        $('<link/>', {
+          rel: 'stylesheet',
+          type: 'text/css',
+          href: '/css/legacy/jquery-ui.min.css'
+        }).appendTo('head');
+        $('<link/>', {
+          rel: 'stylesheet',
+          type: 'text/css',
+          href: '/css/legacy/jquery-ui.theme.min.css'
+        }).appendTo('head');
+        $('<link/>', {
+          rel: 'stylesheet',
+          type: 'text/css',
+          href: '/css/legacy/jquery-ui.structure.min.css'
+        }).appendTo('head');
+      });
+    }
+  },
+
   handleFromChange: function(e) {
     this.setState({
       from: e.target.value
@@ -40,7 +64,7 @@ var DateRangePicker = React.createClass({
     return (
       <li><a className="dropdown-toggle" onClick={this.toggleOpen}><span className="glyphicon glyphicon-calendar" aria-hidden="true"></span><span className="navItemTitle">Date</span></a>
         <ul id="dateDropdown" className="dropdown-menu">
-          From <input type="date" id="dateFrom" name="dateFrom" className="dateInput" onChange={this.handleFromChange} /><br />
+          From <input type="date" id="dateFrom" name="dateFrom" className="dateInput" onChange={this.handleFromChange} ref="dateInput" /><br />
           to <input type="date" id="dateTo" name="dateFrom" className="dateInput" onChange={this.handleToChange} /><br />
           <div className="dropdown-buttons">
             <input type="button" value="Apply" onClick={this.applyDateFilter} className="btn btn-primary" />

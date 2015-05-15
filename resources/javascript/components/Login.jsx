@@ -14,6 +14,10 @@ var Login = React.createClass({
   },
 
   componentDidMount: function () {
+    // without delay, focus doesn't work
+    window.setTimeout(() => {
+      React.findDOMNode(this.refs.username).focus();
+    }, 250);
   },
 
   componentWillUnmount: function () {
@@ -66,19 +70,21 @@ var Login = React.createClass({
       ? 'Wrong username or password!'
       : '';
     return (
-      <div id="fileListContainer">
-        <div>
-          <label>Username:</label>
-          <input type="text" onChange={this.handleUserChange} onKeyDown={this.handleKeyDown} name="username" autoFocus />
+      <div id="loginContainer">
+        <div id="loginContainerChild">
+          <div id="loginContainerChildChild">
+            <div>
+              <input type="text" placeholder="Username" onChange={this.handleUserChange} onKeyDown={this.handleKeyDown} name="username" ref="username" />
+            </div>
+            <div>
+              <input type="password" placeholder="Password" onChange={this.handlePasswordChange} onKeyDown={this.handleKeyDown} name="password"/>
+            </div>
+            <div>
+              <input type="button" className="btn btn-primary" onClick={this.login} value="Log In"/>
+            </div>
+            {message}
+          </div>
         </div>
-        <div>
-          <label>Password:</label>
-          <input type="password" onChange={this.handlePasswordChange} onKeyDown={this.handleKeyDown} name="password"/>
-        </div>
-        <div>
-          <input type="button" className="btn btn-primary" onClick={this.login} value="Log In"/>
-        </div>
-        {message}
       </div>
     );
   }

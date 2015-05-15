@@ -371,3 +371,29 @@ body {
     margin-left: 1em;
   }
 }
+
+#loginContainer {
+  display: table;
+  height: 100%;
+  width: 100%;
+
+  #loginContainerChild {
+    display: table-cell;
+    vertical-align: middle;
+
+    #loginContainerChildChild {
+      margin: auto;
+      max-width: 350px;
+
+      div {
+        margin-top: 1em;
+        margin-bottom: 1em;
+        input {
+          width: 100%;
+          padding: 0.5em;
+          font-size: 1.2em;
+        }
+      }
+    }
+  }
+}

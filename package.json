@@ -35,10 +35,11 @@
     "react": "^0.13.1",
     "react-bootstrap-daterangepicker": "^0.2.2",
     "react-hammerjs": "^0.2.2",
-    "serve-favicon": "~2.2.0"
+    "serve-favicon": "~2.2.0",
+    "zepto-browserify": "^1.1.6-1"
   },
   "devDependencies": {
-    "babelify": "^6.0.2",
+    "babelify": "^6.1.0",
     "bootstrap-sass": "^3.3.4",
     "browserify": "latest",
     "envify": "^3.3.0",

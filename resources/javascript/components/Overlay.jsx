@@ -15,7 +15,8 @@ var config = require('../config_client');
 function getOverlayState() {
   return {
     mode: OverlayStore.getOverlayMode(),
-    isVisible: OverlayStore.isVisible()
+    isVisible: OverlayStore.isVisible(),
+    amountOfImages: OverlayStore.getGallery().length
   }
 }
 
@@ -150,8 +151,9 @@ var Overlay = React.createClass({
                       onClick={this.hideOverlay}><span className="glyphicon glyphicon-remove" aria-hidden="true"></span></div>);
 
     if (this.state.mode === 'image') {
-      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
-                        onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
+      if (this.state.amountOfImages > 1)
+        buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
+                          onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
       buttons.push(<div key="overlayDownload" className="modal-control-btn modal-control-btn-right"
                         onClick={this.downloadImage}><span className="glyphicon glyphicon-download" aria-hidden="true"></span></div>);
       if (ApplicationStore.getUser() === 'admin')

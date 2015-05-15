@@ -11,7 +11,8 @@ var gulp = require('gulp'),
   source = require('vinyl-source-stream'),
   es = require('event-stream'),
   concat = require('gulp-concat'),
-  es6ify = require('es6ify');
+  es6ify = require('es6ify'),
+  babelify = require("babelify");
 
 var config = {
   output: './public',
@@ -42,18 +43,25 @@ function compileScripts(watch) {
   es6ify.traceurOverrides = {experimental: true};
 
   var bundler;
-  bundler = browserify({ debug: true, entries: [es6ify.runtime]}).add(entryFile);
+  /*
+  bundler = browserify({ debug: true, entries: [es6ify.runtime]}).add(entryFile);*/
+
+  bundler = browserify({ debug: true })
+    .transform(babelify)
+    .require(entryFile, { entry: true });
   if (watch) {
     bundler = watchify(bundler);
   }
 
-  bundler.require(requireFiles);
-  bundler.transform(reactify);
-  bundler.transform(es6ify.configure(/.jsx/));
-
   var rebundle = function () {
-    bundler.bundle()
+    /*bundler.bundle()
       .on('error', function (err) { console.error(err) })
+      .pipe(source(config.mainScript))
+      .pipe(gulp.dest(config.buildDir))
+      .pipe(notify("Bundling done"));*/
+
+    bundler.bundle()
+      .on("error", function (err) { console.log("Error: " + err.message); })
       .pipe(source(config.mainScript))
       .pipe(gulp.dest(config.buildDir))
       .pipe(notify("Bundling done"));

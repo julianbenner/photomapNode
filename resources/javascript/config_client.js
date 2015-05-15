@@ -1,7 +1,7 @@
 module.exports = {
   token: 'pk.eyJ1IjoianVsaWFuYmVubmVyIiwiYSI6Imo3VGM4QVkifQ.69vtm3yG3cQWalRZM0tdYA',
 
-  imagePath: 'images',
+  imagePath: 'image',
 
   initial: {
     lat: 50,

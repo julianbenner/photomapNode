@@ -74,6 +74,11 @@ Dispatcher.register(function (payload) {
     case 'load-gallery':
       MapStore.loadGallery(payload.lat, payload.lon, function (data) {
         gallery = data;
+        if (gallery.length === 1) {
+          overlayMode = 'image';
+          selectedImage = 0;
+          overlayVisible = true;
+        }
         OverlayStore.emit(CHANGE_EVENT);
       });
       break;
@@ -86,12 +91,14 @@ Dispatcher.register(function (payload) {
 
     case 'edit-image':
       overlayMode = 'edit';
+      overlayVisible = true;
       OverlayStore.emit(CHANGE_EVENT);
       break;
 
     case 'select-image':
       selectedImage = payload.id;
       overlayMode = 'image';
+      overlayVisible = true;
       OverlayStore.emit(CHANGE_EVENT);
       break;
 

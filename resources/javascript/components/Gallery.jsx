@@ -24,6 +24,14 @@ var Gallery = React.createClass({
   refreshGallery: function () {
     this.setState({
       images: OverlayStore.getGallery()
+    }, function() {
+      if (this.state.images.length === 1) {
+        const id = this.state.images[0].id;
+        Dispatcher.dispatch({
+          eventName: 'select-image',
+          id: id
+        });
+      }
     });
   },
 

@@ -69,6 +69,12 @@ var TopBar = React.createClass({
     });
   },
 
+  logOut: function () {
+    Dispatcher.dispatch({
+      eventName: 'logout'
+    });
+  },
+
   render: function () {
     const currentDate = new Date();
     const day = currentDate.getDate();
@@ -93,7 +99,7 @@ var TopBar = React.createClass({
         </li>);
       }
       buttons.push(<li key="logout"><a
-        onClick={this.logOut}><span className="glyphicon glyphicon-log-out" aria-hidden="true"></span> Logged in as {this.state.user}</a></li>);
+        onClick={this.logOut}><span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>  Log out {this.state.user}</a></li>);
     }
 
     return (

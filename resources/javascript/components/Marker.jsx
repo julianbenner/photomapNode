@@ -16,6 +16,7 @@ var Marker = React.createClass({
     "use strict";
     const lat = this.props.lat;
     const lon = this.props.lon;
+
     // if text is 1, there is only a single picture and we add a custom style
     const stylePromise = new Promise((resolve, reject) => {
       if (this.props.text == '1') {
@@ -29,13 +30,14 @@ var Marker = React.createClass({
         resolve('')
       }
     });
-    stylePromise.then(val => {
+
+    stylePromise.then(imageId => {
       let content, style;
-      if (val === '') {
+      if (imageId === '') {
         style = '';
         content = this.props.text;
       } else {
-        style = 'style="background-image:url(image/' + val + '/tiny);top:0;transform:none;height:100%;-webkit-clip-path:circle(16px)"';
+        style = 'style="background-image:url(image/' + imageId + '/tiny);top:0;transform:none;height:100%;-webkit-clip-path:circle(16px)"';
         content = '';
       }
       const html = '<div class="image_count_child" ' + style + ' data-toggle="modal" data-target="#myModal">' + content + '</div>';
@@ -47,14 +49,9 @@ var Marker = React.createClass({
             className: 'image_count'
           })
         }).on('click', () => {
-          Dispatcher.dispatch({
-            eventName: 'show-gallery'
-          });
-          Dispatcher.dispatch({
-            eventName: 'load-gallery',
-            lat: lat,
-            lon: lon
-          });
+          this.loadGallery();
+          if (this.props.text != '1')
+            this.showGallery();
         })
       }, () => {
         this.state.marker.addTo(this.props.map);
@@ -64,6 +61,20 @@ var Marker = React.createClass({
 
   componentWillUnmount: function () {
     this.props.map.removeLayer(this.state.marker);
+  },
+
+  showGallery: function () {
+    Dispatcher.dispatch({
+      eventName: 'show-gallery'
+    });
+  },
+
+  loadGallery: function () {
+    Dispatcher.dispatch({
+      eventName: 'load-gallery',
+      lat: this.props.lat,
+      lon: this.props.lon
+    });
   },
 
   render: function () {

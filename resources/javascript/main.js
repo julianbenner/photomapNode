@@ -1,6 +1,5 @@
 var React = require('react');
-
-$ = jQuery = require('jquery');
+global.$ = global.jQuery = require('jquery');
 var bootstrap = require('bootstrap');
 
 var Application = require('./components/Application.jsx');
