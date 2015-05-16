@@ -11,15 +11,13 @@ var classNames = require('classnames');
 var FileList = React.createClass({
   getInitialState: function () {
     return {
-      items: [],
-      currently_selected: 0,
-      page: 1,
-      amountOfPages: 1
+      currently_selected: 0
     };
   },
 
   componentDidMount: function () {
-    FileStore.on('files-changed', this.filesChanged);
+    this.getState();
+    FileStore.on('change', this.getState);
     Dispatcher.dispatch({
       eventName: 'load-files',
       fileIndex: this.props.preselected
@@ -27,14 +25,14 @@ var FileList = React.createClass({
   },
 
   componentWillUnmount: function () {
-    FileStore.removeListener('files-changed', this.filesChanged);
+    FileStore.removeListener('change', this.getState);
   },
 
-  filesChanged: function () {
+  getState: function () {
     this.setState({
-      page: FileStore.getSelectedFilePage()
-    }, () => {
-      this.showPage();
+      items: FileStore.getCurrentPageContent(),
+      page: FileStore.getSelectedFilePage(),
+      amountOfPages: FileStore.getAmountOfPages()
     });
   },
 
@@ -76,7 +74,7 @@ var FileList = React.createClass({
   },
 
   render: function () {
-    const items = this.state.items.map((itemChild) => {
+    const items = typeof this.state.items === 'undefined' ? [] : this.state.items.map((itemChild) => {
       return (<FileListItem index={itemChild.id} key={itemChild.id} name={itemChild.name} lat={itemChild.lat}
                             lon={itemChild.lon} date={itemChild.date} selected={itemChild.selected}/>);
     });

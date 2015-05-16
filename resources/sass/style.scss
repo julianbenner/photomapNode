@@ -289,8 +289,13 @@ body {
   height: 100%;
 }
 
+.editThumbnail {
+  margin-right: 1em;
+  box-shadow: 0 1px 1px 0 rgba(0,0,0,0.5);
+}
+
 #locationChooser {
-  height: 40%;
+  height: 300px;
   display: none;
 }
 

@@ -8,6 +8,7 @@ var pageSize = 10;
 var _files = [];
 var _fileIndex = 0;
 var _location = {lat: null, lon: null};
+var CHANGE_EVENT = 'change';
 
 var FileStore = assign({}, EventEmitter.prototype, {
   getSelectedFilePage: function () {
@@ -17,6 +18,11 @@ var FileStore = assign({}, EventEmitter.prototype, {
       }
     }
     return 1;
+  },
+
+  getCurrentPageContent: function () {
+    const page = this.getSelectedFilePage();
+    return _files.slice((page - 1) * pageSize, page * pageSize);
   },
 
   getPageContent: function (page) {
@@ -59,15 +65,22 @@ Dispatcher.register(function (payload) {
           if (typeof _files[currentlySelectedId] !== 'undefined')
             _files[currentlySelectedId].selected = true;
         }
-        FileStore.emit('files-changed');
+        FileStore.emit(CHANGE_EVENT);
       });
       break;
     case 'edit-file':
       _files[FileStore.getItemIdByDbId(_fileIndex)] = payload.file;
       _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true; // above, we override this property
-      $.post("/admin/edit", payload.file).done(function (data) {
-        console.log(data);
-        FileStore.emit('files-changed');
+      $.ajax({
+        url: '/admin/edit',
+        type: 'POST',
+        headers: {
+          token: ApplicationStore.getLoginToken()
+        },
+        data: payload.file,
+        success: function (data) {
+          FileStore.emit(CHANGE_EVENT);
+        }
       });
       break;
     case 'delete-file':
@@ -80,8 +93,7 @@ Dispatcher.register(function (payload) {
         },
         data: payload.file,
         success: function (data) {
-          console.log(data);
-          FileStore.emit('files-changed');
+          FileStore.emit(CHANGE_EVENT);
         }
       });
       break;
@@ -91,7 +103,7 @@ Dispatcher.register(function (payload) {
         _files[FileStore.getItemIdByDbId(_fileIndex)].selected = false;
       _fileIndex = payload.fileIndex;
       _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true;
-      FileStore.emit('files-changed');
+      FileStore.emit(CHANGE_EVENT);
       break;
     case 'toggle-location-chooser':
       FileStore.emit('toggle-location-chooser');

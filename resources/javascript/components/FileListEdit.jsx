@@ -7,62 +7,37 @@ var LocationChooser = require('./LocationChooser.jsx');
 var FileListEdit = React.createClass({
   getInitialState: function () {
     return {
-      dbid: 0,
-      name: null,
-      lat: 0.0,
-      lon: 0.0,
-      date: ''
+      selectedFile: FileStore.getSelectedFile()
     };
   },
 
+  getState: function () {
+    this.setState({
+      selectedFile: FileStore.getSelectedFile()
+    });
+  },
+
   componentDidMount: function () {
-    FileStore.on('files-changed', this.loadContent);
+    FileStore.on('change', this.getState);
+    FileStore.on('files-changed', this.getState);
     FileStore.on('location-changed', this.changeLocation);
   },
 
   componentWillUnmount: function () {
-    FileStore.removeListener('files-changed', this.loadContent);
+    FileStore.removeListener('change', this.getState);
+    FileStore.removeListener('files-changed', this.getState);
     FileStore.removeListener('location-changed', this.changeLocation);
-  },
-
-  loadContent: function () {
-    var currently_selected = FileStore.getSelectedFile();
-    if (typeof currently_selected !== 'undefined')
-      this.setState({
-        dbid: currently_selected.id,
-        name: currently_selected.name,
-        lat: currently_selected.lat,
-        lon: currently_selected.lon,
-        date: currently_selected.date
-      });
-  },
-
-  handleChange: function (event) {
-    switch (event.target.id) {
-      case "inputName":
-        this.setState({name: event.target.value});
-        break;
-      case "inputLat":
-        this.setState({lat: event.target.value});
-        break;
-      case "inputLon":
-        this.setState({lon: event.target.value});
-        break;
-      case "inputDate":
-        this.setState({date: event.target.value});
-        break;
-    }
   },
 
   save: function () {
     Dispatcher.dispatch({
       eventName: 'edit-file',
       file: {
-        id: this.state.dbid,
-        name: this.state.name,
-        lat: this.state.lat,
-        lon: this.state.lon,
-        date: this.state.date
+        id: this.state.selectedFile.id,
+        name: React.findDOMNode(this.refs.inputName).value,
+        lat: React.findDOMNode(this.refs.inputLat).value,
+        lon: React.findDOMNode(this.refs.inputLon).value,
+        date: React.findDOMNode(this.refs.inputDate).value
       }
     });
   },
@@ -71,7 +46,7 @@ var FileListEdit = React.createClass({
     Dispatcher.dispatch({
       eventName: 'delete-file',
       file: {
-        id: this.state.dbid
+        id: this.state.selectedFile.id
       }
     });
   },
@@ -84,54 +59,59 @@ var FileListEdit = React.createClass({
 
   changeLocation: function () {
     const location = FileStore.getLocation();
-    this.setState({
-      lat: location.lat,
-      lon: location.lon
-    });
+    React.findDOMNode(this.refs.inputLat).value = location.lat;
+    React.findDOMNode(this.refs.inputLon).value = location.lon;
   },
 
   render: function () {
     let content1;
-    if (this.state.name === null) {
+    if (typeof this.state.selectedFile === 'undefined') {
       content1 = <div>No file selected</div>;
     } else {
       content1 = (
-        <div id="fileListEdit">
-          <span>{this.state.dbid}</span>
 
-          <div className="input-group">
-            <span className="input-group-addon">File</span>
-            <input id="inputName" type="text" className="form-control" placeholder="File name" value={this.state.name}
-                   onChange={this.handleChange} />
-          </div>
-          <div id="latLonRow">
-            <div id="latLonRowInput">
-              <div className="input-group latLonRowInputInput">
-                <span className="input-group-addon">Lat</span>
-                <input id="inputLat" type="text" className="form-control" placeholder="Latitude" value={this.state.lat}
-                       onChange={this.handleChange} />
-              </div>
-              <div className="input-group latLonRowInputInput">
-                <span className="input-group-addon">Lon</span>
-                <input id="inputLon" type="text" className="form-control" placeholder="Longitude" value={this.state.lon}
-                       onChange={this.handleChange} />
-              </div>
+      <div className="panel panel-default">
+        <div className="panel-heading">
+          <h3 className="panel-title">Edit {this.state.selectedFile.name}</h3>
+        </div>
+        <div className="panel-body">
+          <div id="fileListEdit">
+            <div className="input-group">
+              <span className="input-group-addon">File</span>
+              <input id="inputName" type="text" className="form-control" placeholder="File name" value={this.state.selectedFile.name}
+                     ref="inputName" onChange={this.handleChange} />
             </div>
-            <div id="latLonRowButton" className="input-group-addon" onClick={this.toggleLocationChooser}>
-              <span className="glyphicon glyphicon-map-marker"></span>
+            <div id="latLonRow">
+              <div id="latLonRowInput">
+                <div className="input-group latLonRowInputInput">
+                  <span className="input-group-addon">Lat</span>
+                  <input id="inputLat" type="text" className="form-control" placeholder="Latitude" value={this.state.selectedFile.lat}
+                         ref="inputLat" onChange={this.handleChange} />
+                </div>
+                <div className="input-group latLonRowInputInput">
+                  <span className="input-group-addon">Lon</span>
+                  <input id="inputLon" type="text" className="form-control" placeholder="Longitude" value={this.state.selectedFile.lon}
+                         ref="inputLon" onChange={this.handleChange} />
+                </div>
+              </div>
+              <div id="latLonRowButton" className="input-group-addon" onClick={this.toggleLocationChooser}>
+                <span className="glyphicon glyphicon-map-marker"></span>
+              </div>
+              <div className="clearBoth"></div>
             </div>
-            <div className="clearBoth"></div>
-          </div>
-          <LocationChooser token={this.props.token} lat={this.state.lat} lon={this.state.lon} />
+            <LocationChooser token={this.props.token} lat={this.state.selectedFile.lat} lon={this.state.selectedFile.lat} />
 
-          <div className="input-group">
-            <span className="input-group-addon">Date</span>
-            <input id="inputDate" type="text" className="form-control" placeholder="Date" value={this.state.date}
-                   onChange={this.handleChange} />
+            <div className="input-group">
+              <span className="input-group-addon">Date</span>
+              <input id="inputDate" type="text" className="form-control" placeholder="Date" value={this.state.selectedFile.date}
+                     ref="inputDate" onChange={this.handleChange} />
+            </div>
+            <button type="button" className="btn btn-primary" onClick={this.save}>Save</button>
+            <button type="button" className="btn btn-danger" onClick={this.delete}>Delete</button>
           </div>
-          <button type="button" className="btn btn-primary" onClick={this.save}>Save</button>
-          <button type="button" className="btn btn-danger" onClick={this.delete}>Delete</button>
-        </div>);
+        </div>
+      </div>
+        );
     }
     return content1;
   }

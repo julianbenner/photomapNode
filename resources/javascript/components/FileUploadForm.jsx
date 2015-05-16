@@ -46,6 +46,9 @@ var FileUploadForm = React.createClass({
       this.setState({
         finished: true
       });
+      Dispatcher.dispatch({
+        eventName: 'load-files'
+      });
     }
   },
 
