@@ -139,7 +139,7 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
   });
 }
 
-function getImageDimension(image, dimension, callback) {
+  function getImageDimension(image, dimension, callback) {
   image.size(function (err, value) {
     if (err) {
       callback(err);

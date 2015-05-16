@@ -31,7 +31,7 @@ function getListOfImages(amount, page, callback) {
     });
 }
 
-function edit_image(id, name, lat, lon, date, callback) {
+function editImage(id, name, lat, lon, date, callback) {
   var connection = require('../routes/Database').Get();
 
   var image = {id: id, name: name, lat: lat, lon: lon, date: date};
@@ -61,26 +61,79 @@ function userIsAdmin(request) {
 function checkIfFileInDb(folder, file, callback) {
   var connection = require('../routes/Database').Get();
 
-  const query = 'SELECT EXISTS(SELECT * FROM `' + databaseName + '` WHERE `path` = ' + connection.escape(folder) + ' AND `name` = ' + connection.escape(file) + ') as `exists`';
+  const query = 'SELECT EXISTS(SELECT * FROM `' + config.databaseName + '` WHERE `path` = ' + connection.escape(folder) + ' AND `name` = ' + connection.escape(file) + ') as `exists`';
   console.log(query);
   connection.query(query, function(err, result) {
     if (err) {
-      return {success: false};
+      callback({success: false});
     } else {
       const answer = {success: true, file: folder + '/' + file, exists: result[0]['exists']};
-      if (!answer.exists) {
-        callback();
-      }
-      return answer;
+      callback(answer);
     }
   });
 }
 
-function uploadImage() {
-
+function checkIfFileInDbPromise(folder, file) {
+  return new Promise(function (resolve, reject) {
+    checkIfFileInDb(folder, file, function(result) {
+      if (result.success) {
+        if (result.exists == 0) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      } else {
+        reject('Database query failed!');
+      }
+    })
+  });
 }
 
-function addImage(folder, image, lat, lon) {
+function checkIfFileInFsPromise(folder, file) {
+  return new Promise(function (resolve, reject) {
+    fs.stat(path.join(folder, file), function(err, stat) {
+      if(err == null) {
+        resolve(true);
+      } else if(err.code == 'ENOENT') {
+        resolve(false);
+      } else {
+        reject(err);
+      }
+    })
+  });
+}
+
+function uploadImagePromise(tempFile, destination) {
+  return new Promise(function (resolve, reject) {
+    const fileInDbPromise = checkIfFileInDbPromise(destination, tempFile.originalname);
+    const fileInFsPromise = checkIfFileInFsPromise(destination, tempFile.originalname);
+
+    Promise.all([fileInDbPromise, fileInFsPromise]).then(function onResolve(res) {
+      if (res[0] == true)
+        reject('File already exists in database!');
+      else if (res[1] == true)
+        reject('File already exists in file system!');
+      else {
+        const source = fs.createReadStream(tempFile.path);
+        const dest = fs.createWriteStream(path.join(config.imagePath, destination, tempFile.originalname));
+        source.pipe(dest);
+        source.on('error', function(err) { fs.unlink(tempFile.path); reject(err); });
+
+        source.on('end', function() {
+          fs.unlink(tempFile.path);
+          getImageMetadataPromise(destination, tempFile.originalname).then(function onResolve(result) {
+              addImageToDb(destination, tempFile.originalname, result.lat, result.lon);
+              resolve();
+          });
+        });
+      }
+    }).catch(function(err) {
+      reject(err);
+    });
+  });
+}
+
+function addImageToDb(folder, image, lat, lon) {
   var connection = require('../routes/Database').Get();
 
   if (image !== 'Thumbs.db') { // TODO
@@ -117,6 +170,29 @@ function deleteImage(id, callback) {
   });
 }
 
+function getImageMetadataPromise(folder, image) {
+  return new Promise(function(resolve, reject) {
+    new ExifImage({ image : path.join(config.imagePath, folder, image) }, function (err, exifData) {
+      if (err)
+        reject(err);
+      else {
+        const gps = exifData.gps;
+        let lat, lon;
+        if (typeof gps.GPSLongitude !== 'undefined' && typeof gps.GPSLatitude !== 'undefined') {
+          lat = gps.GPSLatitude[0] + gps.GPSLatitude[1] / 60 + gps.GPSLatitude[2] / (60 * 60);
+          lat = lat * (gps.GPSLatitudeRef === 'N' ? 1 : -1);
+          lon = gps.GPSLongitude[0] + gps.GPSLongitude[1] / 60 + gps.GPSLongitude[2] / (60 * 60);
+          lon = lon * (gps.GPSLongitudeRef === 'E' ? 1 : -1);
+        }
+        resolve({
+          lat: lat,
+          lon: lon
+        });
+      }
+    });
+  });
+}
+
 function compareFsToDb(folder, callback) {
   fs.readdir(config.imagePath + '/' + folder, function (err, files) {
     if (err) {
@@ -129,27 +205,12 @@ function compareFsToDb(folder, callback) {
           else
             compareFsToDb(folder + '/' + item); // path join yields backslashes with windows
         } else {
-          let lat, lon;
-          try {
-            new ExifImage({ image : path.join(config.imagePath, folder, item) }, function (error, exifData) {
-              if (error)
-                console.log('Error: '+error.message);
-              else {
-                const gps = exifData.gps;
-                if (typeof gps.GPSLongitude !== 'undefined' && typeof gps.GPSLatitude !== 'undefined') {
-                  lat = gps.GPSLatitude[0] + gps.GPSLatitude[1] / 60 + gps.GPSLatitude[2] / (60 * 60);
-                  lat = lat * (gps.GPSLatitudeRef === 'N' ? 1 : -1);
-                  lon = gps.GPSLongitude[0] + gps.GPSLongitude[1] / 60 + gps.GPSLongitude[2] / (60 * 60);
-                  lon = lon * (gps.GPSLongitudeRef === 'E' ? 1 : -1);
-                }
-                console.log(exifData); // Do something with your data!
-              }
+          getImageMetadataPromise(folder, item).then(function onResolve(result) {
+            checkIfFileInDb(folder, item, function () {
+              addImageToDb(folder, item, result.lat, result.lon);
             });
-          } catch (error) {
-            console.log('Error: ' + error.message);
-          }
-          checkIfFileInDb(folder, item, function () {
-            addImage(folder, item, lat, lon);
+          }).catch(function(err) {
+            console.log(err);
           });
         }
       });
@@ -170,7 +231,7 @@ module.exports = function admin() {
 
   router.post('/edit', function(req, res) {
     if (userIsAdmin(req)) {
-      edit_image(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
+      editImage(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
         res.send('');
       });
     } else {
@@ -181,10 +242,19 @@ module.exports = function admin() {
   router.post('/upload', function(req, res) {
     console.dir(req.files);
     if (userIsAdmin(req)) {
-      edit_image(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
-        res.send('');
+      const uploadImagePromiseArray = req.files.fileInput.map(function (file) {
+        return uploadImagePromise(file, '');
+      });
+      Promise.all(uploadImagePromiseArray).then(function (results) {
+        console.log(results);
+        res.sendStatus(200);
       });
     } else {
+      req.files.map(function (file) {
+        fs.unlink(file.path, function () {
+          console.log('Deleted unauthorized temporary file ' + file.name);
+        });
+      });
       res.sendStatus(401);
     }
   });
