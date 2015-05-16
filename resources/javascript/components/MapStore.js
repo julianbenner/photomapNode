@@ -57,8 +57,6 @@ function loadMarker(lat, lon) {
       if (data.SUCCESS === true) { // JSON should carry SUCCESS parameter
         markers[lat][lon] = data; // puts the avg lat/lon and images count in the array
         MapStore.emit('refresh-markers'); // refresh-markers assumes the connection is working and will remove warning symbols
-      } else {
-        //MapStore.emit('connection-trouble'); // connection-trouble will trigger showing a warning symbol
       }
     }
   });
@@ -138,6 +136,19 @@ var MapStore = assign({}, EventEmitter.prototype, {
 
   getLatLon: function () {
     return L.latLng(_lat, _lon);
+  },
+
+  getZoom: function () {
+    return zoom;
+  },
+
+  getBounds: function () {
+    return {
+      latMin: latMin,
+      latMax: latMax,
+      lonMin: lonMin,
+      lonMax: lonMax
+    }
   }
 });
 

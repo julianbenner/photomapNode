@@ -83,6 +83,29 @@ var MapView = React.createClass({
     const map = this.map;
     const markers = this.state.markers;
 
+    const marker = [];
+    const bounds = MapStore.getBounds();
+    const rasterSize = config.rasterSize(MapStore.getZoom());
+    const iMin = Math.floor((bounds.latMin + 90) / rasterSize);
+    const iMax = Math.ceil((bounds.latMax + 90) / rasterSize);
+    const jMin = Math.floor((bounds.lonMin + 180) / rasterSize);
+    const jMax = Math.ceil((bounds.lonMax + 180) / rasterSize);
+
+    for (let i = iMin; i <= iMax; i++) {
+      if (typeof markers[i] !== 'undefined') {
+        for (let j = jMin; j <= jMax; j++) {
+          if (typeof markers[i][j] !== 'undefined') {
+            const item = markers[i][j];
+            if (item.image_count > 0)
+              marker.push(<Marker lat={i} lon={j} key={i+'.'+j}
+                                  avg_lat={item.avg_lat} avg_lon={item.avg_lon}
+                                  size={config.circleSize(item.image_count)}
+                                  text={item.image_count} map={map}/>);
+          }
+        }
+      }
+    }
+/*
     const marker = markers.map(i => {
       return i.map(j => {
         if (j.image_count > 0) {
@@ -96,7 +119,7 @@ var MapView = React.createClass({
         }
         return false;
       });
-    });
+    });*/
 
     return (
       <div id='map'>
