@@ -3,6 +3,10 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var LocalStrategy = require('passport-local').Strategy;
 
+var helpers = require('./logic/helpers');
+
+const connection = require('../routes/Database').Get();
+
 var users = [{
   id: 1,
   username: 'bob',
@@ -40,13 +44,28 @@ function findById(id, fn) {
 }
 
 function findByUsername(username, fn) {
-  for (var i = 0, len = users.length; i < len; i++) {
+  /*for (var i = 0, len = users.length; i < len; i++) {
     var user = users[i];
     if (user.username === username) {
       return fn(null, user);
     }
-  }
-  return fn(null, null);
+  }*/
+  const query = 'SELECT id, password FROM photomap_user WHERE name = ' + connection.escape(username);
+  connection.query(query, function (err, rows, fields) {
+    if (err) {
+      return fn(null, null);
+    } else {
+      if(rows.length === 1) {
+        const user = {
+          id: rows[0].id,
+          username: username,
+          password: rows[0].password
+        };
+        return fn(null, user);
+      }
+      return fn(null, null);
+    }
+  });
 }
 
 passport.use(new LocalStrategy(
@@ -67,12 +86,16 @@ passport.use(new LocalStrategy(
             message: 'Unknown user ' + username
           });
         }
-        if (user.password != password) {
-          return done(null, false, {
-            message: 'Invalid password'
-          });
-        }
-        return done(null, user);
+        helpers.verifyPasswordHashPromise(password, user.password).then(function (result) {
+          if(!result)
+            return done(null, false, {
+              message: 'Invalid password'
+            });
+          else
+            return done(null, user);
+        }).catch( function (err) {
+          console.log(err);
+        });
       });
     });
   }

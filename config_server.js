@@ -12,5 +12,7 @@ module.exports = {
   },
 
   imagePath: 'images',
-  cachePath: 'cache'
+  cachePath: 'cache',
+
+  hashIterations: 1000
 };

@@ -5,7 +5,7 @@ var Promise = require('promise');
 var passport = require('passport');
 var auth = require('./logic/auth');
 
-router.post('/',
+router.post('/login',
   passport.authenticate('local'), function(req, res) {
     res.status(200).send(auth.userToToken(req.user.username));
   });

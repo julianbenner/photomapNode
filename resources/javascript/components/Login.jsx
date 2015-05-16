@@ -25,7 +25,7 @@ var Login = React.createClass({
 
   login: function () {
     $.ajax({
-      url: "login",
+      url: "user/login",
       method: "POST",
       data: {
         username: this.state.user,
