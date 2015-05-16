@@ -74,10 +74,10 @@ var Login = React.createClass({
         <div id="loginContainerChild">
           <div id="loginContainerChildChild">
             <div>
-              <input type="text" placeholder="Username" onChange={this.handleUserChange} onKeyDown={this.handleKeyDown} name="username" ref="username" />
+              <input className="form-control" type="text" placeholder="Username" onChange={this.handleUserChange} onKeyDown={this.handleKeyDown} name="username" ref="username" />
             </div>
             <div>
-              <input type="password" placeholder="Password" onChange={this.handlePasswordChange} onKeyDown={this.handleKeyDown} name="password"/>
+              <input className="form-control" type="password" placeholder="Password" onChange={this.handlePasswordChange} onKeyDown={this.handleKeyDown} name="password"/>
             </div>
             <div>
               <input type="button" className="btn btn-primary" onClick={this.login} value="Log In"/>

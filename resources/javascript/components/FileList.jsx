@@ -1,5 +1,6 @@
 var FileListItem = require('./FileListItem.jsx');
 var FileListEdit = require('./FileListEdit.jsx');
+var FileUploadForm = require('./FileUploadForm.jsx');
 var $ = require('jquery');
 var React = require('react/addons');
 var MapStore = require('./MapStore.js');
@@ -109,6 +110,7 @@ var FileList = React.createClass({
             {items}
           </div>
           <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan</button>
+          <FileUploadForm />
         </div>
         <div className="col-xs-6" id="fileListEditColumn">
           <FileListEdit token={this.props.token}/>

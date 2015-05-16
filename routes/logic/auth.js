@@ -10,10 +10,15 @@ function validTokenAge (tokenTime) {
 
 module.exports = {
   tokenToUser: function(token) {
-    const decoded = jwt.decode(token, secret);
-    if (validTokenAge(decoded.time)) {
-      return decoded.user;
-    } else {
+    try {
+      const decoded = jwt.decode(token, secret);
+      if (validTokenAge(decoded.time)) {
+        return decoded.user;
+      } else {
+        return null;
+      }
+    } catch(err) {
+      console.log(err);
       return null;
     }
   },

@@ -4,7 +4,7 @@ var path = require('path');
 var passport = require('passport');
 var fs = require('fs');
 var auth = require('./logic/auth');
-var gm = require('gm');
+var multer = require('multer');
 var ExifImage = require('exif').ExifImage;
 var config = require('../config_server');
 
@@ -47,14 +47,15 @@ function edit_image(id, name, lat, lon, date, callback) {
 }
 
 function userIsAdmin(request) {
+  // TODO
   if (typeof request.query === 'undefined') {
     return false;
-  } else if (typeof request.query.token === 'undefined') {
-    return false;
-  } else if (auth.tokenToUser(request.query.token) === 'admin') {
-    return true;
+  } else if (typeof request.query.token !== 'undefined') {
+    if (auth.tokenToUser(request.query.token) === 'admin') return true;
+  } else if (typeof request.get('token') !== 'undefined') {
+    if (auth.tokenToUser(request.get('token')) === 'admin') return true;
   }
-  return false; // TODO
+  return false;
 }
 
 function checkIfFileInDb(folder, file, callback) {
@@ -73,6 +74,10 @@ function checkIfFileInDb(folder, file, callback) {
       return answer;
     }
   });
+}
+
+function uploadImage() {
+
 }
 
 function addImage(folder, image, lat, lon) {
@@ -112,7 +117,7 @@ function deleteImage(id, callback) {
   });
 }
 
-function compare_fs_to_db(folder, callback) {
+function compareFsToDb(folder, callback) {
   fs.readdir(config.imagePath + '/' + folder, function (err, files) {
     if (err) {
 
@@ -120,9 +125,9 @@ function compare_fs_to_db(folder, callback) {
       files.forEach(function (item) {
         if (fs.lstatSync(path.join(config.imagePath, folder, item)).isDirectory()) {
           if (folder === '')
-            compare_fs_to_db(item);
+            compareFsToDb(item);
           else
-            compare_fs_to_db(folder + '/' + item); // path join yields backslashes with windows
+            compareFsToDb(folder + '/' + item); // path join yields backslashes with windows
         } else {
           let lat, lon;
           try {
@@ -152,8 +157,9 @@ function compare_fs_to_db(folder, callback) {
   });
 }
 
-function full_scan(callback) {
-  compare_fs_to_db('');
+// todo
+function fullScan(callback) {
+  compareFsToDb('');
   callback();
 }
 
@@ -163,6 +169,17 @@ module.exports = function admin() {
   var relPath = '/admin';
 
   router.post('/edit', function(req, res) {
+    if (userIsAdmin(req)) {
+      edit_image(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
+        res.send('');
+      });
+    } else {
+      res.sendStatus(401);
+    }
+  });
+
+  router.post('/upload', function(req, res) {
+    console.dir(req.files);
     if (userIsAdmin(req)) {
       edit_image(req.body.id, req.body.name, req.body.lat, req.body.lon, req.body.date, function() {
         res.send('');
@@ -230,7 +247,7 @@ module.exports = function admin() {
 
   router.get('/fullscan', function(req, res) {
     if (userIsAdmin(req)) {
-      full_scan(function (data) {
+      fullScan(function (data) {
         res.json(data);
       })
     } else {

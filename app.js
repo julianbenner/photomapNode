@@ -4,6 +4,7 @@ var bodyParser = require('body-parser');
 var flash = require('connect-flash');
 var passport = require('passport');
 var url = require('url');
+var multer = require('multer');
 
 var count = require('./routes/count');
 
@@ -15,7 +16,11 @@ var app = express();
 app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.json()); // get information from html forms
 app.use(bodyParser.urlencoded({
-    extended: true
+  extended: true
+}));
+
+app.use(multer({
+  dest: './tmp/'
 }));
 
 require('./routes/passport');
@@ -58,6 +63,7 @@ app.use(function(req, res) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+        console.log(err.stack);
         res.status(err.status || 500);
         res.render('error', {
             error: err,
