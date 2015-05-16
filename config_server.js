@@ -13,6 +13,7 @@ module.exports = {
 
   imagePath: 'images',
   cachePath: 'cache',
+  tempPath: 'tmp',
 
   hashIterations: 1000
 };

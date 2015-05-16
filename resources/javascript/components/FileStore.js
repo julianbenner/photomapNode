@@ -75,6 +75,9 @@ Dispatcher.register(function (payload) {
       $.ajax({
         url: '/admin/delete',
         type: 'DELETE',
+        headers: {
+          token: ApplicationStore.getLoginToken()
+        },
         data: payload.file,
         success: function (data) {
           console.log(data);

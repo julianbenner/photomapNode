@@ -12,6 +12,8 @@ require('./routes/Database').Init();
 
 var React = require('react/addons');
 
+var config = require('./config_server');
+
 var app = express();
 app.use(morgan('dev')); // log every request to the console
 app.use(bodyParser.json()); // get information from html forms
@@ -20,7 +22,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(multer({
-  dest: './tmp/'
+  dest: config.tempPath
 }));
 
 require('./routes/passport');

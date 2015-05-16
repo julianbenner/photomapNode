@@ -114,21 +114,24 @@ function uploadImagePromise(tempFile, destination) {
       else if (res[1] == true)
         reject('File already exists in file system!');
       else {
-        const source = fs.createReadStream(tempFile.path);
-        const dest = fs.createWriteStream(path.join(config.imagePath, destination, tempFile.originalname));
-        source.pipe(dest);
-        source.on('error', function(err) { fs.unlink(tempFile.path); reject(err); });
+        getImageMetadataPromise(config.tempPath, tempFile.name).then(function onResolve(result) {
+          const source = fs.createReadStream(tempFile.path);
+          const dest = fs.createWriteStream(path.join(config.imagePath, destination, tempFile.originalname));
+          source.pipe(dest);
 
-        source.on('end', function() {
-          fs.unlink(tempFile.path);
-          getImageMetadataPromise(destination, tempFile.originalname).then(function onResolve(result) {
-              addImageToDb(destination, tempFile.originalname, result.lat, result.lon);
-              resolve();
+          source.on('error', function(err) { fs.unlink(tempFile.path); reject(err); });
+          source.on('end', function() {
+            fs.unlink(tempFile.path);
           });
+
+          addImageToDb(destination, tempFile.originalname, result.lat, result.lon);
+          resolve();
+        }).catch(function(err) {
+          reject(err.message);
         });
       }
     }).catch(function(err) {
-      reject(err);
+      reject(err.message);
     });
   });
 }
@@ -157,22 +160,61 @@ function addImageToDb(folder, image, lat, lon) {
   }
 }
 
-function deleteImage(id, callback) {
-  var connection = require('../routes/Database').Get();
+function deleteFilePromise(id) {
+  return new Promise(function(resolve, reject) {
+    const connection = require('../routes/Database').Get();
+    const query = 'SELECT path, name FROM `' + config.databaseName + '` WHERE id = ' + connection.escape(id);
+    console.log(query);
+    connection.query(query, function (err, result) {
+      if (err) {
+        reject(err);
+      }
+      if (result[0].path !== 'undefined' &&
+        result[0].name !== 'undefined') {
+        const fullPath = path.join(config.imagePath, result[0].path, result[0].name);
+        fs.unlink(fullPath, function () {
+          console.log('Deleted file ' + fullPath);
+          resolve();
+        });
+      } else {
+        reject('Invalid database answer!');
+      }
+    });
+  });
+}
 
-  const query = 'DELETE FROM `' + config.databaseName + '` WHERE id = ' + connection.escape(id);
-  console.log(query);
-  connection.query(query, function (err, result) {
-    if (err) {
-      console.log(err);
-    }
-    callback(err, result);
+function deleteDbRowPromise(id) {
+  return new Promise(function(resolve, reject) {
+    const connection = require('../routes/Database').Get();
+    const query = 'DELETE FROM `' + config.databaseName + '` WHERE id = ' + connection.escape(id);
+    console.log(query);
+    connection.query(query, function (err, result) {
+      if (err) {
+        reject(err);
+      }
+      resolve();
+    });
+  });
+}
+
+function deleteImage(id, callback) {
+  const filePromise = deleteFilePromise(id);
+  const databasePromise = deleteDbRowPromise(id);
+
+  filePromise.then(function onResolve() {
+    databasePromise.then(function onResolve() {
+      callback(null, '');
+    }).catch(function (err) {
+      callback(err);
+    });
+  }).catch(function (err) {
+    callback(err);
   });
 }
 
 function getImageMetadataPromise(folder, image) {
   return new Promise(function(resolve, reject) {
-    new ExifImage({ image : path.join(config.imagePath, folder, image) }, function (err, exifData) {
+    new ExifImage({ image : path.join(folder, image) }, function (err, exifData) {
       if (err)
         reject(err);
       else {
@@ -205,7 +247,7 @@ function compareFsToDb(folder, callback) {
           else
             compareFsToDb(folder + '/' + item); // path join yields backslashes with windows
         } else {
-          getImageMetadataPromise(folder, item).then(function onResolve(result) {
+          getImageMetadataPromise(config.imagePath + '/' + folder, item).then(function onResolve(result) {
             checkIfFileInDb(folder, item, function () {
               addImageToDb(folder, item, result.lat, result.lon);
             });
@@ -242,12 +284,16 @@ module.exports = function admin() {
   router.post('/upload', function(req, res) {
     console.dir(req.files);
     if (userIsAdmin(req)) {
+      if (!Array.isArray(req.files.fileInput))
+        req.files.fileInput = [req.files.fileInput];
       const uploadImagePromiseArray = req.files.fileInput.map(function (file) {
         return uploadImagePromise(file, '');
       });
-      Promise.all(uploadImagePromiseArray).then(function (results) {
+      Promise.all(uploadImagePromiseArray).then(function onResolve(results) {
         console.log(results);
         res.sendStatus(200);
+      }).catch (function(err) {
+        res.status(400).send(err);
       });
     } else {
       req.files.map(function (file) {
@@ -260,7 +306,7 @@ module.exports = function admin() {
   });
 
   router.delete('/delete', function(req, res) {
-    if (user_is_admin(req)) {
+    if (userIsAdmin(req)) {
       deleteImage(req.body.id, function(err, result) {
         if (err) {
           res.sendStatus(400);

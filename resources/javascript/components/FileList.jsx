@@ -109,8 +109,15 @@ var FileList = React.createClass({
           <div className="list-group">
             {items}
           </div>
-          <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan</button>
-          <FileUploadForm />
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <h3 className="panel-title">Add files</h3>
+            </div>
+            <div className="panel-body">
+              <FileUploadForm />
+              <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan</button>
+            </div>
+          </div>
         </div>
         <div className="col-xs-6" id="fileListEditColumn">
           <FileListEdit token={this.props.token}/>
