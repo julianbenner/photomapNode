@@ -76,20 +76,20 @@ var FileListEdit = React.createClass({
         </div>
         <div className="panel-body">
           <div id="fileListEdit">
-            <div className="input-group">
-              <span className="input-group-addon">File</span>
+            <div className="input-group editInputGroup">
+              <span className="input-group-addon editAddon">File</span>
               <input id="inputName" type="text" className="form-control" placeholder="File name" defaultValue={this.state.selectedFile.name}
                      ref="inputName" onChange={this.handleChange} />
             </div>
             <div id="latLonRow">
               <div id="latLonRowInput">
                 <div className="input-group latLonRowInputInput">
-                  <span className="input-group-addon">Lat</span>
+                  <span className="input-group-addon editAddon">Lat</span>
                   <input id="inputLat" type="text" className="form-control" placeholder="Latitude" defaultValue={this.state.selectedFile.lat}
                          ref="inputLat" onChange={this.handleChange} />
                 </div>
                 <div className="input-group latLonRowInputInput">
-                  <span className="input-group-addon">Lon</span>
+                  <span className="input-group-addon editAddon">Lon</span>
                   <input id="inputLon" type="text" className="form-control" placeholder="Longitude" defaultValue={this.state.selectedFile.lon}
                          ref="inputLon" onChange={this.handleChange} />
                 </div>
@@ -101,13 +101,15 @@ var FileListEdit = React.createClass({
             </div>
             <LocationChooser token={this.props.token} lat={this.state.selectedFile.lat} lon={this.state.selectedFile.lat} />
 
-            <div className="input-group">
-              <span className="input-group-addon">Date</span>
+            <div className="input-group editInputGroup">
+              <span className="input-group-addon editAddon">Date</span>
               <input id="inputDate" type="text" className="form-control" placeholder="Date" defaultValue={this.state.selectedFile.date}
                      ref="inputDate" onChange={this.handleChange} />
             </div>
-            <button type="button" className="btn btn-primary" onClick={this.save}>Save</button>
-            <button type="button" className="btn btn-danger" onClick={this.delete}>Delete</button>
+            <div className="editButtons">
+              <button type="button" className="btn btn-primary" onClick={this.save}>Save</button>
+              <button type="button" className="btn btn-danger" onClick={this.delete}>Delete</button>
+            </div>
           </div>
         </div>
       </div>

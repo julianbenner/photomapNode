@@ -25,10 +25,19 @@ var TopBar = React.createClass({
 
   _onChange: function () {
     this.setState(getApplicationState());
+    this.enableTooltips();
   },
 
   componentDidMount: function () {
     ApplicationStore.on('change', this._onChange);
+    this.enableTooltips();
+  },
+
+  enableTooltips: function () {
+    $(".tooltip").hide();
+    $(React.findDOMNode(this.refs.loginButton)).tooltip();
+    $(React.findDOMNode(this.refs.adminButton)).tooltip();
+    $(React.findDOMNode(this.refs.logoutButton)).tooltip();
   },
 
   componentWillUnmount: function () {
@@ -90,15 +99,15 @@ var TopBar = React.createClass({
     </DateRangePicker>);
 
     if (this.state.loggedIn !== true) {
-      buttons.push(<li key="login"><a
+      buttons.push(<li key="login" data-toggle="tooltip" data-placement="bottom" ref="loginButton" title="Log in"><a
         onClick={this.openLoginDialog}><span className="glyphicon glyphicon-log-in" aria-hidden="true"></span></a></li>);
     } else {
       if (this.state.user === 'admin') {
-        buttons.push(<li key="admin" className="hiddenOnMobile"><a
+        buttons.push(<li key="admin" data-toggle="tooltip" data-placement="bottom" ref="adminButton" title="Admin" className="hiddenOnMobile"><a
           onClick={this.openAdminInterface}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
         </li>);
       }
-      buttons.push(<li key="logout"><a
+      buttons.push(<li key="logout" data-toggle="tooltip" data-placement="bottom" ref="logoutButton" title="Log out"><a
         onClick={this.logOut}><span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>  Log out {this.state.user}</a></li>);
     }
 

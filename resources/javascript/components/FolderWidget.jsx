@@ -112,6 +112,7 @@ var FolderWidget = React.createClass({
 
   componentDidMount: function () {
     MapStore.on('update-folder-list', this.updateFolderList);
+    $(React.findDOMNode(this.refs.button)).tooltip();
   },
 
   componentWillUnmount: function () {
@@ -141,7 +142,7 @@ var FolderWidget = React.createClass({
   render: function () {
     const content = this.state.folderStructure.toJSX();
     return (
-      <li><a className="dropdown-toggle" onClick={this.toggleList}><span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span><span className="navItemTitle">Folders</span></a>
+      <li data-toggle="tooltip" data-placement="bottom" ref="button" title="Filter by folder"><a className="dropdown-toggle" onClick={this.toggleList}><span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span><span className="navItemTitle">Folders</span></a>
         <ul id="folderDropdown" className="dropdown-menu folder">
           {content}
           <div className="dropdown-buttons">

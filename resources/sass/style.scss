@@ -92,8 +92,8 @@ body {
 }
 
 .large_modal {
-  margin: 25px !important;
-  margin-top: 75px !important;
+  margin: 15px !important;
+  margin-top: 50px !important;
   width: auto;
   position: absolute !important;
   top: 0;
@@ -294,6 +294,18 @@ body {
   box-shadow: 0 1px 1px 0 rgba(0,0,0,0.5);
 }
 
+.editAddon {
+  width: 5em;
+}
+
+.editInputGroup {
+  width: 100%;
+}
+
+.editButtons {
+  margin-top: 1em;
+}
+
 #locationChooser {
   height: 300px;
   display: none;
@@ -320,6 +332,8 @@ body {
   position: absolute;
   right: 0;
   height: 100%;
+  margin-left: 12px;
+  margin-top: 12px;
 }
 
 .clearBoth {
