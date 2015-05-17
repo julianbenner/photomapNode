@@ -24,7 +24,6 @@ var FileUploadForm = React.createClass({
 
   updateProgress: function (e) {
     if (e.lengthComputable) {
-      console.log(e.loaded / e.total);
       this.setState({
         progress: e.loaded / e.total
       });

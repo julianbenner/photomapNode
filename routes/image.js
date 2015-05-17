@@ -128,7 +128,7 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
         ? file.resize(gmWidth, gmHeight)
         : file;
 
-      if (typeof options !== undefined) {
+      if (typeof options !== 'undefined') {
         if (typeof options.crop !== 'undefined') {
           deliverFile = deliverFile.gravity('Center').crop(options.crop.x, options.crop.y);
         }

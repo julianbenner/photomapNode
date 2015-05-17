@@ -30,13 +30,12 @@ var FileListItem = React.createClass({
     const aStyle = {
       backgroundColor: this.props.lon == '' || this.props.lon == null || this.props.lat == '' || this.props.lat == null ? '#b32' : ''
     };
-    const path = '/' + config.imagePath + '/' + this.props.index + '/tiny';
+    const path = '/' + config.imagePath + '/' + this.props.index + '/tinySquare';
 
     return (
       <a href="#" className={classes} style={aStyle} onClick={this.toggleEdit}>
         <img src={path} className="editThumbnail" />
-        {this.props.index} - {this.props.name}
-        <span className="small">{this.props.lat}, {this.props.lon}</span>
+        {this.props.name}
       </a>
     );
   }

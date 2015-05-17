@@ -11,7 +11,8 @@ var classNames = require('classnames');
 var FileList = React.createClass({
   getInitialState: function () {
     return {
-      currently_selected: 0
+      currently_selected: 0,
+      page: 1
     };
   },
 
@@ -31,46 +32,47 @@ var FileList = React.createClass({
   getState: function () {
     this.setState({
       items: FileStore.getCurrentPageContent(),
-      page: FileStore.getSelectedFilePage(),
-      amountOfPages: FileStore.getAmountOfPages()
-    });
-  },
-
-  showPage: function () {
-    const pageContent = FileStore.getPageContent(this.state.page);
-    this.setState({
-      items: pageContent,
+      page: FileStore.getPage(),
       amountOfPages: FileStore.getAmountOfPages()
     });
   },
 
   prevPage: function () {
-    if (this.state.page > 1) {
-      this.setState({
-        page: this.state.page - 1
-      }, () => {
-        this.showPage(this.state.page);
-      });
-    }
+    Dispatcher.dispatch({
+      eventName: 'files-prev-page'
+    })
   },
 
   nextPage: function () {
-    if (this.state.page < this.state.amountOfPages)
-      this.setState({
-        page: this.state.page + 1
-      }, () => {
-        this.showPage(this.state.page);
-      });
-  },
-
-  selectItem: function () {
-
+    Dispatcher.dispatch({
+      eventName: 'files-next-page'
+    })
   },
 
   triggerFullScan: function () {
     Dispatcher.dispatch({
       eventName: 'files-full-scan'
     })
+  },
+
+  sortFiles: function (mode) {
+    Dispatcher.dispatch({
+      eventName: 'files-sort',
+      sort: mode
+    })
+  },
+
+  sortNoLocAsc: function () {
+    this.sortFiles('no-loc-asc');
+  },
+  sortNoLocDesc: function () {
+    this.sortFiles('no-loc-desc');
+  },
+  sortIdAsc: function () {
+    this.sortFiles('id-asc');
+  },
+  sortIdDesc: function () {
+    this.sortFiles('id-desc');
   },
 
   render: function () {
@@ -89,24 +91,48 @@ var FileList = React.createClass({
     return (
       <div id="fileListContainer">
         <div className="col-xs-6">
-          <nav>
-            <ul className="pagination">
-              <li className={previousClass}>
-                <a href="#" onClick={this.prevPage}>
-                  <span aria-hidden="true">&larr;</span>
-                </a>
-              </li>
-              <li><span>{this.state.page + '/' + this.state.amountOfPages}</span></li>
-              <li className={nextClass}>
-                <a href="#" onClick={this.nextPage}>
-                  <span aria-hidden="true">&rarr;</span>
-                </a>
-              </li>
-            </ul>
-          </nav>
-          <div className="list-group">
-            {items}
+          <div className="panel panel-default">
+            <div className="panel-heading">
+              <h3 className="panel-title">Browse</h3>
+            </div>
+            <div className="panel-body">
+              <nav>
+                <ul className="pagination">
+                  <li className={previousClass}>
+                    <a href="#" onClick={this.prevPage}>
+                      <span aria-hidden="true">&larr;</span>
+                    </a>
+                  </li>
+                  <li><span>{this.state.page + '/' + this.state.amountOfPages}</span></li>
+                  <li className={nextClass}>
+                    <a href="#" onClick={this.nextPage}>
+                      <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+              <div className="btn-toolbar" role="toolbar">
+                <div className="btn-group" role="group">
+                  <button type="button" className="btn btn-default" disabled="disabled">No location</button>
+                  <button type="button" className="btn btn-default" onClick={this.sortNoLocDesc}><span className="glyphicon glyphicon-triangle-top"></span></button>
+                  <button type="button" className="btn btn-default" onClick={this.sortNoLocAsc}><span className="glyphicon glyphicon-triangle-bottom"></span></button>
+                </div>
+                <div className="btn-group" role="group">
+                  <button type="button" className="btn btn-default" disabled="disabled">ID</button>
+                  <button type="button" className="btn btn-default" onClick={this.sortIdDesc}><span className="glyphicon glyphicon-triangle-top"></span></button>
+                  <button type="button" className="btn btn-default" onClick={this.sortIdAsc}><span className="glyphicon glyphicon-triangle-bottom"></span></button>
+                </div>
+              </div>
+              <div className="list-group">
+                {items}
+              </div>
+            </div>
           </div>
+        </div>
+
+        <div className="col-xs-6" id="fileListEditColumn">
+          <FileListEdit token={this.props.token}/>
+
           <div className="panel panel-default">
             <div className="panel-heading">
               <h3 className="panel-title">Add files</h3>
@@ -116,9 +142,6 @@ var FileList = React.createClass({
               <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan</button>
             </div>
           </div>
-        </div>
-        <div className="col-xs-6" id="fileListEditColumn">
-          <FileListEdit token={this.props.token}/>
         </div>
       </div>
     );

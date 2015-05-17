@@ -5,10 +5,25 @@ var EventEmitter = require('events').EventEmitter;
 
 var pageSize = 10;
 
+var _page = 1;
 var _files = [];
 var _fileIndex = 0;
 var _location = {lat: null, lon: null};
 var CHANGE_EVENT = 'change';
+
+var sortNoLocation = function(a, b) {
+  if (a.lat == null && b.lat != null) {
+    return 1;
+  } else if (a.lat != null && b.lat == null) {
+    return -1;
+  } else {
+    return 0;
+  }
+};
+
+var sortNoLocationDesc = function(a, b) {
+  return sortNoLocation(a, b) * -1;
+};
 
 var FileStore = assign({}, EventEmitter.prototype, {
   getSelectedFilePage: function () {
@@ -20,9 +35,12 @@ var FileStore = assign({}, EventEmitter.prototype, {
     return 1;
   },
 
+  getPage: function () {
+    return _page;
+  },
+
   getCurrentPageContent: function () {
-    const page = this.getSelectedFilePage();
-    return _files.slice((page - 1) * pageSize, page * pageSize);
+    return _files.slice((_page - 1) * pageSize, _page * pageSize);
   },
 
   getPageContent: function (page) {
@@ -114,6 +132,35 @@ Dispatcher.register(function (payload) {
       break;
     case 'files-full-scan':
       doFullScan();
+      break;
+    case 'files-prev-page':
+      if (_page > 1) {
+        _page--;
+        FileStore.emit(CHANGE_EVENT);
+      }
+      break;
+    case 'files-next-page':
+      if (_page < FileStore.getAmountOfPages()) {
+        _page++;
+        FileStore.emit(CHANGE_EVENT);
+      }
+      break;
+    case 'files-sort':
+      switch (payload.sort) {
+        case 'no-loc-asc':
+          _files.sort(sortNoLocation);
+          break;
+        case 'no-loc-desc':
+          _files.sort(sortNoLocationDesc);
+          break;
+        case 'id-asc':
+          _files.sort(function(a,b) { return a.id - b.id; });
+          break;
+        case 'id-desc':
+          _files.sort(function(a,b) { return b.id - a.id; });
+          break;
+      }
+      FileStore.emit(CHANGE_EVENT);
       break;
   }
 
