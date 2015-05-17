@@ -1,4 +1,7 @@
 module.exports = {
+  keyFile: 'key.pem',
+  certFile: 'cert.pem',
+
   secret: 'geheim',
   tokenLifetime: 60*60*1000,
 

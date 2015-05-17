@@ -185,7 +185,7 @@ var Overlay = React.createClass({
         case 'filelistPresel':
           return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={OverlayStore.getSelectedImageId()}/>;
         case 'filelist':
-          return <FileList key="overlayBodyFilelist" token={this.props.token} />;
+          return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={OverlayStore.getSelectedImageId() } />;
         case 'login':
           return <Login />;
       }

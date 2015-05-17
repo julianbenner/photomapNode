@@ -57,6 +57,7 @@
     "gulp-util": "^3.0.4",
     "react-tools": "^0.13.0",
     "reactify": "^1.1.0",
+    "spdy": "^1.32.0",
     "uglify": "^0.1.1",
     "uglify-js": "^2.4.16",
     "vinyl-buffer": "^1.0.0",
