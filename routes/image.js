@@ -128,12 +128,14 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
         ? file.resize(gmWidth, gmHeight)
         : file;
 
-      if (options.crop) {
-        deliverFile = deliverFile.gravity('Center').crop(options.crop.x, options.crop.y);
-      }
+      if (typeof options !== undefined) {
+        if (typeof options.crop !== 'undefined') {
+          deliverFile = deliverFile.gravity('Center').crop(options.crop.x, options.crop.y);
+        }
 
-      if (options.quality) {
-        deliverFile = deliverFile.quality(options.quality);
+        if (typeof options.quality !== 'undefined') {
+          deliverFile = deliverFile.quality(options.quality);
+        }
       }
 
       deliverFile.write(cachedPath, function () {

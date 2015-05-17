@@ -24,6 +24,7 @@ var FileUploadForm = React.createClass({
 
   updateProgress: function (e) {
     if (e.lengthComputable) {
+      console.log(e.loaded / e.total);
       this.setState({
         progress: e.loaded / e.total
       });
@@ -57,9 +58,8 @@ var FileUploadForm = React.createClass({
     files.map(function(file) { formData.append("fileInput", file); });
 
     this.setState({ error: false, finished: false, message: "" });
-
     const xhr = new XMLHttpRequest();
-    xhr.addEventListener("progress", this.updateProgress, false);
+    xhr.upload.addEventListener("progress", this.updateProgress, false);
     xhr.addEventListener("load", this.transferComplete, false);
     xhr.addEventListener("error", this.transferFailed, false);
     xhr.open("POST", "/admin/upload");
