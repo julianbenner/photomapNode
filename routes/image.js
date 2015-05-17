@@ -91,7 +91,7 @@ function promiseImageDimension (file, parameter) {
   });
 }
 
-function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWidth, res, next) {
+function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWidth, res, next, options) {
   let cachedPath;
   let file;
   let height, width;
@@ -124,9 +124,17 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
 
       const heightComparisonHolds = heightComparator !== null && height > heightComparator;
       const widthComparisonHolds = widthComparator !== null && width > widthComparator;
-      const deliverFile = (heightComparisonHolds || widthComparisonHolds)
+      let deliverFile = (heightComparisonHolds || widthComparisonHolds)
         ? file.resize(gmWidth, gmHeight)
         : file;
+
+      if (options.crop) {
+        deliverFile = deliverFile.gravity('Center').crop(options.crop.x, options.crop.y);
+      }
+
+      if (options.quality) {
+        deliverFile = deliverFile.quality(options.quality);
+      }
 
       deliverFile.write(cachedPath, function () {
         res.set('Content-Type', 'image/jpeg');
@@ -157,9 +165,16 @@ function sendBlank(res) {
 }
 
 router.get('/:id/thumb', function (req, res, next) {
-  const width = 200;
+  const edge = 270;
 
-  deliverCachedFile(req.params.id, null, width, null, width, res, next);
+  deliverCachedFile(req.params.id, edge, edge, edge, edge + '^', res, next, {crop:{x:270, y:180}});
+});
+
+// tiny: 40 width/height
+router.get('/:id/tinySquare', function (req, res, next) {
+  const longestEdge = 40;
+
+  deliverCachedFile(req.params.id, longestEdge, longestEdge, longestEdge, longestEdge + '^', res, next, {crop:{x: 40, y: 40}});
 });
 
 // tiny: 40 width/height
