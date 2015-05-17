@@ -124,7 +124,7 @@ function uploadImagePromise(tempFile, destination) {
             fs.unlink(tempFile.path);
           });
 
-          addImageToDb(destination, tempFile.originalname, result.lat, result.lon);
+          addImageToDb(destination, tempFile.originalname, result.lat, result.lon, result.date);
           resolve();
         }).catch(function(err) {
           reject(err.message);
@@ -136,17 +136,20 @@ function uploadImagePromise(tempFile, destination) {
   });
 }
 
-function addImageToDb(folder, image, lat, lon) {
+function addImageToDb(folder, image, lat, lon, date) {
   var connection = require('../routes/Database').Get();
 
   if (image !== 'Thumbs.db') { // TODO
     let columns, content;
+    columns = 'name, path';
+    content = '';
     if (typeof lat !== 'undefined' && typeof lon !== 'undefined') {
-      columns = 'name, path, lat, lon';
-      content = ', ' + connection.escape(lat) + ',' + connection.escape(lon);
-    } else {
-      columns = 'name, path';
-      content = '';
+      columns += ', lat, lon';
+      content += ', ' + connection.escape(lat) + ',' + connection.escape(lon);
+    }
+    if (typeof date !== 'undefined') {
+      columns += ', date';
+      content += ', ' + connection.escape(date);
     }
     const query = 'INSERT INTO `' + config.databaseName + '` (' + columns + ') VALUES (' + connection.escape(image) + ',' + connection.escape(folder) + content + ')';
     console.log(query);
@@ -219,16 +222,21 @@ function getImageMetadataPromise(folder, image) {
         reject(err);
       else {
         const gps = exifData.gps;
-        let lat, lon;
+        const exif = exifData.exif;
+        let lat, lon, date;
         if (typeof gps.GPSLongitude !== 'undefined' && typeof gps.GPSLatitude !== 'undefined') {
           lat = gps.GPSLatitude[0] + gps.GPSLatitude[1] / 60 + gps.GPSLatitude[2] / (60 * 60);
           lat = lat * (gps.GPSLatitudeRef === 'N' ? 1 : -1);
           lon = gps.GPSLongitude[0] + gps.GPSLongitude[1] / 60 + gps.GPSLongitude[2] / (60 * 60);
           lon = lon * (gps.GPSLongitudeRef === 'E' ? 1 : -1);
         }
+        if (typeof exif !== 'undefined' && typeof exif.DateTimeOriginal !== 'original') {
+          date = exif.DateTimeOriginal;
+        }
         resolve({
           lat: lat,
-          lon: lon
+          lon: lon,
+          date: date
         });
       }
     });
@@ -249,7 +257,7 @@ function compareFsToDb(folder, callback) {
         } else {
           getImageMetadataPromise(config.imagePath + '/' + folder, item).then(function onResolve(result) {
             checkIfFileInDb(folder, item, function () {
-              addImageToDb(folder, item, result.lat, result.lon);
+              addImageToDb(folder, item, result.lat, result.lon, result.date);
             });
           }).catch(function(err) {
             console.log(err);

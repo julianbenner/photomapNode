@@ -9,7 +9,7 @@ var gm = require('gm');
 var fs = require('fs');
 
 var Promise = require('promise');
-var murmur = require('murmurhash-js'); // TODO change
+var crypto = require('crypto');
 var config = require('../config_server');
 
 const connectionObject = require('../routes/Database').Get();
@@ -101,7 +101,7 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
     const filePath = result;
     file = gm(filePath);
 
-    const cacheHash = murmur(filePath + heightComparator + widthComparator + 'longest');
+    const cacheHash = crypto.createHash('md5').update(filePath + heightComparator + widthComparator + gmHeight + gmWidth).digest("hex");
     cachedPath = path.join(config.cachePath, cacheHash.toString());
 
     // promise determines whether the cached file already exists
