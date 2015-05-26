@@ -28,7 +28,6 @@ html, body {
 
 body {
   padding-top: 70px;
-  background-image: url(/images/background.jpg);
 }
 
 .btn-navbar-toggle {
@@ -43,9 +42,7 @@ body {
   }
 }
 
-#reactTopBar {
-  margin-left: 5px !important;
-  margin-right: 5px !important;
+#collapsable {
   @media(min-width: 768px)
   {
     display: block;
@@ -213,6 +210,36 @@ body {
   }
 }
 
+.nav > li {
+  &:hover, &:focus {
+    text-decoration: none;
+    background-color: #e6e6e6;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.25em 1em;
+  }
+}
+
+.searchHolder {
+  padding: 3px;
+  @media (min-width: 768px) {
+    float:left;
+    width: 300px;
+  }
+}
+
+.searchWidget {
+}
+
+.navbar-hamburger {
+  @media (max-width: 768px) {
+    float: left;
+    line-height: 43px;
+    padding: 0 20px 0 0;
+  }
+}
+
 .nav > li > div {
   position: relative;
   display: block;
@@ -222,12 +249,6 @@ body {
     background-color: #e6e6e6;
   }
 }
-.nav > li > div
-  :hover {
-    text-decoration: none;
-    background-color: #e6e6e6;
-  }
-
 
 .nav > li.disabled > div {
   color: #999999;

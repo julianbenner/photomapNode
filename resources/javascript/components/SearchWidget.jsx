@@ -37,7 +37,7 @@ var SearchWidget = React.createClass({
 
   render: function () {
     return (
-      <li className="navbar-form" role="search" key="searchWidget">
+      <div className="searchWidget" role="search" key="searchWidget">
         <span className="input-group add-on">
           <input onKeyPress={this.keypress} type="text" className="form-control" placeholder="Search"
                  id="locationQuery" value={this.state.value} onChange={this.handleChange}></input>
@@ -46,7 +46,7 @@ var SearchWidget = React.createClass({
             </button>
           </div>
         </span>
-      </li>
+      </div>
     );
   }
 });

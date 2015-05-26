@@ -92,7 +92,6 @@ var TopBar = React.createClass({
 
     const buttons = [];
 
-    buttons.push(<SearchWidget token={this.props.token} key="searchWidget"/>);
     buttons.push(<FolderWidget key="folderWidget"/>);
     buttons.push(<DateRangePicker key="dateRangePicker" onApply={this.changeDate} onCancel={this.cancelDate}>
       <span className="glyphicon glyphicon-calendar" aria-hidden="true"></span>
@@ -100,11 +99,11 @@ var TopBar = React.createClass({
 
     if (this.state.loggedIn !== true) {
       buttons.push(<li key="login" data-toggle="tooltip" data-placement="bottom" ref="loginButton" title="Log in"><a
-        onClick={this.openLoginDialog}><span className="glyphicon glyphicon-log-in" aria-hidden="true"></span></a></li>);
+        onClick={this.openLoginDialog}><span className="glyphicon glyphicon-log-in" aria-hidden="true"></span><span className="navItemTitle">Log in</span></a></li>);
     } else {
       if (this.state.user === 'admin') {
         buttons.push(<li key="admin" data-toggle="tooltip" data-placement="bottom" ref="adminButton" title="Admin" className="hiddenOnMobile"><a
-          onClick={this.openAdminInterface}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+          onClick={this.openAdminInterface}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span> Admin</a>
         </li>);
       }
       buttons.push(<li key="logout" data-toggle="tooltip" data-placement="bottom" ref="logoutButton" title="Log out"><a
@@ -112,9 +111,18 @@ var TopBar = React.createClass({
     }
 
     return (
-      <ul className="navbar-nav nav">
-        {buttons}
-      </ul>
+      <div>
+        <div className="container">
+          <a className="btn btn-navbar searchHolder" data-toggle="collapse" data-target="#collapsable">
+            <div><span className="glyphicon glyphicon-menu-hamburger btn-navbar-toggle navbar-hamburger" /> <SearchWidget token={this.props.token} key="searchWidget"/></div>
+          </a>
+          <div className="navbar-header collapse" id="collapsable">
+            <ul className="navbar-nav nav">
+              {buttons}
+            </ul>
+          </div>
+        </div>
+      </div>
     );
   }
 });
