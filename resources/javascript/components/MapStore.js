@@ -8,7 +8,11 @@ var config = require('../config_client');
 var zoom = config.initial.zoom;
 var rasterSize = function () { return config.rasterSize(zoom) };
 
+var CHANGE_EVENT = 'change';
+
 var markers = [];
+
+var searchResults = [];
 
 var latMin = 0.0;
 var latMax = 0.0;
@@ -33,6 +37,19 @@ function geosearch(query, token) {
       console.log('result ' + _lat + ' ' + _lon);
       MapStore.emit('viewport-change');
     }
+  });
+}
+
+function geosearch1(query, token) {
+  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+    searchResults = data.features.map(function(result) {
+      return {
+        name: result["place_name"],
+        lat: result["center"][1],
+        lon: result["center"][0]
+      };
+    });
+    MapStore.emit(CHANGE_EVENT);
   });
 }
 
@@ -149,6 +166,10 @@ var MapStore = assign({}, EventEmitter.prototype, {
       lonMin: lonMin,
       lonMax: lonMax
     }
+  },
+
+  getSearchResults: function () {
+    return searchResults;
   }
 });
 
@@ -189,8 +210,16 @@ Dispatcher.register(function (payload) {
     case 'geosearch':
       geosearch(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
       break;
+    case 'geosearch1':
+      geosearch1(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      break;
     case 'folder-structure-changed':
       MapStore.emit('update-folder-list');
+      break;
+    case 'move-map':
+      _lat = payload.lat;
+      _lon = payload.lon;
+      MapStore.emit('viewport-change');
       break;
   }
 

@@ -230,6 +230,28 @@ body {
 }
 
 .searchWidget {
+  position: relative;
+}
+
+.searchResults {
+  width: 100%;
+
+  li {
+    color: darken($gray-base, 0.2);
+    &:focus, &:hover {
+      color: $gray-base;
+      background-color: rgba($brand-primary, 0.05);
+    }
+
+    a {
+      padding: 4px;
+      overflow: hidden;
+    }
+  }
+}
+
+.searchResultsVisible {
+  display: block;
 }
 
 .navbar-hamburger {

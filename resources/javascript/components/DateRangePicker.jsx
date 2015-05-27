@@ -63,7 +63,7 @@ var DateRangePicker = React.createClass({
 
   render: function() {
     return (
-      <li data-toggle="tooltip" data-placement="bottom" ref="button" title="Filter by date"><a className="dropdown-toggle" onClick={this.toggleOpen}><span className="glyphicon glyphicon-calendar" aria-hidden="true"></span><span className="navItemTitle">Date</span></a>
+      <li ref="button" title="Filter by date"><a className="dropdown-toggle" onClick={this.toggleOpen}><span className="glyphicon glyphicon-calendar" aria-hidden="true"></span>Date</a>
         <ul id="dateDropdown" className="dropdown-menu">
           From <input type="date" id="dateFrom" name="dateFrom" className="dateInput" onChange={this.handleFromChange} ref="dateInput" /><br />
           to <input type="date" id="dateTo" name="dateFrom" className="dateInput" onChange={this.handleToChange} /><br />

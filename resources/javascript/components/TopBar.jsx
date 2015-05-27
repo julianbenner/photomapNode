@@ -98,23 +98,23 @@ var TopBar = React.createClass({
     </DateRangePicker>);
 
     if (this.state.loggedIn !== true) {
-      buttons.push(<li key="login" data-toggle="tooltip" data-placement="bottom" ref="loginButton" title="Log in"><a
-        onClick={this.openLoginDialog}><span className="glyphicon glyphicon-log-in" aria-hidden="true"></span><span className="navItemTitle">Log in</span></a></li>);
+      buttons.push(<li key="login" ref="loginButton" title="Log in"><a
+        onClick={this.openLoginDialog}><span className="glyphicon glyphicon-log-in" aria-hidden="true"></span> Log in</a></li>);
     } else {
       if (this.state.user === 'admin') {
-        buttons.push(<li key="admin" data-toggle="tooltip" data-placement="bottom" ref="adminButton" title="Admin" className="hiddenOnMobile"><a
+        buttons.push(<li key="admin" ref="adminButton" title="Admin" className="hiddenOnMobile"><a
           onClick={this.openAdminInterface}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span> Admin</a>
         </li>);
       }
-      buttons.push(<li key="logout" data-toggle="tooltip" data-placement="bottom" ref="logoutButton" title="Log out"><a
+      buttons.push(<li key="logout" ref="logoutButton" title="Log out"><a
         onClick={this.logOut}><span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>  Log out {this.state.user}</a></li>);
     }
 
     return (
       <div>
         <div className="container">
-          <a className="btn btn-navbar searchHolder" data-toggle="collapse" data-target="#collapsable">
-            <div><span className="glyphicon glyphicon-menu-hamburger btn-navbar-toggle navbar-hamburger" /> <SearchWidget token={this.props.token} key="searchWidget"/></div>
+          <a className="btn btn-navbar searchHolder">
+            <div><span className="glyphicon glyphicon-menu-hamburger btn-navbar-toggle navbar-hamburger" data-toggle="collapse" data-target="#collapsable" /> <SearchWidget token={this.props.token} key="searchWidget"/></div>
           </a>
           <div className="navbar-header collapse" id="collapsable">
             <ul className="navbar-nav nav">
