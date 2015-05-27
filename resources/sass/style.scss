@@ -150,12 +150,14 @@ body {
   height: 100%;
   width: 100%;
   overflow-y: auto;
+  padding: 0;
 }
 
 .galleryContainer {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding: 15px;
 }
 
 #galleryImageContainer {
@@ -335,6 +337,10 @@ body {
 
 #fileListEdit, #fileListEditColumn, #fileListContainer {
   height: 100%;
+}
+
+#fileListContainer {
+  padding: 20px;
 }
 
 .editThumbnail {

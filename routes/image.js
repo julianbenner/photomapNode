@@ -167,9 +167,10 @@ function sendBlank(res) {
 }
 
 router.get('/:id/thumb', function (req, res, next) {
-  const edge = 270;
+  const width = 270;
+  const height = 180;
 
-  deliverCachedFile(req.params.id, edge, edge, edge, edge + '^', res, next, {crop:{x:270, y:180}});
+  deliverCachedFile(req.params.id, height, width, height, width + '^', {crop:{x:270, y:height}});
 });
 
 // tiny: 40 width/height
