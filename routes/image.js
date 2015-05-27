@@ -170,7 +170,7 @@ router.get('/:id/thumb', function (req, res, next) {
   const width = 270;
   const height = 180;
 
-  deliverCachedFile(req.params.id, height, width, height, width + '^', {crop:{x:270, y:height}});
+  deliverCachedFile(req.params.id, height, width, height, width + '^', res, next, {crop:{x:width, y:height}});
 });
 
 // tiny: 40 width/height
