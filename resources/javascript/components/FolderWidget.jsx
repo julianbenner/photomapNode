@@ -142,7 +142,7 @@ var FolderWidget = React.createClass({
   render: function () {
     const content = this.state.folderStructure.toJSX();
     return (
-      <li ref="button" title="Filter by folder"><a className="dropdown-toggle" onClick={this.toggleList}><span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span> Folders</a>
+      <li ref="button" title="Filter by folder"><a className="dropdown-toggle" onClick={this.toggleList}><span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span><span className="navbar-button-text">Folders</span></a>
         <ul id="folderDropdown" className="dropdown-menu folder">
           {content}
           <div className="dropdown-buttons">

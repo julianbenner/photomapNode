@@ -99,15 +99,15 @@ var TopBar = React.createClass({
 
     if (this.state.loggedIn !== true) {
       buttons.push(<li key="login" ref="loginButton" title="Log in"><a
-        onClick={this.openLoginDialog}><span className="glyphicon glyphicon-log-in" aria-hidden="true"></span> Log in</a></li>);
+        onClick={this.openLoginDialog}><span className="glyphicon glyphicon-log-in" aria-hidden="true"></span><span className="navbar-button-text">Log in</span></a></li>);
     } else {
       if (this.state.user === 'admin') {
         buttons.push(<li key="admin" ref="adminButton" title="Admin" className="hiddenOnMobile"><a
-          onClick={this.openAdminInterface}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span> Admin</a>
+          onClick={this.openAdminInterface}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span><span className="navbar-button-text">Admin</span></a>
         </li>);
       }
       buttons.push(<li key="logout" ref="logoutButton" title="Log out"><a
-        onClick={this.logOut}><span className="glyphicon glyphicon-log-out" aria-hidden="true"></span>  Log out {this.state.user}</a></li>);
+        onClick={this.logOut}><span className="glyphicon glyphicon-log-out" aria-hidden="true"></span><span className="navbar-button-text">Log out {this.state.user}</span></a></li>);
     }
 
     return (

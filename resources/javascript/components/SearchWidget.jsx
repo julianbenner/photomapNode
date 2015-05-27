@@ -41,6 +41,9 @@ var SearchWidget = React.createClass({
       token: this.props.token,
       query: React.findDOMNode(this.refs.search).value
     });
+    this.setState({
+      resultsVisible: false
+    });
   },
 
   selectResult: function (lat, lon) {
@@ -90,16 +93,17 @@ var SearchWidget = React.createClass({
   },
 
   focusOut: function () {
-    if (document.activeElement.nodeName != 'INPUT')
+    setTimeout(() => {
       this.setState({
         resultsVisible: false
       });
+    },100);
   },
 
   render: function () {
     const results = this.state.results.map(result => {
       const key = "" + result.lat + "." + result.lon;
-      return <li onClick={this.selectResult.bind(this, result.lat, result.lon)} key={key}><a>{result.name}</a></li>;
+      return <li onClick={this.selectResult.bind(this, result.lat, result.lon)} key={key} className="searchResult"><a>{result.name}</a></li>;
     });
     const style = classNames({
       'searchResults': true,
