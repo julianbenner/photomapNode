@@ -3,6 +3,7 @@ var React = require('react/addons');
 require('mapbox.js');
 var Dispatcher = require('./Dispatcher.js');
 var FileStore = require('./FileStore.js');
+var LocationChooserSearch = require('./LocationChooserSearch.jsx');
 var config = require('../config_client');
 
 function getFileStoreState() {
@@ -71,7 +72,7 @@ var LocationChooser = React.createClass({
 
   render: function () {
     return (
-      <div id='locationChooser'></div>
+      <div id='locationChooser'><LocationChooserSearch /></div>
     );
   }
 });
