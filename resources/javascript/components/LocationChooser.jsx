@@ -82,8 +82,9 @@ var LocationChooser = React.createClass({
   },
 
   render: function () {
+    const marker = typeof this.map === 'undefined' ? '' : <LocationChooserMarker lat={this.state.markerLat} lon={this.state.markerLon} map={this.map} />;
     return (
-      <div id='locationChooser'><LocationChooserSearch token={this.props.token} /><LocationChooserMarker lat={this.state.markerLat} lon={this.state.markerLon} map={this.map} /></div>
+      <div id='locationChooser'><LocationChooserSearch token={this.props.token} />{marker}</div>
     );
   }
 });
