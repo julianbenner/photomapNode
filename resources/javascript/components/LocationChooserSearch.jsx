@@ -127,4 +127,4 @@ var LocationChooserSearch = React.createClass({
   }
 });
 
-module.exports = SearchWidget;
+module.exports = LocationChooserSearch;
