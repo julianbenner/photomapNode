@@ -4,6 +4,7 @@ var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 var $ = require('jquery');
 var config = require('../config_client');
+var Folder = require('./Folder');
 
 var zoom = config.initial.zoom;
 var rasterSize = function () { return config.rasterSize(zoom) };
@@ -25,6 +26,7 @@ var _lon;
 var dateMin = null;
 var dateMax = null;
 
+var folderStructure = new Folder('/');
 var folderFilter = {};
 var folderFilteringEnabled = false;
 
@@ -170,6 +172,10 @@ var MapStore = assign({}, EventEmitter.prototype, {
 
   getSearchResults: function () {
     return searchResults;
+  },
+
+  getFolderStructure: function () {
+    return folderStructure;
   }
 });
 
@@ -214,7 +220,7 @@ Dispatcher.register(function (payload) {
       geosearch1(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
       break;
     case 'folder-structure-changed':
-      MapStore.emit('update-folder-list');
+      MapStore.emit(CHANGE_EVENT);
       break;
     case 'move-map':
       _lat = payload.lat;

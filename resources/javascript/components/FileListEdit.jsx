@@ -99,7 +99,7 @@ var FileListEdit = React.createClass({
               </div>
               <div className="clearBoth"></div>
             </div>
-            <LocationChooser token={this.props.token} lat={this.state.selectedFile.lat} lon={this.state.selectedFile.lat} />
+            <LocationChooser token={this.props.token} lat={this.state.selectedFile.lat} lon={this.state.selectedFile.lon} />
 
             <div className="input-group editInputGroup">
               <span className="input-group-addon editAddon">Date</span>

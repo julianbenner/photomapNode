@@ -11,6 +11,32 @@ var _fileIndex = 0;
 var _location = {lat: null, lon: null};
 var CHANGE_EVENT = 'change';
 
+var searchResults = [];
+function geosearch(query, token) {
+  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+    if (data.features.length > 0) {
+      var result = data.features[0];
+      _location.lat = result.center[1];
+      _location.lon = result.center[0];
+      console.log('result ' + _lat + ' ' + _lon);
+      FileStore.emit(CHANGE_EVENT);
+    }
+  });
+}
+
+function geosearch1(query, token) {
+  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+    searchResults = data.features.map(function(result) {
+      return {
+        name: result["place_name"],
+        lat: result["center"][1],
+        lon: result["center"][0]
+      };
+    });
+    FileStore.emit(CHANGE_EVENT);
+  });
+}
+
 var sortNoLocation = function(a, b) {
   if (a.lat == null && b.lat != null) {
     return 1;
@@ -60,6 +86,10 @@ var FileStore = assign({}, EventEmitter.prototype, {
 
   getAmountOfPages: function () {
     return Math.ceil(_files.length / pageSize);
+  },
+
+  getSearchResults: function () {
+    return searchResults;
   },
 
   getLocation: function () {
@@ -160,6 +190,19 @@ Dispatcher.register(function (payload) {
           _files.sort(function(a,b) { return b.id - a.id; });
           break;
       }
+      FileStore.emit(CHANGE_EVENT);
+      break;
+    case 'geosearch_lc':
+      geosearch(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      break;
+    case 'geosearch1_lc':
+      geosearch1(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      break;
+    case 'move-map_lc':
+      _location = {
+        lat: payload.lat,
+        lon: payload.lon
+      };
       FileStore.emit(CHANGE_EVENT);
       break;
   }

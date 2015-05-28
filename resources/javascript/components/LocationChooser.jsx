@@ -5,6 +5,13 @@ var Dispatcher = require('./Dispatcher.js');
 var FileStore = require('./FileStore.js');
 var config = require('../config_client');
 
+function getFileStoreState() {
+  const location = FileStore.getLocation();
+  return {
+    lat: location.lat,
+    lon: location.lon
+  }
+}
 
 var LocationChooser = React.createClass({
   getInitialState: function () {
@@ -17,10 +24,22 @@ var LocationChooser = React.createClass({
     L.mapbox.accessToken = this.props.token;
 
     FileStore.on('toggle-location-chooser', this.toggle);
+    FileStore.on('change', this.update);
   },
 
   componentWillUnmount: function () {
     FileStore.removeListener('toggle-location-chooser', this.toggle);
+    FileStore.removeListener('change', this.update);
+  },
+
+  updateMap: function () {
+    this.map.setView(L.latLng(this.state.lat, this.state.lon));
+  },
+
+  update: function () {
+    this.setState(getFileStoreState(), () => {
+      this.updateMap();
+    })
   },
 
   setLocation: function (lat, lon) {

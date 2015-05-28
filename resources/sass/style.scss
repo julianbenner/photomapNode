@@ -225,6 +225,7 @@ body {
 
 .searchHolder {
   padding: 3px;
+  max-width: 100%;
   @media (min-width: 768px) {
     float:left;
     width: 300px;

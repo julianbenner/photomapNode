@@ -56,7 +56,11 @@ router.get('/', function (req, res, next) {
   const lonMax = req.query.lonMax || 0;
   const dateMin = req.query.dateMin || undefined;
   const dateMax = req.query.dateMax || undefined;
-  const folderFilter = JSON.parse(req.query.folderFilter) || {};
+  let folderFilter;
+  if (typeof req.query.folderFilter !== 'undefined')
+    folderFilter = JSON.parse(req.query.folderFilter);
+  else
+    folderFilter = {};
   const folderFilteringEnabled = req.query.folderFilteringEnabled || false;
   get_image_count(latMin, latMax, lonMin, lonMax, dateMin, dateMax, folderFilter, folderFilteringEnabled, function (data) {
     res.json(data);
