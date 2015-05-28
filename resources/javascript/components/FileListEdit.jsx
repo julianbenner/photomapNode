@@ -61,8 +61,10 @@ var FileListEdit = React.createClass({
     const location = FileStore.getLocation();
     if (typeof location !== 'undefined' && typeof location.lat !== 'undefined') {
       if (typeof React.findDOMNode(this.refs.inputLat) !== 'undefined') {
-        React.findDOMNode(this.refs.inputLat).value = location.lat;
-        React.findDOMNode(this.refs.inputLon).value = location.lon;
+        if (React.findDOMNode(this.refs.inputLat) != null) {
+          React.findDOMNode(this.refs.inputLat).value = location.lat;
+          React.findDOMNode(this.refs.inputLon).value = location.lon;
+        }
       }
     }
   },
