@@ -18,7 +18,9 @@ function getFileStoreState() {
 var LocationChooser = React.createClass({
   getInitialState: function () {
     return {
-      initialized: false // determines whether the map has been slid out yet
+      initialized: false, // determines whether the map has been slid out yet
+      markerLat: this.props.lat,
+      markerLon: this.props.lon
     };
   },
 
