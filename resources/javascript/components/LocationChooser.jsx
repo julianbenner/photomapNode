@@ -66,8 +66,12 @@ var LocationChooser = React.createClass({
         map.on('click', (e) => {
           var x = e.clientX; var y = e.clientY;
           var element = document.elementFromPoint(x, y);
-          if ($(element).is("a") || $(element).is("input")){} else
+          if ($(element).is("a") || $(element).is("input")){
+            console.log("don't set");
+          } else {
             this.setLocation(e.latlng.lat, e.latlng.lng);
+            console.log("set");
+          }
         });
 
         this.setState({

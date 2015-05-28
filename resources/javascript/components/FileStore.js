@@ -18,7 +18,7 @@ function geosearch(query, token) {
       var result = data.features[0];
       _location.lat = result.center[1];
       _location.lon = result.center[0];
-      console.log('result ' + _lat + ' ' + _lon);
+      console.log('result ' + location._lat + ' ' + location._lon);
       FileStore.emit(CHANGE_EVENT);
     }
   });

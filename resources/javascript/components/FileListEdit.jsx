@@ -20,13 +20,13 @@ var FileListEdit = React.createClass({
   componentDidMount: function () {
     FileStore.on('change', this.getState);
     FileStore.on('files-changed', this.getState);
-    FileStore.on('location-changed', this.changeLocation);
+    FileStore.on('change', this.changeLocation);
   },
 
   componentWillUnmount: function () {
     FileStore.removeListener('change', this.getState);
     FileStore.removeListener('files-changed', this.getState);
-    FileStore.removeListener('location-changed', this.changeLocation);
+    FileStore.removeListener('change', this.changeLocation);
   },
 
   save: function () {
