@@ -19,8 +19,8 @@ var LocationChooser = React.createClass({
   getInitialState: function () {
     return {
       initialized: false, // determines whether the map has been slid out yet
-      markerLat: this.props.lat,
-      markerLon: this.props.lon
+      lat: this.props.lat,
+      lon: this.props.lon
     };
   },
 
@@ -47,10 +47,6 @@ var LocationChooser = React.createClass({
   },
 
   setLocation: function (lat, lon) {
-    this.setState({
-      markerLat: lat,
-      markerLon: lon
-    });
     Dispatcher.dispatch({
       eventName: 'change-location',
       lat: lat,
@@ -82,7 +78,7 @@ var LocationChooser = React.createClass({
   },
 
   render: function () {
-    const marker = typeof this.map === 'undefined' ? '' : <LocationChooserMarker key={this.state.markerLat+'.'+this.state.markerLon} lat={this.state.markerLat} lon={this.state.markerLon} map={this.map} />;
+    const marker = typeof this.map === 'undefined' ? '' : <LocationChooserMarker key={this.state.lat+'.'+this.state.lon} lat={this.state.lat} lon={this.state.lon} map={this.map} />;
     return (
       <div id='locationChooser'><LocationChooserSearch token={this.props.token} />{marker}</div>
     );

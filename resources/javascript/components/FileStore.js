@@ -150,6 +150,7 @@ Dispatcher.register(function (payload) {
       if (typeof currentlySelected !== 'undefined')
         _files[FileStore.getItemIdByDbId(_fileIndex)].selected = false;
       _fileIndex = payload.fileIndex;
+      _location = {lat: _files[FileStore.getItemIdByDbId(_fileIndex)].lat, lon: _files[FileStore.getItemIdByDbId(_fileIndex)].lon};
       _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true;
       FileStore.emit(CHANGE_EVENT);
       break;
@@ -158,7 +159,7 @@ Dispatcher.register(function (payload) {
       break;
     case 'change-location':
       _location = {lat: payload.lat, lon: payload.lon};
-      FileStore.emit('location-changed');
+      FileStore.emit(CHANGE_EVENT);
       break;
     case 'files-full-scan':
       doFullScan();
