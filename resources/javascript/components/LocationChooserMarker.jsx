@@ -11,12 +11,14 @@ var LocationChooserMarker = React.createClass({
     this.setState({
       marker: L.marker([lat, lon])
     }, () => {
-      this.state.marker.addTo(this.props.map);
+      if (typeof this.props.map !== 'undefined')
+        this.state.marker.addTo(this.props.map);
     });
   },
 
   componentWillUnmount: function () {
-    this.props.map.removeLayer(this.state.marker);
+    if (typeof this.props.map !== 'undefined')
+      this.props.map.removeLayer(this.state.marker);
   },
 
   render: function () {
