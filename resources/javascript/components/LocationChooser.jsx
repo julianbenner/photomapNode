@@ -4,6 +4,7 @@ require('mapbox.js');
 var Dispatcher = require('./Dispatcher.js');
 var FileStore = require('./FileStore.js');
 var LocationChooserSearch = require('./LocationChooserSearch.jsx');
+var LocationChooserMarker = require('./LocationChooserMarker.jsx');
 var config = require('../config_client');
 
 function getFileStoreState() {
@@ -44,6 +45,10 @@ var LocationChooser = React.createClass({
   },
 
   setLocation: function (lat, lon) {
+    this.setState({
+      markerLat: lat,
+      markerLon: lon
+    });
     Dispatcher.dispatch({
       eventName: 'change-location',
       lat: lat,
@@ -59,8 +64,12 @@ var LocationChooser = React.createClass({
         var map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
           .setView([initialLat, initialLon], config.initial.zoom);
 
+        // lol
         map.on('click', (e) => {
-          this.setLocation(e.latlng.lat, e.latlng.lng);
+          var x = e.clientX; var y = e.clientY;
+          var element = document.elementFromPoint(x, y);
+          if ($(element).is("a") || $(element).is("input")){} else
+            this.setLocation(e.latlng.lat, e.latlng.lng);
         });
 
         this.setState({
@@ -72,7 +81,7 @@ var LocationChooser = React.createClass({
 
   render: function () {
     return (
-      <div id='locationChooser'><LocationChooserSearch token={this.props.token} /></div>
+      <div id='locationChooser'><LocationChooserSearch token={this.props.token} /><LocationChooserMarker lat={this.state.markerLat} lon={this.state.markerLon} map={this.map} /></div>
     );
   }
 });

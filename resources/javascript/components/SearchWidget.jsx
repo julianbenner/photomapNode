@@ -97,7 +97,7 @@ var SearchWidget = React.createClass({
       this.setState({
         resultsVisible: false
       });
-    },100);
+    }, 200);
   },
 
   render: function () {

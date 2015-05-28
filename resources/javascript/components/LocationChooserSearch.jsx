@@ -97,7 +97,7 @@ var LocationChooserSearch = React.createClass({
       this.setState({
         resultsVisible: false
       });
-    },100);
+    }, 200);
   },
 
   render: function () {
@@ -116,10 +116,6 @@ var LocationChooserSearch = React.createClass({
         <span className="input-group add-on">
           <input onKeyPress={this.keypress} onChange={this.handleChange} type="text" className="form-control" placeholder="Search"
                  id="locationQuery" value={this.state.value} ref="search" onFocus={this.focusIn} onBlur={this.focusOut}></input>
-          <div className="input-group-btn">
-            <button className="btn btn-default" onClick={this.search}><span className="glyphicon glyphicon-search"></span>
-            </button>
-          </div>
         </span>
         <ul className={style}>{results}</ul>
       </div>
