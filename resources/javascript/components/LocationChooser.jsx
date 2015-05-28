@@ -72,7 +72,7 @@ var LocationChooser = React.createClass({
 
   render: function () {
     return (
-      <div id='locationChooser'><LocationChooserSearch /></div>
+      <div id='locationChooser'><LocationChooserSearch token={this.props.token} /></div>
     );
   }
 });
