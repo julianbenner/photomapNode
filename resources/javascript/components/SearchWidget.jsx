@@ -112,7 +112,7 @@ var SearchWidget = React.createClass({
     });
 
     return (
-      <div className="searchWidget searchWidgetLc" role="search" key="searchWidget">
+      <div className="searchWidget" role="search" key="searchWidget">
         <span className="input-group add-on">
           <input onKeyPress={this.keypress} onChange={this.handleChange} type="text" className="form-control" placeholder="Search"
                  id="locationQuery" value={this.state.value} ref="search" onFocus={this.focusIn} onBlur={this.focusOut}></input>
