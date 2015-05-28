@@ -29,21 +29,29 @@ var LocationChooser = React.createClass({
 
     FileStore.on('toggle-location-chooser', this.toggle);
     FileStore.on('change', this.update);
+    FileStore.on('search', this.search);
   },
 
   componentWillUnmount: function () {
     FileStore.removeListener('toggle-location-chooser', this.toggle);
     FileStore.removeListener('change', this.update);
+    FileStore.removeListener('search', this.search);
   },
 
-  updateMap: function () {
-    this.map.setView(L.latLng(this.state.lat, this.state.lon));
+  updateMap: function (lat, lon) {
+    if (typeof this.map !== 'undefined')
+      this.map.setView(L.latLng(lat, lon));
   },
 
   update: function () {
     this.setState(getFileStoreState(), () => {
-      this.updateMap();
+      this.updateMap(this.state.lat, this.state.lon);
     })
+  },
+
+  search: function () {
+    const viewport = FileStore.getSearchResultViewport();
+    this.updateMap(viewport.lat, viewport.lon);
   },
 
   setLocation: function (lat, lon) {
@@ -64,13 +72,11 @@ var LocationChooser = React.createClass({
 
         // lol
         map.on('click', (e) => {
-          var x = e.clientX; var y = e.clientY;
+          var x = e.originalEvent.clientX; var y = e.originalEvent.clientY;
           var element = document.elementFromPoint(x, y);
           if ($(element).is("a") || $(element).is("input")){
-            console.log("don't set");
           } else {
             this.setLocation(e.latlng.lat, e.latlng.lng);
-            console.log("set");
           }
         });
 

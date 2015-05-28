@@ -9,6 +9,7 @@ var _page = 1;
 var _files = [];
 var _fileIndex = 0;
 var _location = {lat: null, lon: null};
+var _searchResultViewport = {lat: null, lon: null};
 var CHANGE_EVENT = 'change';
 
 var searchResults = [];
@@ -16,10 +17,10 @@ function geosearch(query, token) {
   $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
     if (data.features.length > 0) {
       var result = data.features[0];
-      _location.lat = result.center[1];
-      _location.lon = result.center[0];
+      _searchResultViewport.lat = result.center[1];
+      _searchResultViewport.lon = result.center[0];
       console.log('result ' + location._lat + ' ' + location._lon);
-      FileStore.emit(CHANGE_EVENT);
+      FileStore.emit('search');
     }
   });
 }
@@ -94,6 +95,10 @@ var FileStore = assign({}, EventEmitter.prototype, {
 
   getLocation: function () {
     return _location;
+  },
+
+  getSearchResultViewport: function () {
+    return _searchResultViewport;
   },
 
   doFullScan: function () {
@@ -200,11 +205,11 @@ Dispatcher.register(function (payload) {
       geosearch1(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
       break;
     case 'move-map_lc':
-      _location = {
+      _searchResultViewport = {
         lat: payload.lat,
         lon: payload.lon
       };
-      FileStore.emit(CHANGE_EVENT);
+      FileStore.emit('search');
       break;
   }
 

@@ -12,8 +12,23 @@ var FileListEdit = React.createClass({
   },
 
   getState: function () {
+    const currentFile = this.state.selectedFile;
+    const newFile = FileStore.getSelectedFile();
+
+    let lat, lon;
+
+    if ((typeof currentFile !== 'undefined') && newFile.id === currentFile.id) {
+      const location = FileStore.getLocation();
+      lat = location.lat;
+      lon = location.lon;
+    } else if (typeof newFile !== 'undefined') {
+      lat = newFile.lat;
+      lon = newFile.lon;
+    }
     this.setState({
-      selectedFile: FileStore.getSelectedFile()
+      selectedFile: newFile,
+      lat: lat,
+      lon: lon
     });
   },
 
@@ -58,15 +73,11 @@ var FileListEdit = React.createClass({
   },
 
   changeLocation: function () {
-    const location = FileStore.getLocation();
-    if (typeof location !== 'undefined' && typeof location.lat !== 'undefined') {
-      if (typeof React.findDOMNode(this.refs.inputLat) !== 'undefined') {
-        if (React.findDOMNode(this.refs.inputLat) != null) {
-          React.findDOMNode(this.refs.inputLat).value = location.lat;
-          React.findDOMNode(this.refs.inputLon).value = location.lon;
-        }
-      }
-    }
+    /*const location = FileStore.getLocation();
+    if (React.findDOMNode(this.refs.inputLat) != null) {
+      React.findDOMNode(this.refs.inputLat).value = location.lat;
+      React.findDOMNode(this.refs.inputLon).value = location.lon;
+    }*/
   },
 
   render: function () {
@@ -91,12 +102,12 @@ var FileListEdit = React.createClass({
               <div id="latLonRowInput">
                 <div className="input-group latLonRowInputInput">
                   <span className="input-group-addon editAddon">Lat</span>
-                  <input id="inputLat" type="text" className="form-control" placeholder="Latitude" value={this.state.selectedFile.lat}
+                  <input id="inputLat" type="text" className="form-control" placeholder="Latitude" value={this.state.lat}
                          ref="inputLat" onChange={this.handleChange} />
                 </div>
                 <div className="input-group latLonRowInputInput">
                   <span className="input-group-addon editAddon">Lon</span>
-                  <input id="inputLon" type="text" className="form-control" placeholder="Longitude" value={this.state.selectedFile.lon}
+                  <input id="inputLon" type="text" className="form-control" placeholder="Longitude" value={this.state.lon}
                          ref="inputLon" onChange={this.handleChange} />
                 </div>
               </div>
