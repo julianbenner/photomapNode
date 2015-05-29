@@ -15,33 +15,37 @@ var FileListEdit = React.createClass({
     const currentFile = this.state.selectedFile;
     const newFile = FileStore.getSelectedFile();
 
-    let lat, lon;
+    let name, lat, lon, date;
 
-    if ((typeof currentFile !== 'undefined') && newFile.id === currentFile.id) {
+    if ((typeof currentFile !== 'undefined') && (typeof newFile !== 'undefined') && newFile.id === currentFile.id) {
       const location = FileStore.getLocation();
       lat = location.lat;
       lon = location.lon;
-    } else if (typeof newFile !== 'undefined') {
+      name = newFile.name;
+      date = newFile.date;
+    } else if (typeof newFile !== 'undefined' ) {
       lat = newFile.lat;
       lon = newFile.lon;
+      name = newFile.name;
+      date = newFile.date;
     }
     this.setState({
       selectedFile: newFile,
+      name: name,
       lat: lat,
-      lon: lon
+      lon: lon,
+      date: date
     });
   },
 
   componentDidMount: function () {
     FileStore.on('change', this.getState);
     FileStore.on('files-changed', this.getState);
-    FileStore.on('change', this.changeLocation);
   },
 
   componentWillUnmount: function () {
     FileStore.removeListener('change', this.getState);
     FileStore.removeListener('files-changed', this.getState);
-    FileStore.removeListener('change', this.changeLocation);
   },
 
   save: function () {
@@ -55,6 +59,17 @@ var FileListEdit = React.createClass({
         date: React.findDOMNode(this.refs.inputDate).value
       }
     });
+  },
+
+  cancel: function () {
+    this.setState(this.getInitialState(), () => {
+      this.setState({
+        name: this.state.selectedFile.name,
+        date: this.state.selectedFile.date,
+        lat: this.state.selectedFile.lat,
+        lon: this.state.selectedFile.lon
+      })
+    })
   },
 
   delete: function () {
@@ -72,12 +87,21 @@ var FileListEdit = React.createClass({
     });
   },
 
-  changeLocation: function () {
-    /*const location = FileStore.getLocation();
-    if (React.findDOMNode(this.refs.inputLat) != null) {
-      React.findDOMNode(this.refs.inputLat).value = location.lat;
-      React.findDOMNode(this.refs.inputLon).value = location.lon;
-    }*/
+  handleChange: function (event) {
+    switch (event.target.id) {
+      case "inputName":
+        this.setState({name: event.target.value});
+        break;
+      case "inputLat":
+        this.setState({lat: event.target.value});
+        break;
+      case "inputLon":
+        this.setState({lon: event.target.value});
+        break;
+      case "inputDate":
+        this.setState({date: event.target.value});
+        break;
+    }
   },
 
   render: function () {
@@ -95,7 +119,7 @@ var FileListEdit = React.createClass({
           <div id="fileListEdit">
             <div className="input-group editInputGroup">
               <span className="input-group-addon editAddon">File</span>
-              <input id="inputName" type="text" className="form-control" placeholder="File name" value={this.state.selectedFile.name}
+              <input id="inputName" type="text" className="form-control" placeholder="File name" value={this.state.name}
                      ref="inputName" onChange={this.handleChange} />
             </div>
             <div id="latLonRow">
@@ -120,11 +144,12 @@ var FileListEdit = React.createClass({
 
             <div className="input-group editInputGroup">
               <span className="input-group-addon editAddon">Date</span>
-              <input id="inputDate" type="text" className="form-control" placeholder="Date" value={this.state.selectedFile.date}
-                     ref="inputDate" onChange={this.handleChange} />
+              <input id="inputDate" type="datetime" className="form-control" placeholder="Date"
+                     value={this.state.date} ref="inputDate" onChange={this.handleChange} />
             </div>
             <div className="editButtons">
               <button type="button" className="btn btn-primary" onClick={this.save}>Save</button>
+              <button type="button" className="btn" onClick={this.cancel}>Cancel</button>
               <button type="button" className="btn btn-danger" onClick={this.delete}>Delete</button>
             </div>
           </div>
