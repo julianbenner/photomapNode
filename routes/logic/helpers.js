@@ -11,13 +11,15 @@ module.exports = {
     const thisConstraint = selected ? ' OR path = ' + connection.escape(folderFilter.name) : '';
     let childrenConstraint = '';
     if (folderFilter.allSubfoldersSelected !== 'true' && folderFilter.allSubfoldersSelected !== true) {
-      if (typeof folderFilter.content !== 'undefined')
+      if (typeof folderFilter.content !== 'undefined') {
+        const that = this;
         childrenConstraint = folderFilter.content.map(function (child) {
           if (typeof child !== 'undefined' && child !== '')
-            return this.folderFilterToConstraint(child);
+            return that.folderFilterToConstraint(child);
           else
             return '';
         }).join('');
+      }
     } else {
       childrenConstraint = ' OR path LIKE ' + connection.escape(folderFilter.name + '%');
     }
