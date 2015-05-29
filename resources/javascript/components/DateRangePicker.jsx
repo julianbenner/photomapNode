@@ -30,7 +30,13 @@ var DateRangePicker = React.createClass({
         }).appendTo('head');
       });
     }
-    $(React.findDOMNode(this.refs.button)).tooltip();
+  },
+
+  getInitialState: function () {
+    return {
+      from: new Date(0),
+      to: Date.now()
+    }
   },
 
   handleFromChange: function(e) {
@@ -46,11 +52,13 @@ var DateRangePicker = React.createClass({
   },
 
   applyDateFilter: function() {
-    Dispatcher.dispatch({
-      eventName: 'change-date',
-      startDate: this.state.from,
-      endDate: this.state.to
-    });
+    if (this.state.from !== null && this.state.to !== null)
+      Dispatcher.dispatch({
+        eventName: 'change-date',
+        startDate: this.state.from,
+        endDate: this.state.to
+      });
+    this.toggleOpen();
   },
 
   resetDateFilter: function() {

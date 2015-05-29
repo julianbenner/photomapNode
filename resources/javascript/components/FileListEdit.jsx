@@ -126,13 +126,13 @@ var FileListEdit = React.createClass({
               <div id="latLonRowInput">
                 <div className="input-group latLonRowInputInput">
                   <span className="input-group-addon editAddon">Lat</span>
-                  <input id="inputLat" type="text" className="form-control" placeholder="Latitude" value={this.state.lat}
-                         ref="inputLat" onChange={this.handleChange} />
+                  <input id="inputLat" type="number" min="-90" max="90" step="0.00001" className="form-control"
+                         placeholder="Latitude" value={this.state.lat} ref="inputLat" onChange={this.handleChange} />
                 </div>
                 <div className="input-group latLonRowInputInput">
                   <span className="input-group-addon editAddon">Lon</span>
-                  <input id="inputLon" type="text" className="form-control" placeholder="Longitude" value={this.state.lon}
-                         ref="inputLon" onChange={this.handleChange} />
+                  <input id="inputLon" type="number" min="-180" max="180" step="0.00001" className="form-control"
+                         placeholder="Longitude" value={this.state.lon} ref="inputLon" onChange={this.handleChange} />
                 </div>
               </div>
               <div id="latLonRowButton" className="input-group-addon" onClick={this.toggleLocationChooser}>

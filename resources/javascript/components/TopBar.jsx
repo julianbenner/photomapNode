@@ -25,19 +25,10 @@ var TopBar = React.createClass({
 
   _onChange: function () {
     this.setState(getApplicationState());
-    this.enableTooltips();
   },
 
   componentDidMount: function () {
     ApplicationStore.on('change', this._onChange);
-    this.enableTooltips();
-  },
-
-  enableTooltips: function () {
-    $(".tooltip").hide();
-    $(React.findDOMNode(this.refs.loginButton)).tooltip();
-    $(React.findDOMNode(this.refs.adminButton)).tooltip();
-    $(React.findDOMNode(this.refs.logoutButton)).tooltip();
   },
 
   componentWillUnmount: function () {
@@ -112,11 +103,15 @@ var TopBar = React.createClass({
 
     return (
       <div>
-        <div className="container">
-          <a className="btn btn-navbar searchHolder">
-            <div><span className="glyphicon glyphicon-menu-hamburger btn-navbar-toggle navbar-hamburger" data-toggle="collapse" data-target="#collapsable" /> <SearchWidget token={this.props.token} key="searchWidget"/></div>
-          </a>
-          <div className="navbar-header collapse" id="collapsable">
+        <div className="container containerTopbar">
+          <div className="btn btn-navbar searchHolder">
+            <a className="btn-navbar-toggle navbar-hamburger">
+              <span className="glyphicon glyphicon-menu-hamburger" data-toggle="collapse" data-target="#collapsable" />
+            </a>
+            <SearchWidget token={this.props.token} key="searchWidget"/>
+          </div>
+
+          <div className="navbar-header collapse buttonsTopbar" id="collapsable">
             <ul className="navbar-nav nav">
               {buttons}
             </ul>

@@ -1,7 +1,7 @@
 @import "_variables";
 
 $icon-font-path: "bootstrap-sass/assets/fonts/bootstrap/";
-@import "bootstrap-sprockets";
+//@import "bootstrap-sprockets";
 @import "bootstrap";
 
 .daterangepicker {
@@ -234,6 +234,7 @@ body {
 
 .searchWidget {
   position: relative;
+  margin-left: 43px;
 }
 
 .searchWidgetLc {
@@ -269,11 +270,26 @@ body {
   display: block;
 }
 
+.containerTopbar {
+  @media (max-width: 768px) {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+.buttonsTopbar {
+  @media (max-width: 768px) {
+    padding-left: 1em;
+    padding-right: 1em;
+  }
+}
+
 .navbar-hamburger {
   @media (max-width: 768px) {
     float: left;
     line-height: 43px;
-    padding: 0 20px 0 0;
+    width: 43px;
+    padding: 0;
   }
 }
 
@@ -305,6 +321,16 @@ body {
   padding-top: 10px;
   padding-bottom: 10px;
   line-height: 21px;
+}
+
+.navbar-nav > li {
+  &:hover, &:focus {
+    background: none;
+  }
+  @media (max-width: 768px) {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
 }
 
 .navbar-default .navbar-nav > li > div {
@@ -415,11 +441,17 @@ body {
 }
 
 .dropdown-buttons {
+  margin-top: 0.5em;
   white-space: nowrap;
 }
 
 .dateInput {
   width: 100%;
+  padding-left: 1em;
+}
+
+::-webkit-inner-spin-button {
+  display: none;
 }
 
 .folder {
@@ -429,13 +461,13 @@ body {
 
 .folderName {
   display: inline-block;
-  height: 2.5em;
-  line-height: 2.5em;
+  height: 2.75em;
+  line-height: 2.75em;
   width: 100%;
   white-space: nowrap;
 
   &:hover, &:focus {
-    background-color: rgba($brand-primary, 0.1);
+    background-color: rgba($brand-primary, 0.05);
   }
 
   a {
@@ -447,7 +479,7 @@ body {
     text-decoration: none;
 
     &:hover {
-      background-color: rgba($brand-primary, 0.15);
+      background-color: rgba($brand-primary, 0.07);
     }
   }
 

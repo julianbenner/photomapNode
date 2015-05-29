@@ -42,6 +42,7 @@ var FolderWidget = React.createClass({
       eventName: 'filter-by-folder',
       folders: this.state.folderStructure.toJSON()
     });
+    this.toggleList();
   },
 
   render: function () {
