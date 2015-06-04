@@ -294,8 +294,10 @@ module.exports = function admin() {
     if (userIsAdmin(req)) {
       if (!Array.isArray(req.files.fileInput))
         req.files.fileInput = [req.files.fileInput];
+      const folderHeader = req.get('folder');
+      const destination = typeof folderHeader === 'undefined' ? '' : folderHeader === '/' ? '' : folderHeader;
       const uploadImagePromiseArray = req.files.fileInput.map(function (file) {
-        return uploadImagePromise(file, '');
+        return uploadImagePromise(file, destination);
       });
       Promise.all(uploadImagePromiseArray).then(function onResolve(results) {
         console.log(results);

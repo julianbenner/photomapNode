@@ -6,20 +6,33 @@ var Dispatcher = require('./Dispatcher.js');
 var Dropzone = require('./Dropzone');
 var classNames = require('classnames');
 
+function getFolderStructure() {
+  return {
+    folderStructure: FileStore.getFolderStructure()
+  };
+}
+
 var FileUploadForm = React.createClass({
   getInitialState: function () {
     return {
       progress: 0,
       error: false,
       finished: false,
-      message: ''
+      message: '',
+      folderStructure: FileStore.getFolderStructure()
     };
   },
 
   componentDidMount: function () {
+    FileStore.on('change', this.updateFolderList);
   },
 
   componentWillUnmount: function () {
+    FileStore.on('change', this.updateFolderList);
+  },
+
+  updateFolderList: function () {
+    this.setState(getFolderStructure());
   },
 
   updateProgress: function (e) {
@@ -52,6 +65,10 @@ var FileUploadForm = React.createClass({
     }
   },
 
+  herp: function () {
+    FileStore.getSelectedFolder();
+  },
+
   onDrop: function (files) {
     const formData = new FormData();
     files.map(function(file) { formData.append("fileInput", file); });
@@ -63,6 +80,7 @@ var FileUploadForm = React.createClass({
     xhr.addEventListener("error", this.transferFailed, false);
     xhr.open("POST", "/admin/upload");
     xhr.setRequestHeader("token", ApplicationStore.getLoginToken());
+    xhr.setRequestHeader("folder", FileStore.getSelectedFolder().name);
     xhr.send(formData);
   },
 
@@ -75,6 +93,7 @@ var FileUploadForm = React.createClass({
       "progress-bar-success": this.state.finished && !this.state.error,
       "progress-bar-danger": this.state.error
     });
+    const content = this.state.folderStructure.toJSX();
     return (
       <div>
         <Dropzone onDrop={this.onDrop} width="100%">
@@ -84,6 +103,8 @@ var FileUploadForm = React.createClass({
         <div className="progress">
           <div className={progressClasses} role="progressbar" style={progressStyle} />
         </div>
+<button className="btn" value="herp" onClick={this.herp} />
+        {content}
       </div>
     );
   }

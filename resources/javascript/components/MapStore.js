@@ -26,7 +26,8 @@ var _lon;
 var dateMin = null;
 var dateMax = null;
 
-var folderStructure = new Folder('/');
+// for filtering
+var folderStructure = new Folder('/', false);
 var folderFilter = {};
 var folderFilteringEnabled = false;
 

@@ -2,12 +2,14 @@ var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 
 module.exports = class Folder {
-  constructor(name) {
+  constructor(name, radio = false, parent = null) {
     this.name = name;
     this.explored = false;
     this.unfolded = false;
     this.selected = false;
     this.content = [];
+    this.radio = radio;
+    this.parent = parent;
     this.toggleFold = this.toggleFold.bind(this);
     this.toggleCheck = this.toggleCheck.bind(this);
     this.setSelected = this.setSelected.bind(this);
@@ -36,7 +38,7 @@ module.exports = class Folder {
     }).done(data => {
       this.content = data.map(subfolder => {
         if (subfolder !== null) {
-          const subfolderObject = new Folder(((this.name === '/') ? '' : this.name + '/') + subfolder.name);
+          const subfolderObject = new Folder(((this.name === '/') ? '' : this.name + '/') + subfolder.name, this.radio, this);
           if (this.selected) subfolderObject.selected = true;
           return subfolderObject;
         }
@@ -46,13 +48,39 @@ module.exports = class Folder {
     });
   }
 
+  passDeselectMessageToDescendant() {
+    if (this.parent === null) {
+      // assume we are descendant
+      this.deselectEverything();
+    } else {
+      if (typeof this.parent !== 'undefined') {
+        this.parent.passDeselectMessageToDescendant();
+      }
+    }
+  }
+
+  deselectEverything() {
+    this.selected = false;
+    this.content.forEach(item => {
+      if (typeof item !== 'undefined') {
+        item.deselectEverything();
+      }
+    })
+  }
+
   setSelected(selected) {
-    this.selected = selected;
-    this.content.forEach(child => {
-      if (typeof child !== 'undefined')
-        if (typeof child.setSelected !== 'undefined')
-          child.setSelected(selected);
-    });
+    // if radio button deselect everything
+    if (this.radio === true) {
+      this.passDeselectMessageToDescendant();
+      this.selected = selected;
+    } else {
+      this.selected = selected;
+      this.content.forEach(child => {
+        if (typeof child !== 'undefined')
+          if (typeof child.setSelected !== 'undefined')
+            child.setSelected(selected);
+      });
+    }
   }
 
   toggleCheck() {
@@ -97,6 +125,15 @@ module.exports = class Folder {
     }
     const folderKey = this.name; // TODO
     const foldElement = this.unfolded ? '-' : '+';
-    return <li key={folderKey}><span className="folderName" onClick={this.toggleCheck}><a onClick={this.toggleFold}>{foldElement}</a><input readOnly type="checkbox" checked={this.selected} /><label>{name[name.length - 1]}</label></span><ul className="folder">{subfolders}</ul></li>;
+    const type = this.radio ? 'radio' : 'checkbox';
+    return (
+    <li key={folderKey}>
+      <span className="folderName" onClick={this.toggleCheck}>
+        <a onClick={this.toggleFold}>{foldElement}</a>
+        <input readOnly type={type} checked={this.selected} />
+        <label>{name[name.length - 1]}</label>
+      </span>
+      <ul className="folder">{subfolders}</ul>
+    </li>);
   }
 };

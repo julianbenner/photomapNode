@@ -57,6 +57,10 @@ var GalleryImage = React.createClass({
       || document.documentElement.clientHeight
       || document.body.clientHeight;
 
+    const selectedImage = OverlayStore.getSelectedImage();
+
+    const imageId = typeof selectedImage === 'undefined' ? 0 : selectedImage.id;
+
     const size = () => {
       if (width < 600 && height < 600) {
         return 'small';
@@ -67,7 +71,7 @@ var GalleryImage = React.createClass({
       }
     };
 
-    const path = '/' + config.imagePath + '/' + OverlayStore.getSelectedImage().id + '/' + size();
+    const path = '/' + config.imagePath + '/' + imageId + '/' + size();
     return (
       <div id="galleryImageContainer">
         <img src={path} id="galleryImage"/>

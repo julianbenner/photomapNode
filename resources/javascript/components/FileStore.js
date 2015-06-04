@@ -2,6 +2,7 @@ var ApplicationStore = require('./ApplicationStore');
 var Dispatcher = require('./Dispatcher.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
+var Folder = require('./Folder');
 
 var pageSize = 10;
 
@@ -11,6 +12,9 @@ var _fileIndex = 0;
 var _location = {lat: null, lon: null};
 var _searchResultViewport = {lat: null, lon: null};
 var CHANGE_EVENT = 'change';
+
+// for uploading
+var folderStructure = new Folder('/', true);
 
 var searchResults = [];
 function geosearch(query, token) {
@@ -104,6 +108,35 @@ var FileStore = assign({}, EventEmitter.prototype, {
   doFullScan: function () {
     $.getJSON('/admin/fullscan', function () {
     });
+  },
+
+  getFolderStructure: function () {
+    return folderStructure;
+  },
+
+  getSelectedFolder: function () {
+    const folderContent = folderStructure.toJSON();
+
+    const getFoldedSelectedFolder = function (folder, rec) {
+      if (folder.selected) {
+        return folder;
+      } else {
+        let selectedFolder = null;
+        folder.content.forEach(item => {
+          if (typeof item !== 'undefined') {
+            const recFolder = rec(item, rec);
+            if (typeof recFolder !== 'undefined') {
+              selectedFolder = recFolder;
+            }
+          }
+        });
+        if (selectedFolder !== null) {
+          return selectedFolder;
+        }
+      }
+    };
+
+    return getFoldedSelectedFolder(folderContent, getFoldedSelectedFolder);
   }
 });
 
@@ -210,6 +243,9 @@ Dispatcher.register(function (payload) {
         lon: payload.lon
       };
       FileStore.emit('search');
+      break;
+    case 'folder-structure-changed':
+      FileStore.emit(CHANGE_EVENT);
       break;
   }
 
