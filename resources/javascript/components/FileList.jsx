@@ -49,6 +49,13 @@ var FileList = React.createClass({
     })
   },
 
+  goToPage: function (page) {
+    Dispatcher.dispatch({
+      eventName: 'files-page',
+      page: page
+    })
+  },
+
   triggerFullScan: function () {
     Dispatcher.dispatch({
       eventName: 'files-full-scan'
@@ -88,6 +95,55 @@ var FileList = React.createClass({
       'disabled': this.state.page === this.state.amountOfPages
     });
 
+    const pagesBefore = [];
+    const pagesAfter = [];
+
+    const differenceToFirstPage = this.state.page - 1;
+    const differenceToLastPage = this.state.amountOfPages - this.state.page;
+
+    const generatePageButton = function(page) {
+      return (<li>
+        <a href="#" onClick={this.goToPage.bind(this, page)}>
+          <span aria-hidden="true">{page}</span>
+        </a>
+      </li>);
+    };
+
+    if (differenceToFirstPage === 0) {
+      // we are on page 1
+    } else if (differenceToFirstPage <= 3) {
+      // we are on pages 2, 3 or 4
+      for (let i = 1; i <= differenceToFirstPage; i++) {
+        pagesBefore.push(generatePageButton(i));
+      }
+    } else {
+      // we are on pages 5 or higher
+      pagesBefore.push(generatePageButton(1));
+      pagesBefore.push(<li>
+        <span aria-hidden="true">&hellip;</span>
+      </li>);
+      for (let i = this.state.page - 3; i < this.state.page; i++) {
+        pagesBefore.push(generatePageButton(i));
+      }
+    }
+
+    if (differenceToLastPage === 0) {
+      // we are on last page
+    } else if (differenceToLastPage <= 3) {
+      for (let i = this.state.page + 1; i <= this.state.amountOfPages; i++) {
+        pagesAfter.push(generatePageButton(i));
+      }
+    } else {
+      // we are on pages 5 or higher
+      for (let i = this.state.page + 1; i < this.state.page + 3; i++) {
+        pagesAfter.push(generatePageButton(i));
+      }
+      pagesAfter.push(<li>
+        <span aria-hidden="true">&hellip;</span>
+      </li>);
+      pagesAfter.push(generatePageButton(this.state.amountOfPages));
+    }
+
     return (
       <div id="fileListContainer">
         <div className="col-xs-6">
@@ -103,7 +159,9 @@ var FileList = React.createClass({
                       <span aria-hidden="true">&larr;</span>
                     </a>
                   </li>
+                  {pagesBefore}
                   <li><span>{this.state.page + '/' + this.state.amountOfPages}</span></li>
+                  {pagesAfter}
                   <li className={nextClass}>
                     <a href="#" onClick={this.nextPage}>
                       <span aria-hidden="true">&rarr;</span>

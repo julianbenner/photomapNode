@@ -230,6 +230,10 @@ Dispatcher.register(function (payload) {
     case 'files-full-scan':
       FileStore.doFullScan();
       break;
+    case 'files-page':
+      _page = payload.page;
+      FileStore.emit(CHANGE_EVENT);
+      break;
     case 'files-prev-page':
       if (_page > 1) {
         _page--;
