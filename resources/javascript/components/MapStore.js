@@ -31,10 +31,8 @@ var folderStructure = new Folder('/', false);
 var folderFilter = {};
 var folderFilteringEnabled = false;
 
-var token = config.token;
-
 function getGeosearchUrl(query) {
-  return 'https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token;
+  return 'https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + config.token;
 }
 
 function searchBoundariesToZoom(bbox) {
@@ -77,20 +75,26 @@ function loadMarker(lat, lon) {
   var lonMin = (lon * rasterSize())-180;
   var lonMax = (((lon + 1) * rasterSize()))-180;
 
-  $.getJSON("get_image_count", {
-    latMin: latMin,
-    latMax: latMax,
-    lonMin: lonMin,
-    lonMax: lonMax,
-    dateMin: dateMin,
-    dateMax: dateMax,
-    folderFilter: JSON.stringify(folderFilter),
-    folderFilteringEnabled: folderFilteringEnabled
-  }).done(function (data) {
-    if (typeof markers[lat] !== 'undefined') { // make sure Marker row is initialized
-      if (data.SUCCESS === true) { // JSON should carry SUCCESS parameter
-        markers[lat][lon] = data; // puts the avg lat/lon and images count in the array
-        MapStore.emit('refresh-markers'); // refresh-markers assumes the connection is working and will remove warning symbols
+
+  $.ajax({
+    url: '/get_image_count',
+    type: 'POST',
+    data: {
+      latMin: latMin,
+      latMax: latMax,
+      lonMin: lonMin,
+      lonMax: lonMax,
+      dateMin: dateMin,
+      dateMax: dateMax,
+      folderFilter: folderFilter,
+      folderFilteringEnabled: folderFilteringEnabled
+    },
+    success: function (data) {
+      if (typeof markers[lat] !== 'undefined') { // make sure Marker row is initialized
+        if (data.SUCCESS === true) { // JSON should carry SUCCESS parameter
+          markers[lat][lon] = data; // puts the avg lat/lon and images count in the array
+          MapStore.emit('refresh-markers'); // refresh-markers assumes the connection is working and will remove warning symbols
+        }
       }
     }
   });
@@ -124,7 +128,25 @@ function clearMarkers() {
 
 var MapStore = assign({}, EventEmitter.prototype, {
   loadGallery: function (lat, lon, callback) {
-    $.getJSON("get_image_list/", {
+    $.ajax({
+      url: '/get_image_list',
+      type: 'POST',
+      data: {
+        latMin: (lat * MapStore.getRasterSize())-90,
+        latMax: (((lat + 1) * MapStore.getRasterSize()))-90,
+        lonMin: (lon * MapStore.getRasterSize())-180,
+        lonMax: (((lon + 1) * MapStore.getRasterSize()))-180,
+        dateMin: MapStore.getDateMin(),
+        dateMax: MapStore.getDateMax(),
+        folderFilter: MapStore.getFolderFilter(),
+        folderFilteringEnabled: MapStore.getFolderFilteringEnabled()
+      },
+      success: function (data) {
+        callback(data);
+      }
+    });
+
+    /*$.getJSON("get_image_list/", {
       latMin: (lat * MapStore.getRasterSize())-90,
       latMax: (((lat + 1) * MapStore.getRasterSize()))-90,
       lonMin: (lon * MapStore.getRasterSize())-180,
@@ -135,7 +157,7 @@ var MapStore = assign({}, EventEmitter.prototype, {
       folderFilteringEnabled: MapStore.getFolderFilteringEnabled()
     }).done(function (data) {
       callback(data);
-    });
+    });*/
   },
 
   getRasterSize: function () {

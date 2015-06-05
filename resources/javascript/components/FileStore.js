@@ -3,6 +3,7 @@ var Dispatcher = require('./Dispatcher.js');
 var assign = require('object-assign');
 var EventEmitter = require('events').EventEmitter;
 var Folder = require('./Folder');
+var config = require('../config_client');
 
 var pageSize = 10;
 
@@ -17,25 +18,38 @@ var CHANGE_EVENT = 'change';
 var folderStructure = new Folder('/', true);
 
 var searchResults = [];
-function geosearch(query, token) {
-  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+
+function getGeosearchUrl(query) {
+  return 'https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + config.token;
+}
+
+function searchBoundariesToZoom(bbox) {
+  const latSize = bbox[3] - bbox[1];
+  const lonSize = bbox[2] - bbox[0];
+  const widestExtent = Math.max(latSize, lonSize);
+  return 10 - Math.log2(widestExtent);
+}
+
+function geosearch(query) {
+  $.getJSON(getGeosearchUrl(query)).done(function (data) {
     if (data.features.length > 0) {
       var result = data.features[0];
       _searchResultViewport.lat = result.center[1];
       _searchResultViewport.lon = result.center[0];
-      console.log('result ' + location._lat + ' ' + location._lon);
+      zoom = searchBoundariesToZoom(result.bbox);
       FileStore.emit('search');
     }
   });
 }
 
-function geosearch1(query, token) {
-  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+function geosearch1(query) {
+  $.getJSON(getGeosearchUrl(query)).done(function (data) {
     searchResults = data.features.map(function(result) {
       return {
         name: result["place_name"],
         lat: result["center"][1],
-        lon: result["center"][0]
+        lon: result["center"][0],
+        zoom: searchBoundariesToZoom(result.bbox)
       };
     });
     FileStore.emit(CHANGE_EVENT);
@@ -143,15 +157,22 @@ var FileStore = assign({}, EventEmitter.prototype, {
 Dispatcher.register(function (payload) {
   switch (payload.eventName) {
     case 'load-files':
-      $.getJSON("/admin/list?page=" + 1 + "&amount=all&token=" + ApplicationStore.getLoginToken(), function (data) {
-        _files = data;
-        if (typeof payload.fileIndex !== 'undefined') {
-          _fileIndex = payload.fileIndex;
-          const currentlySelectedId = FileStore.getItemIdByDbId(_fileIndex);
-          if (typeof _files[currentlySelectedId] !== 'undefined')
-            _files[currentlySelectedId].selected = true;
+      $.ajax({
+        url: '/admin/list?page=1&amount=all',
+        type: 'GET',
+        headers: {
+          token: ApplicationStore.getLoginToken()
+        },
+        success: function (data) {
+          _files = data;
+          if (typeof payload.fileIndex !== 'undefined') {
+            _fileIndex = payload.fileIndex;
+            const currentlySelectedId = FileStore.getItemIdByDbId(_fileIndex);
+            if (typeof _files[currentlySelectedId] !== 'undefined')
+              _files[currentlySelectedId].selected = true;
+          }
+          FileStore.emit(CHANGE_EVENT);
         }
-        FileStore.emit(CHANGE_EVENT);
       });
       break;
     case 'edit-file':
@@ -232,10 +253,10 @@ Dispatcher.register(function (payload) {
       FileStore.emit(CHANGE_EVENT);
       break;
     case 'geosearch_lc':
-      geosearch(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      geosearch(payload.query);
       break;
     case 'geosearch1_lc':
-      geosearch1(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      geosearch1(payload.query);
       break;
     case 'move-map_lc':
       _searchResultViewport = {

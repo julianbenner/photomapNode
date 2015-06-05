@@ -16,7 +16,7 @@ var is_production = function () {
   }
 };
 
-function get_image_count(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, folderFilter, folderFilteringEnabled, callback) {
+function getImageCount(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, folderFilter, folderFilteringEnabled, callback) {
   var connection = require('../routes/Database').Get();
   var constraints = 'lat BETWEEN ' + connection.escape(lat_min) + ' AND ' + connection.escape(lat_max) +
     ' AND lon BETWEEN ' + connection.escape(lon_min) + ' AND ' + connection.escape(lon_max);
@@ -49,20 +49,20 @@ function get_image_count(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, f
   });
 }
 
-router.get('/', function (req, res, next) {
-  const latMin = req.query.latMin || 0;
-  const latMax = req.query.latMax || 0;
-  const lonMin = req.query.lonMin || 0;
-  const lonMax = req.query.lonMax || 0;
-  const dateMin = req.query.dateMin || undefined;
-  const dateMax = req.query.dateMax || undefined;
+router.post('/', function (req, res, next) {
+  const latMin = req.body.latMin || 0;
+  const latMax = req.body.latMax || 0;
+  const lonMin = req.body.lonMin || 0;
+  const lonMax = req.body.lonMax || 0;
+  const dateMin = req.body.dateMin || undefined;
+  const dateMax = req.body.dateMax || undefined;
   let folderFilter;
-  if (typeof req.query.folderFilter !== 'undefined')
-    folderFilter = JSON.parse(req.query.folderFilter);
+  if (typeof req.body.folderFilter !== 'undefined')
+    folderFilter = req.body.folderFilter;
   else
     folderFilter = {};
-  const folderFilteringEnabled = req.query.folderFilteringEnabled || false;
-  get_image_count(latMin, latMax, lonMin, lonMax, dateMin, dateMax, folderFilter, folderFilteringEnabled, function (data) {
+  const folderFilteringEnabled = req.body.folderFilteringEnabled || false;
+  getImageCount(latMin, latMax, lonMin, lonMax, dateMin, dateMax, folderFilter, folderFilteringEnabled, function (data) {
     res.json(data);
   });
 });

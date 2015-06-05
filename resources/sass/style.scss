@@ -454,6 +454,11 @@ body {
   display: none;
 }
 
+::-webkit-calendar-picker-indicator {
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
 .folder {
   list-style: none;
   padding-left: 1em;
