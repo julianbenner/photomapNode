@@ -84,9 +84,7 @@ var TopBar = React.createClass({
     const buttons = [];
 
     buttons.push(<FolderWidget key="folderWidget"/>);
-    buttons.push(<DateRangePicker key="dateRangePicker" onApply={this.changeDate} onCancel={this.cancelDate}>
-      <span className="glyphicon glyphicon-calendar" aria-hidden="true"></span>
-    </DateRangePicker>);
+    buttons.push(<DateRangePicker key="dateRangePicker" onApply={this.changeDate} onCancel={this.cancelDate} />);
 
     if (this.state.loggedIn !== true) {
       buttons.push(<li key="login" ref="loginButton" title="Log in"><a

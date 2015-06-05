@@ -2,6 +2,7 @@
 var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
+var classNames = require('classnames');
 
 var DateRangePicker = React.createClass({
   toggleOpen: function() {
@@ -9,6 +10,7 @@ var DateRangePicker = React.createClass({
   },
 
   componentDidMount: function() {
+    MapStore.on('change', this._onChange);
     // compatibiliy with legacy browsers such as Firefox
     if ( $(React.findDOMNode(this.refs.dateInput)).prop('type') != 'date' ) {
       jQuery.getScript("./javascripts/jquery-ui.min.js", function() {
@@ -37,6 +39,16 @@ var DateRangePicker = React.createClass({
       from: new Date(0),
       to: Date.now()
     }
+  },
+
+  componentWillUnmount: function () {
+    MapStore.removeListener('change', this._onChange);
+  },
+
+  _onChange: function () {
+    this.setState({
+      dateFilteringEnabled: MapStore.getDateFilteringEnabled()
+    });
   },
 
   handleFromChange: function(e) {
@@ -71,8 +83,13 @@ var DateRangePicker = React.createClass({
   },
 
   render: function() {
+    const style = classNames({
+      'glyphicon': true,
+      'glyphicon-calendar': true,
+      'filterIsActive': this.state.dateFilteringEnabled
+    });
     return (
-      <li ref="button" title="Filter by date"><a className="dropdown-toggle" onClick={this.toggleOpen}><span className="glyphicon glyphicon-calendar" aria-hidden="true"></span><span className="navbar-button-text">Date</span></a>
+      <li ref="button" title="Filter by date"><a className="dropdown-toggle" onClick={this.toggleOpen}><span className={style} aria-hidden="true"></span><span className="navbar-button-text">Date</span></a>
         <ul id="dateDropdown" className="dropdown-menu">
           From <input type="date" id="dateFrom" name="dateFrom" className="dateInput" onChange={this.handleFromChange} ref="dateInput" /><br />
           to <input type="date" id="dateTo" name="dateFrom" className="dateInput" onChange={this.handleToChange} /><br />

@@ -3,32 +3,34 @@ var React = require('react/addons');
 var Dispatcher = require('./Dispatcher.js');
 var MapStore = require('./MapStore.js');
 var Folder = require('./Folder');
+var classNames = require('classnames');
 
-function getFolderStructure() {
+function getState() {
   return {
-    folderStructure: MapStore.getFolderStructure()
+    folderStructure: MapStore.getFolderStructure(),
+    folderFilteringEnabled: MapStore.getFolderFilteringEnabled()
   };
 }
 
 var FolderWidget = React.createClass({
   getInitialState: function () {
-    return getFolderStructure();
+    return getState();
   },
 
   componentDidMount: function () {
-    MapStore.on('change', this.updateFolderList);
+    MapStore.on('change', this._onChange);
   },
 
   componentWillUnmount: function () {
-    MapStore.on('change', this.updateFolderList);
+    MapStore.on('change', this._onChange);
   },
 
   toggleList: function (event) {
     $("#folderDropdown").slideToggle();
   },
 
-  updateFolderList: function () {
-    this.setState(getFolderStructure());
+  _onChange: function () {
+    this.setState(getState());
   },
 
   deselectEverything: function () {
@@ -58,8 +60,13 @@ var FolderWidget = React.createClass({
 
   render: function () {
     const content = this.state.folderStructure.toJSX();
+    const style = classNames({
+      'glyphicon': true,
+      'glyphicon-folder-open': true,
+      'filterIsActive': this.state.folderFilteringEnabled
+    });
     return (
-      <li ref="button" title="Filter by folder"><a className="dropdown-toggle" onClick={this.toggleList}><span className="glyphicon glyphicon-folder-open" aria-hidden="true"></span><span className="navbar-button-text">Folders</span></a>
+      <li ref="button" title="Filter by folder"><a className="dropdown-toggle" onClick={this.toggleList}><span className={style} aria-hidden="true"></span><span className="navbar-button-text">Folders</span></a>
         <ul id="folderDropdown" className="dropdown-menu folder">
           {content}
           <div className="dropdown-buttons">

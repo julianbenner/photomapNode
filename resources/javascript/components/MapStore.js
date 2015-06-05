@@ -186,6 +186,10 @@ var MapStore = assign({}, EventEmitter.prototype, {
     return folderFilteringEnabled;
   },
 
+  getDateFilteringEnabled: function () {
+    return dateMin != null || dateMax != null;
+  },
+
   getMarkers: function () {
     return markers;
   },
@@ -239,6 +243,7 @@ Dispatcher.register(function (payload) {
       folderFilter = payload.folders;
       folderFilteringEnabled = true;
       loadMarkers();
+      MapStore.emit(CHANGE_EVENT);
       break;
     case 'reset-folder-filter':
       clearMarkers();
@@ -253,6 +258,7 @@ Dispatcher.register(function (payload) {
       dateMin = payload.startDate === null ? null : payload.startDate;
       dateMax = payload.endDate === null ? null : payload.endDate;
       loadMarkers();
+      MapStore.emit(CHANGE_EVENT);
       break;
     case 'click-map':
       MapStore.emit('click-map');
