@@ -121,8 +121,10 @@ var MapView = React.createClass({
       });
     });*/
 
+    // circle marker needed for Firefox compatibility
     return (
       <div id='map'>
+        <svg width="0" height="0"><clipPath id="circleMarker"><circle cy="17.5" cx="17.5" r="16"></circle></clipPath></svg>
         {marker}
       </div>
     );
