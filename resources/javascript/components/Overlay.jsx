@@ -164,13 +164,23 @@ var Overlay = React.createClass({
                         onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
     }
 
-    const titleContent = this.state.mode === 'image'
-      ?(<div key="overlayCenter" className="modal-control-btn-center">
-      <span className="imageNavButton imageNavButtonLeft" onClick={this.triggerPrevImage}><span className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></span>
-      <span className="hiddenOnMobile">{this.state.title}</span>
-      <span className="imageNavButton imageNavButtonRight" onClick={this.triggerNextImage}><span className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></span>
-    </div>)
-      :(<div key="overlayCenter" className="modal-control-btn-center"><span id="overlayTitle">{this.state.title}</span></div>);
+    let titleContent;
+    const leftArrow = (this.state.amountOfImages > 1) ?
+      <span className="imageNavButton imageNavButtonLeft" onClick={this.triggerPrevImage}><span
+        className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></span> : '';
+    const rightArrow = (this.state.amountOfImages > 1) ?
+      <span className="imageNavButton imageNavButtonRight" onClick={this.triggerNextImage}><span
+        className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></span> : '';
+    if (this.state.mode === 'image') {
+      titleContent = (<div key="overlayCenter" className="modal-control-btn-center">
+        {leftArrow}
+        <span className="hiddenOnMobile">{this.state.title}</span>
+        {rightArrow}
+      </div>)
+    } else {
+      titleContent = (<div key="overlayCenter" className="modal-control-btn-center"><span id="overlayTitle">{this.state.title}</span>
+      </div>);
+    }
 
     buttons.push(titleContent);
 

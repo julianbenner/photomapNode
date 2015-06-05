@@ -104,6 +104,7 @@ var TopBar = React.createClass({
     return (
       <div>
         <div className="container containerTopbar">
+          PhotoMap
           <div className="btn btn-navbar searchHolder">
             <a className="btn-navbar-toggle navbar-hamburger">
               <span className="glyphicon glyphicon-menu-hamburger" data-toggle="collapse" data-target="#collapsable" />
