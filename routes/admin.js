@@ -243,6 +243,17 @@ function getImageMetadataPromise(folder, image) {
   });
 }
 
+function compareFileToDb(folder, item) {
+  getImageMetadataPromise(config.imagePath + '/' + folder, item).then(function onResolve(result) {
+    checkIfFileInDb(folder, item, function (answer) {
+      if (typeof answer.exists !== 'undefined' && answer.exists == false)
+        addImageToDb(folder, item, result.lat, result.lon, result.date);
+    });
+  }).catch(function(err) {
+    console.log(err);
+  });
+}
+
 function compareFsToDb(folder, callback) {
   fs.readdir(config.imagePath + '/' + folder, function (err, files) {
     if (err) {
@@ -250,27 +261,34 @@ function compareFsToDb(folder, callback) {
     } else {
       files.forEach(function (item) {
         if (fs.lstatSync(path.join(config.imagePath, folder, item)).isDirectory()) {
-          if (folder === '')
-            compareFsToDb(item);
-          else
-            compareFsToDb(folder + '/' + item); // path join yields backslashes with windows
+          const path = folder === '' ? item : folder + '/' + item;
+          compareFsToDb(path); // path join yields backslashes with windows
         } else {
-          getImageMetadataPromise(config.imagePath + '/' + folder, item).then(function onResolve(result) {
-            checkIfFileInDb(folder, item, function () {
-              addImageToDb(folder, item, result.lat, result.lon, result.date);
-            });
-          }).catch(function(err) {
-            console.log(err);
-          });
+          compareFileToDb(folder, item);
         }
       });
     }
   });
 }
 
+function compareDbToFs() {
+  getListOfImages('all', 1, function (images) {
+    images.forEach(function (image) {
+      checkIfFileInFsPromise(image.path, image.name).then(function onResolve(result) {
+        if (result === true) { // file exists on file system
+
+        } else { // file doesn't exist
+          deleteDbRowPromise(image.id).then(function onResolve() {});
+        }
+      })
+    });
+  });
+}
+
 // todo
 function fullScan(callback) {
   compareFsToDb('');
+  compareDbToFs();
   callback();
 }
 
