@@ -120,7 +120,14 @@ var FileStore = assign({}, EventEmitter.prototype, {
   },
 
   doFullScan: function () {
-    $.getJSON('/admin/fullscan', function () {
+    $.ajax({
+      url: '/admin/fullscan',
+      type: 'GET',
+      headers: {
+        token: ApplicationStore.getLoginToken()
+      },
+      success: function (data) {
+      }
     });
   },
 
