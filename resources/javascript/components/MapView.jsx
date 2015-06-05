@@ -16,8 +16,13 @@ var MapView = React.createClass({
   componentDidMount: function () {
     L.mapbox.accessToken = this.props.token;
 
+    const southWest = L.latLng(-90, -180);
+    const northEast = L.latLng(90, 180);
+    const maxBounds = L.latLngBounds(southWest, northEast);
+
     const map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
-      .setView([config.initial.lat, config.initial.lon], config.initial.zoom);
+      .setView([config.initial.lat, config.initial.lon], config.initial.zoom)
+      .setMaxBounds(maxBounds);
 
     map.on('moveend', () => {
       Dispatcher.dispatch({
