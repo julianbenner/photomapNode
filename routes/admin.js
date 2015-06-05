@@ -246,8 +246,12 @@ function getImageMetadataPromise(folder, image) {
 function compareFileToDb(folder, item) {
   getImageMetadataPromise(config.imagePath + '/' + folder, item).then(function onResolve(result) {
     checkIfFileInDb(folder, item, function (answer) {
-      if (typeof answer.exists !== 'undefined' && answer.exists == false)
+      if (typeof answer.exists !== 'undefined' && answer.exists == false) {
+        console.log('Image ' + folder + '/' + item + ' does not exist in database!');
         addImageToDb(folder, item, result.lat, result.lon, result.date);
+      } else {
+        console.log('Image ' + folder + '/' + item + ' exists in database!');
+      }
     });
   }).catch(function(err) {
     console.log(err);
@@ -274,11 +278,14 @@ function compareFsToDb(folder, callback) {
 function compareDbToFs() {
   getListOfImages('all', 1, function (images) {
     images.forEach(function (image) {
-      checkIfFileInFsPromise(image.path, image.name).then(function onResolve(result) {
+      checkIfFileInFsPromise(config.imagePath + '/' + image.path, image.name).then(function onResolve(result) {
         if (result === true) { // file exists on file system
-
+          console.log('Image ' + image.id + ' exists in file system!');
         } else { // file doesn't exist
-          deleteDbRowPromise(image.id).then(function onResolve() {});
+          console.log('Image ' + image.id + ' does not exist in file system!');
+          deleteDbRowPromise(image.id).then(function onResolve() {
+            console.log('Deleted image ' + image.id + '!');
+          });
         }
       })
     });
