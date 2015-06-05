@@ -221,7 +221,7 @@ Dispatcher.register(function (payload) {
       FileStore.emit(CHANGE_EVENT);
       break;
     case 'files-full-scan':
-      doFullScan();
+      FileStore.doFullScan();
       break;
     case 'files-prev-page':
       if (_page > 1) {
