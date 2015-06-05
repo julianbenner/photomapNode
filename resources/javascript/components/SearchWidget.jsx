@@ -46,11 +46,12 @@ var SearchWidget = React.createClass({
     });
   },
 
-  selectResult: function (lat, lon) {
+  selectResult: function (lat, lon, zoom) {
     Dispatcher.dispatch({
       eventName: 'move-map',
       lat: lat,
-      lon: lon
+      lon: lon,
+      zoom: zoom
     });
   },
 
@@ -103,7 +104,7 @@ var SearchWidget = React.createClass({
   render: function () {
     const results = this.state.results.map(result => {
       const key = "" + result.lat + "." + result.lon;
-      return <li onClick={this.selectResult.bind(this, result.lat, result.lon)} key={key} className="searchResult"><a>{result.name}</a></li>;
+      return <li onClick={this.selectResult.bind(this, result.lat, result.lon, result.zoom)} key={key} className="searchResult"><a>{result.name}</a></li>;
     });
     const style = classNames({
       'searchResults': true,

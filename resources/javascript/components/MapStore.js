@@ -31,25 +31,39 @@ var folderStructure = new Folder('/', false);
 var folderFilter = {};
 var folderFilteringEnabled = false;
 
-function geosearch(query, token) {
-  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+var token = config.token;
+
+function getGeosearchUrl(query) {
+  return 'https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token;
+}
+
+function searchBoundariesToZoom(bbox) {
+  const latSize = bbox[3] - bbox[1];
+  const lonSize = bbox[2] - bbox[0];
+  const widestExtent = Math.max(latSize, lonSize);
+  return 10 - Math.log2(widestExtent);
+}
+
+function geosearch(query) {
+  $.getJSON(getGeosearchUrl(query)).done(function (data) {
     if (data.features.length > 0) {
       var result = data.features[0];
       _lat = result.center[1];
       _lon = result.center[0];
-      console.log('result ' + _lat + ' ' + _lon);
+      zoom = searchBoundariesToZoom(result.bbox);
       MapStore.emit('viewport-change');
     }
   });
 }
 
-function geosearch1(query, token) {
-  $.getJSON('https://api.tiles.mapbox.com/v4/geocode/mapbox.places/' + query + '.json?access_token=' + token).done(function (data) {
+function geosearch1(query) {
+  $.getJSON(getGeosearchUrl(query)).done(function (data) {
     searchResults = data.features.map(function(result) {
       return {
         name: result["place_name"],
         lat: result["center"][1],
-        lon: result["center"][0]
+        lon: result["center"][0],
+        zoom: searchBoundariesToZoom(result.bbox)
       };
     });
     MapStore.emit(CHANGE_EVENT);
@@ -204,6 +218,13 @@ Dispatcher.register(function (payload) {
       folderFilteringEnabled = true;
       loadMarkers();
       break;
+    case 'reset-folder-filter':
+      clearMarkers();
+      folderFilter = {};
+      folderFilteringEnabled = false;
+      loadMarkers();
+      MapStore.emit(CHANGE_EVENT);
+      break;
     case 'change-date':
       clearMarkers();
       // date should be string 'YYYY-MM-DD'
@@ -214,11 +235,13 @@ Dispatcher.register(function (payload) {
     case 'click-map':
       MapStore.emit('click-map');
       break;
+    // directly jump
     case 'geosearch':
-      geosearch(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      geosearch(payload.query);
       break;
+    // with results
     case 'geosearch1':
-      geosearch1(payload.query, ((typeof payload.token !== 'undefined')?payload.token:null));
+      geosearch1(payload.query);
       break;
     case 'folder-structure-changed':
       MapStore.emit(CHANGE_EVENT);
@@ -226,6 +249,7 @@ Dispatcher.register(function (payload) {
     case 'move-map':
       _lat = payload.lat;
       _lon = payload.lon;
+      zoom = payload.zoom;
       MapStore.emit('viewport-change');
       break;
   }

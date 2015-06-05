@@ -70,7 +70,7 @@ var MapView = React.createClass({
   },
 
   viewportChange: function () {
-    this.map.setView(MapStore.getLatLon());
+    this.map.setView(MapStore.getLatLon(), Math.ceil(MapStore.getZoom()));
   },
 
   addMarker: function (lat, lon, size, text) {
@@ -124,7 +124,7 @@ var MapView = React.createClass({
     // circle marker needed for Firefox compatibility
     return (
       <div id='map'>
-        <svg width="0" height="0"><clipPath id="circleMarker"><circle cy="17.5" cx="17.5" r="16"></circle></clipPath></svg>
+        <svg width="0" height="0"><clipPath id="circleMarker"><circle cy="17.5" cx="17.5" r="16.5"></circle></clipPath></svg>
         {marker}
       </div>
     );

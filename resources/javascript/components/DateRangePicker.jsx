@@ -67,6 +67,7 @@ var DateRangePicker = React.createClass({
       startDate: null,
       endDate: null
     });
+    this.toggleOpen();
   },
 
   render: function() {
@@ -77,7 +78,7 @@ var DateRangePicker = React.createClass({
           to <input type="date" id="dateTo" name="dateFrom" className="dateInput" onChange={this.handleToChange} /><br />
           <div className="dropdown-buttons">
             <input type="button" value="Apply" onClick={this.applyDateFilter} className="btn btn-primary" />
-            <input type="button" value="Reset" onClick={this.resetDateFilter} className="btn" />
+            <input type="button" value="Reset" onClick={this.resetDateFilter} className="btn btn-default" />
           </div>
         </ul>
       </li>

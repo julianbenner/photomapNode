@@ -28,8 +28,11 @@ var FolderWidget = React.createClass({
   },
 
   updateFolderList: function () {
-    //this.forceUpdate();
     this.setState(getFolderStructure());
+  },
+
+  deselectEverything: function () {
+    this.state.folderStructure.deselectEverything();
   },
 
   debugOutput: function () {
@@ -45,6 +48,14 @@ var FolderWidget = React.createClass({
     this.toggleList();
   },
 
+  resetFolderFilter: function () {
+    Dispatcher.dispatch({
+      eventName: 'reset-folder-filter'
+    });
+    this.deselectEverything();
+    this.toggleList();
+  },
+
   render: function () {
     const content = this.state.folderStructure.toJSX();
     return (
@@ -53,7 +64,7 @@ var FolderWidget = React.createClass({
           {content}
           <div className="dropdown-buttons">
             <input type="button" value="Apply" onClick={this.applyFolderFilter} className="btn btn-primary" />
-            <input type="button" value="Reset" onClick={this.resetFolderFilter} className="btn" />
+            <input type="button" value="Reset" onClick={this.resetFolderFilter} className="btn btn-danger" />
           </div>
         </ul>
       </li>
