@@ -37,7 +37,7 @@ var Marker = React.createClass({
         style = '';
         content = this.props.text;
       } else {
-        style = 'style="background-image:url(image/' + imageId + '/tinySquare);top:0;transform:none;height:100%;-webkit-clip-path:circle(16px);clip-path:url(\'#circleMarker\')"';
+        style = 'style="background-image:url(image/' + imageId + '/tinySquare);top:0.5px;left:0.5px;transform:none;height:100%;-webkit-clip-path:circle(16px);clip-path:url(\'#circleMarker\')"';
         content = '';
       }
       const html = '<div class="image_count_child" ' + style + ' data-toggle="modal" data-target="#myModal">' + content + '</div>';
