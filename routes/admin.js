@@ -279,7 +279,7 @@ function compareDbToFs() {
   getListOfImages('all', 1, function (images) {
     images.forEach(function (image) {
       checkIfFileInFsPromise(config.imagePath + '/' + image.path, image.name).then(function onResolve(result) {
-        if (result === true) { // file exists on file system
+        if (result !== false) { // file exists on file system
           console.log('Image ' + image.id + ' exists in file system!');
         } else { // file doesn't exist
           console.log('Image ' + image.id + ' does not exist in file system!');

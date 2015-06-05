@@ -101,41 +101,46 @@ var FileList = React.createClass({
     const differenceToFirstPage = this.state.page - 1;
     const differenceToLastPage = this.state.amountOfPages - this.state.page;
 
-    const generatePageButton = function(page) {
-      return (<li>
+    const generatePageButton = page => {
+      const key = "pagebutton" + page;
+      return (<li key={key}>
         <a href="#" onClick={this.goToPage.bind(this, page)}>
           <span aria-hidden="true">{page}</span>
         </a>
       </li>);
     };
 
-    if (differenceToFirstPage === 0) {
-      // we are on page 1
-    } else if (differenceToFirstPage <= 3) {
-      // we are on pages 2, 3 or 4
+    if (differenceToFirstPage <= 2) {
+      for (let i = 1; i <= (4-differenceToFirstPage); i++) {
+        pagesBefore.push(<li>
+            <span aria-hidden="true">&nbsp;</span>
+        </li>);
+      }
       for (let i = 1; i <= differenceToFirstPage; i++) {
         pagesBefore.push(generatePageButton(i));
       }
     } else {
-      // we are on pages 5 or higher
+      // we are on pages 4 or higher
       pagesBefore.push(generatePageButton(1));
       pagesBefore.push(<li>
         <span aria-hidden="true">&hellip;</span>
       </li>);
-      for (let i = this.state.page - 3; i < this.state.page; i++) {
+      for (let i = this.state.page - 2; i < this.state.page; i++) {
         pagesBefore.push(generatePageButton(i));
       }
     }
 
-    if (differenceToLastPage === 0) {
-      // we are on last page
-    } else if (differenceToLastPage <= 3) {
+    if (differenceToLastPage <= 2) {
       for (let i = this.state.page + 1; i <= this.state.amountOfPages; i++) {
         pagesAfter.push(generatePageButton(i));
       }
+      for (let i = 1; i <= (4-differenceToLastPage); i++) {
+        pagesAfter.push(<li>
+          <span aria-hidden="true">&nbsp;</span>
+        </li>);
+      }
     } else {
-      // we are on pages 5 or higher
-      for (let i = this.state.page + 1; i < this.state.page + 3; i++) {
+      for (let i = this.state.page + 1; i <= this.state.page + 2; i++) {
         pagesAfter.push(generatePageButton(i));
       }
       pagesAfter.push(<li>
@@ -160,7 +165,7 @@ var FileList = React.createClass({
                     </a>
                   </li>
                   {pagesBefore}
-                  <li><span>{this.state.page + '/' + this.state.amountOfPages}</span></li>
+                  <li><span style={{color:'#000'}}>{this.state.page}</span></li>
                   {pagesAfter}
                   <li className={nextClass}>
                     <a href="#" onClick={this.nextPage}>

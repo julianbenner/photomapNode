@@ -384,6 +384,11 @@ body {
   width: 100%;
 }
 
+.pagination>li>a, .pagination>li>span {
+  min-width: 42px;
+  padding: 10px 14px;
+}
+
 #fileListEdit, #fileListEditColumn, #fileListContainer {
   height: 100%;
 }
