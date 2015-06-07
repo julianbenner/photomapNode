@@ -54,7 +54,7 @@ function compileScripts(watch) {
   }
 
   var rebundle = function () {
-    return bundler.bundle()
+    bundler.bundle()
       .on("error", function (err) { console.log("Error: " + err.message); })
       .pipe(source(config.mainScript))
       .pipe(gulp.dest(config.buildDir))
@@ -62,7 +62,7 @@ function compileScripts(watch) {
   };
 
   bundler.on('update', rebundle);
-  return rebundle;
+  return rebundle();
 }
 
 gulp.task('css', function () {

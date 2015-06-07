@@ -220,7 +220,7 @@ var Overlay = React.createClass({
         <div className="modal-control">
           {buttons}
         </div>
-        <div className="modal-dialog large_modal" className={modalClass}>
+        <div className={modalClass}>
           <div className="modal-intermediate">
             <div className={contentClasses}>
               <div className="modal-body">
