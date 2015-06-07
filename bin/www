@@ -14,7 +14,7 @@ var config = require('../config_server');
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || config.port);
 app.set('port', port);
 
 /**
@@ -28,7 +28,14 @@ var options = {
   cert: fs.readFileSync(config.certFile)
 };
 
-var server = require('spdy').createServer(options, app);
+var server;
+
+if (config.useHttps) {
+  server = require(config.httpPackage).createServer(options, app);
+} else {
+  server = require(config.httpPackage).createServer(app);
+}
+
 
 /**
  * Listen on provided port, on all network interfaces.

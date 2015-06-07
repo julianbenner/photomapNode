@@ -20,7 +20,7 @@ function getImageList(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, fold
     constraints += ' AND (1=0' + folderFilterQuery + ')';
   }
 
-  var query = 'SELECT id, name FROM ' + config.databaseName +
+  var query = 'SELECT id, name FROM ' + config.imageTableName +
     ' WHERE ' + constraints;
   connection.query(
     query, function (err, rows, fields) {

@@ -1,6 +1,7 @@
 @import "_variables";
 
 $icon-font-path: "../fonts/";
+
 @import "bootstrap";
 
 .daterangepicker {
@@ -225,7 +226,7 @@ body {
 #logo {
   float: left;
   line-height: 51px;
-  color: #fff;
+  color: $navbar-default-link-color;
   font-size: 1.5em;
 
   @media (max-width: 768px) {
@@ -234,7 +235,6 @@ body {
 }
 
 .searchHolder {
-  padding: 3px;
   max-width: 100%;
   @media (min-width: 768px) {
     float:left;
@@ -245,6 +245,17 @@ body {
 .searchWidget {
   position: relative;
   margin-left: 43px;
+  line-height: 33px;
+  padding-top: 8px;
+
+  button {
+    height: 33px;
+    padding: 0px 14px;
+  }
+}
+
+#locationQuery {
+  height: 33px;
 }
 
 .searchWidgetLc {
@@ -297,7 +308,8 @@ body {
 .navbar-hamburger {
   @media (max-width: 768px) {
     float: left;
-    line-height: 43px;
+    line-height: 50px;
+    text-align: center;
     width: 43px;
     padding: 0;
   }

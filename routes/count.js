@@ -30,7 +30,7 @@ function getImageCount(lat_min, lat_max, lon_min, lon_max, dateMin, dateMax, fol
   }
 
   var query = 'SELECT image_count, slat/image_count as avg_lat, slon/image_count as avg_lon FROM ' +
-    '(SELECT COUNT(*) as image_count, SUM(lat) as slat, SUM(lon) as slon FROM ' + config.databaseName +
+    '(SELECT COUNT(*) as image_count, SUM(lat) as slat, SUM(lon) as slon FROM ' + config.imageTableName +
     ' WHERE ' + constraints + ') t';
 
   //if (!is_production())

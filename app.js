@@ -27,12 +27,6 @@ app.use(multer({
 
 require('./routes/passport');
 app.use(passport.initialize());
-app.use(passport.session()); // persistent login sessions
-app.use(flash());
-
-app.set('views', './resources/views');
-app.set('view engine', 'jade');
-
 
 app.use(express.static(__dirname + '/public'));
 
@@ -45,13 +39,9 @@ app.use('/image', require('./routes/image'));
 
 // error handlers
 
-// catch 404 and forward to error handlersno
+// catch 404 and forward to error handlers
 app.use(function(req, res) {
-    res.status(400);
-    res.render('error', {
-        title: 'Error 404',
-        error: req.url + ' does not exist on this server.'
-    });
+    res.status(404).send('404');
 });
 
 // development error handler
@@ -59,21 +49,14 @@ app.use(function(req, res) {
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         console.log(err.stack);
-        res.status(err.status || 500);
-        res.render('error', {
-            error: err,
-            message: err.stack
-        });
+        res.status(err.status || 500).send(err.stack);
     });
 }
 
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-        error: err
-    });
+    res.status(err.status || 500).send(err);
 });
 
 

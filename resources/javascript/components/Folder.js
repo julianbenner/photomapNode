@@ -123,7 +123,7 @@ module.exports = class Folder {
           return folder.toJSX();
       });
     }
-    const folderKey = this.name; // TODO
+    const folderKey = this.name;
     const foldElement = this.unfolded ? '-' : '+';
     const type = this.radio ? 'radio' : 'checkbox';
     return (

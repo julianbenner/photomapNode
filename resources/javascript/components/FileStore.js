@@ -100,7 +100,7 @@ var FileStore = assign({}, EventEmitter.prototype, {
     for (var i = 0; i != _files.length; i++) {
       if (_files[i].id == id) return i;
     }
-    return -1; // TODO
+    return -1;
   },
 
   getAmountOfPages: function () {

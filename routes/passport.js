@@ -2,27 +2,11 @@ var passport = require('passport');
 var flash = require('connect-flash');
 var session = require('express-session');
 var LocalStrategy = require('passport-local').Strategy;
+var config = require('../config_server');
 
 var helpers = require('./logic/helpers');
 
 const connection = require('../routes/Database').Get();
-
-var users = [{
-  id: 1,
-  username: 'bob',
-  password: 'secret',
-  email: 'bob@example.com'
-}, {
-  id: 2,
-  username: 'joe',
-  password: 'birthday',
-  email: 'joe@example.com'
-}, {
-  id: 3,
-  username: 'admin',
-  password: 'admin',
-  email: 'joe@example.com'
-}];
 
 passport.serializeUser(function(user, done) {
   done(null, user.id);
@@ -44,13 +28,7 @@ function findById(id, fn) {
 }
 
 function findByUsername(username, fn) {
-  /*for (var i = 0, len = users.length; i < len; i++) {
-    var user = users[i];
-    if (user.username === username) {
-      return fn(null, user);
-    }
-  }*/
-  const query = 'SELECT id, password FROM photomap_user WHERE name = ' + connection.escape(username);
+  const query = 'SELECT id, password FROM ' + config.userTableName + ' WHERE name = ' + connection.escape(username);
   connection.query(query, function (err, rows, fields) {
     if (err) {
       return fn(null, null);

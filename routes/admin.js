@@ -21,7 +21,7 @@ function getListOfImages(amount, page, callback) {
   var start_from = connection.escape(amount * (page - 1));
   amount = connection.escape(amount);
 
-  var query = 'SELECT * FROM ' + config.databaseName + ' ORDER BY path,name' + (use_limit ? ' LIMIT ' + start_from + ', ' + amount : '');
+  var query = 'SELECT * FROM ' + config.imageTableName + ' ORDER BY path,name' + (use_limit ? ' LIMIT ' + start_from + ', ' + amount : '');
   console.log(query);
   connection.query(
     query,
@@ -47,7 +47,6 @@ function editImage(id, name, lat, lon, date, callback) {
 }
 
 function userIsAdmin(request) {
-  // TODO
   if (typeof request.query === 'undefined') {
     return false;
   } else if (typeof request.query.token !== 'undefined') {
@@ -61,7 +60,7 @@ function userIsAdmin(request) {
 function checkIfFileInDb(folder, file, callback) {
   var connection = require('../routes/Database').Get();
 
-  const query = 'SELECT EXISTS(SELECT * FROM `' + config.databaseName + '` WHERE `path` = ' + connection.escape(folder) + ' AND `name` = ' + connection.escape(file) + ') as `exists`';
+  const query = 'SELECT EXISTS(SELECT * FROM `' + config.imageTableName + '` WHERE `path` = ' + connection.escape(folder) + ' AND `name` = ' + connection.escape(file) + ') as `exists`';
   console.log(query);
   connection.query(query, function(err, result) {
     if (err) {
@@ -139,7 +138,7 @@ function uploadImagePromise(tempFile, destination) {
 function addImageToDb(folder, image, lat, lon, date) {
   var connection = require('../routes/Database').Get();
 
-  if (image !== 'Thumbs.db') { // TODO
+  if (image !== 'Thumbs.db') { // herp
     let columns, content;
     columns = 'name, path';
     content = '';
@@ -151,7 +150,7 @@ function addImageToDb(folder, image, lat, lon, date) {
       columns += ', date';
       content += ', ' + connection.escape(date);
     }
-    const query = 'INSERT INTO `' + config.databaseName + '` (' + columns + ') VALUES (' + connection.escape(image) + ',' + connection.escape(folder) + content + ')';
+    const query = 'INSERT INTO `' + config.imageTableName + '` (' + columns + ') VALUES (' + connection.escape(image) + ',' + connection.escape(folder) + content + ')';
     console.log(query);
     connection.query(query, function (err, result) {
       if (err) {
@@ -166,7 +165,7 @@ function addImageToDb(folder, image, lat, lon, date) {
 function deleteFilePromise(id) {
   return new Promise(function(resolve, reject) {
     const connection = require('../routes/Database').Get();
-    const query = 'SELECT path, name FROM `' + config.databaseName + '` WHERE id = ' + connection.escape(id);
+    const query = 'SELECT path, name FROM `' + config.imageTableName + '` WHERE id = ' + connection.escape(id);
     console.log(query);
     connection.query(query, function (err, result) {
       if (err) {
@@ -189,7 +188,7 @@ function deleteFilePromise(id) {
 function deleteDbRowPromise(id) {
   return new Promise(function(resolve, reject) {
     const connection = require('../routes/Database').Get();
-    const query = 'DELETE FROM `' + config.databaseName + '` WHERE id = ' + connection.escape(id);
+    const query = 'DELETE FROM `' + config.imageTableName + '` WHERE id = ' + connection.escape(id);
     console.log(query);
     connection.query(query, function (err, result) {
       if (err) {
@@ -292,7 +291,6 @@ function compareDbToFs() {
   });
 }
 
-// todo
 function fullScan(callback) {
   compareFsToDb('');
   compareDbToFs();

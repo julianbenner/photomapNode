@@ -17,7 +17,7 @@ const connectionObject = require('../routes/Database').Get();
 function promiseGetImage(id) {
   const promise = new Promise(function (resolve, reject) {
     const query =
-      'SELECT name, path FROM ' + config.databaseName +
+      'SELECT name, path FROM ' + config.imageTableName +
       ' WHERE id=' + connectionObject.escape(id);
 
     connectionObject.query(query, function (err, rows) {
