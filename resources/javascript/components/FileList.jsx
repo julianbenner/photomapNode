@@ -110,7 +110,7 @@ var FileList = React.createClass({
       </li>);
     };
 
-    if (differenceToFirstPage <= 2) {
+    if (differenceToFirstPage <= 3) {
       for (let i = 1; i <= (4-differenceToFirstPage); i++) {
         pagesBefore.push(<li>
             <span aria-hidden="true">&nbsp;</span>
@@ -130,7 +130,7 @@ var FileList = React.createClass({
       }
     }
 
-    if (differenceToLastPage <= 2) {
+    if (differenceToLastPage <= 3) {
       for (let i = this.state.page + 1; i <= this.state.amountOfPages; i++) {
         pagesAfter.push(generatePageButton(i));
       }

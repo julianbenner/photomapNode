@@ -27,6 +27,7 @@
     "multer": "^0.1.8",
     "murmurhash-js": "^1.0.0",
     "mysql": "^2.5.4",
+    "mysql2": "^0.15.7",
     "node-cache": "^1.1.0",
     "object-assign": "^2.0.0",
     "passport": "^0.2.1",

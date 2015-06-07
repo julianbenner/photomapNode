@@ -43,13 +43,6 @@ app.use('/get_folder_content', require('./routes/folder'));
 app.use('/admin', require('./routes/admin')());
 app.use('/image', require('./routes/image'));
 
-app.use('/', function(req, res) {
-    res.render('index', {
-        isMap: true,
-        user: req.user
-    });
-});
-
 // error handlers
 
 // catch 404 and forward to error handlersno

@@ -73,7 +73,7 @@ gulp.task('css', function () {
 
   return es.concat(appCss, mapboxCss)
     .pipe(concat('style.css'))
-    .pipe(autoprefix('last 10 version'))
+    .pipe(autoprefix('last 2 version'))
     .pipe(gulp.dest(config.output + '/css'))
     .pipe(notify("SASS done"));
 });

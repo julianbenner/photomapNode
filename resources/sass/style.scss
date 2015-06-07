@@ -1,7 +1,6 @@
 @import "_variables";
 
-$icon-font-path: "bootstrap-sass/assets/fonts/bootstrap/";
-//@import "bootstrap-sprockets";
+$icon-font-path: "../fonts/";
 @import "bootstrap";
 
 .daterangepicker {
@@ -385,7 +384,7 @@ body {
 }
 
 .pagination>li>a, .pagination>li>span {
-  min-width: 42px;
+  min-width: 45px;
   padding: 10px 14px;
 }
 
@@ -395,6 +394,10 @@ body {
 
 #fileListContainer {
   padding: 20px;
+}
+
+#upload li {
+  list-style: none;
 }
 
 .editThumbnail {
@@ -462,7 +465,7 @@ body {
 }
 
 .filterIsActive {
-  color: #afa;
+  color: lighten($brand-primary, 15%);
 }
 
 .dateInput {

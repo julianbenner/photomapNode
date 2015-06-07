@@ -65,10 +65,6 @@ var FileUploadForm = React.createClass({
     }
   },
 
-  herp: function () {
-    FileStore.getSelectedFolder();
-  },
-
   onDrop: function (files) {
     const formData = new FormData();
     files.map(function(file) { formData.append("fileInput", file); });
@@ -95,7 +91,7 @@ var FileUploadForm = React.createClass({
     });
     const content = this.state.folderStructure.toJSX();
     return (
-      <div>
+      <div id="upload">
         <Dropzone onDrop={this.onDrop} width="100%">
           <div>Drop files here or click to open the file chooser</div>
         </Dropzone>
@@ -103,8 +99,10 @@ var FileUploadForm = React.createClass({
         <div className="progress">
           <div className={progressClasses} role="progressbar" style={progressStyle} />
         </div>
-<button className="btn" value="herp" onClick={this.herp} />
-        {content}
+        <div>
+          Upload to:<br/>
+          {content}
+        </div>
       </div>
     );
   }
