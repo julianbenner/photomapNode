@@ -38,9 +38,6 @@ Dispatcher.register(function (payload) {
       user = '';
       ApplicationStore.emit(CHANGE_EVENT);
       break;
-    //case 'folder-structure-changed':
-    //  MapStore.emit('update-folder-list');
-    //  break;
   }
 
   return true;

@@ -165,7 +165,7 @@ Dispatcher.register(function (payload) {
   switch (payload.eventName) {
     case 'load-files':
       $.ajax({
-        url: '/admin/list?page=1&amount=all',
+        url: 'admin/list?page=1&amount=all',
         type: 'GET',
         headers: {
           token: ApplicationStore.getLoginToken()
@@ -186,7 +186,7 @@ Dispatcher.register(function (payload) {
       _files[FileStore.getItemIdByDbId(_fileIndex)] = payload.file;
       _files[FileStore.getItemIdByDbId(_fileIndex)].selected = true; // above, we override this property
       $.ajax({
-        url: '/admin/edit',
+        url: 'admin/edit',
         type: 'POST',
         headers: {
           token: ApplicationStore.getLoginToken()
@@ -200,7 +200,7 @@ Dispatcher.register(function (payload) {
     case 'delete-file':
       _files.splice(FileStore.getItemIdByDbId(_fileIndex), 1);
       $.ajax({
-        url: '/admin/delete',
+        url: 'admin/delete',
         type: 'DELETE',
         headers: {
           token: ApplicationStore.getLoginToken()

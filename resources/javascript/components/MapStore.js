@@ -77,7 +77,7 @@ function loadMarker(lat, lon) {
 
 
   $.ajax({
-    url: '/get_image_count',
+    url: 'get_image_count',
     type: 'POST',
     data: {
       latMin: latMin,
@@ -129,7 +129,7 @@ function clearMarkers() {
 var MapStore = assign({}, EventEmitter.prototype, {
   loadGallery: function (lat, lon, callback) {
     $.ajax({
-      url: '/get_image_list',
+      url: 'get_image_list',
       type: 'POST',
       data: {
         latMin: (lat * MapStore.getRasterSize())-90,
