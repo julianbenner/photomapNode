@@ -71,7 +71,7 @@ var GalleryImage = React.createClass({
       }
     };
 
-    const path = '/' + config.imagePath + '/' + imageId + '/' + size();
+    const path = config.imagePath + '/' + imageId + '/' + size();
     return (
       <div id="galleryImageContainer">
         <img src={path} id="galleryImage"/>

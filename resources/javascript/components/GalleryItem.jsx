@@ -24,7 +24,7 @@ var GalleryItem = React.createClass({
 
   render: function () {
     if (typeof OverlayStore.getImage(this.props.id) !== 'undefined') {
-      const imagePath = '/' + config.imagePath + '/' + OverlayStore.getImage(this.props.id).id + '/thumb';
+      const imagePath = config.imagePath + '/' + OverlayStore.getImage(this.props.id).id + '/thumb';
       return (
         <div className="thumbnail" onClick={this.selectImage}>
           <img src={imagePath}/>
