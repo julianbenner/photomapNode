@@ -138,7 +138,7 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
         }
       }
 
-      deliverFile.write(cachedPath, function () {
+      deliverFile.noProfile().write(cachedPath, function () {
         res.set('Content-Type', 'image/jpeg');
         fs.createReadStream(cachedPath).pipe(res);
       });
@@ -150,7 +150,7 @@ function deliverCachedFile(id, heightComparator, widthComparator, gmHeight, gmWi
 }
 
   function getImageDimension(image, dimension, callback) {
-  image.size(function (err, value) {
+  image.size({bufferStream: true}, function (err, value) {
     if (err) {
       callback(err);
     } else if (value && value[dimension]) {
