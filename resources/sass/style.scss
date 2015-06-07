@@ -89,14 +89,17 @@ body {
 }
 
 .large_modal {
-  margin: 15px !important;
-  margin-top: 50px !important;
+  margin: 50px 15px 15px;
   width: auto;
   position: absolute !important;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
+}
+
+.large_modal_max {
+  margin: 0 !important;
 }
 
 .thumbnail {

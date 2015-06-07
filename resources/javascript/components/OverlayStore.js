@@ -10,6 +10,22 @@ var overlayMode = '';
 var overlayVisible = false;
 var gallery = [];
 var selectedImage = 0;
+var maximized = false;
+
+function toggleFullScreen() {
+  var doc = window.document;
+  var docEl = doc.documentElement;
+
+  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+  if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+    requestFullScreen.call(docEl);
+  }
+  else {
+    cancelFullScreen.call(doc);
+  }
+}
 
 function prevImage() {
   if (selectedImage === 0) {
@@ -55,6 +71,10 @@ var OverlayStore = assign({}, EventEmitter.prototype, {
 
   getImage: function (i) {
     return gallery[i];
+  },
+
+  getMaximized: function () {
+    return maximized;
   }
 });
 
@@ -109,6 +129,12 @@ Dispatcher.register(function (payload) {
 
     case 'next-image':
       nextImage();
+      OverlayStore.emit(CHANGE_EVENT);
+      break;
+
+    case 'toggle-enlarge':
+      toggleFullScreen();
+      maximized = !maximized;
       OverlayStore.emit(CHANGE_EVENT);
       break;
   }

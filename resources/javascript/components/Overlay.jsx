@@ -16,7 +16,8 @@ function getOverlayState() {
   return {
     mode: OverlayStore.getOverlayMode(),
     isVisible: OverlayStore.isVisible(),
-    amountOfImages: OverlayStore.getGallery().length
+    amountOfImages: OverlayStore.getGallery().length,
+    maximized: OverlayStore.getMaximized()
   }
 }
 
@@ -29,7 +30,8 @@ var Overlay = React.createClass({
     return {
       contentMode: 'empty',
       mode: "",
-      title: ""
+      title: "",
+      maximized: false
     };
   },
 
@@ -207,12 +209,18 @@ var Overlay = React.createClass({
       'modal-content-bright': this.state.mode === 'edit'
     });
 
+    const modalClass = classNames({
+      'modal-dialog': true,
+      'large_modal': true,
+      'large_modal_max': this.state.maximized == true
+    });
+
     return (
       <div className="modal fade">
         <div className="modal-control">
           {buttons}
         </div>
-        <div className="modal-dialog large_modal">
+        <div className="modal-dialog large_modal" className={modalClass}>
           <div className="modal-intermediate">
             <div className={contentClasses}>
               <div className="modal-body">

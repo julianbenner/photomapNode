@@ -19,10 +19,19 @@ var GalleryImage = React.createClass({
     hammertime.on('swiperight', ev => {
       this.triggerPrevImage();
     });
+    hammertime.on('tap', ev => {
+      this.toggleEnlarge();
+    });
   },
 
   componentWillUnmount: function () {
     document.removeEventListener('keydown', this.onKeyDown);
+  },
+
+  toggleEnlarge: function () {
+    Dispatcher.dispatch({
+      eventName: 'toggle-enlarge'
+    });
   },
 
   triggerPrevImage: function () {
