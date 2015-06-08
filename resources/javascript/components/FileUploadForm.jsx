@@ -76,7 +76,9 @@ var FileUploadForm = React.createClass({
     xhr.addEventListener("error", this.transferFailed, false);
     xhr.open("POST", "admin/upload");
     xhr.setRequestHeader("token", ApplicationStore.getLoginToken());
-    xhr.setRequestHeader("folder", FileStore.getSelectedFolder().name);
+    
+    const uploadTo = FileStore.getSelectedFolder().name || '/';
+    xhr.setRequestHeader("folder", uploadTo);
     xhr.send(formData);
   },
 
