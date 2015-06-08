@@ -1,6 +1,7 @@
 var FileListItem = require('./FileListItem.jsx');
 var FileListEdit = require('./FileListEdit.jsx');
 var FileUploadForm = require('./FileUploadForm.jsx');
+var AdminChangePassword = require('./AdminChangePassword.jsx');
 var $ = require('jquery');
 var React = require('react/addons');
 var MapStore = require('./MapStore.js');
@@ -80,6 +81,10 @@ var FileList = React.createClass({
   },
   sortIdDesc: function () {
     this.sortFiles('id-desc');
+  },
+
+  changePassword: function () {
+
   },
 
   render: function () {
@@ -202,9 +207,11 @@ var FileList = React.createClass({
             </div>
             <div className="panel-body">
               <FileUploadForm />
-              <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan</button>
+              <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan file system</button>
             </div>
           </div>
+
+          <AdminChangePassword />
         </div>
       </div>
     );

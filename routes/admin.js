@@ -4,6 +4,7 @@ var path = require('path');
 var passport = require('passport');
 var fs = require('fs');
 var auth = require('./logic/auth');
+var helpers = require('./logic/helpers');
 var multer = require('multer');
 var ExifImage = require('exif').ExifImage;
 var config = require('../config_server');
@@ -55,6 +56,70 @@ function userIsAdmin(request) {
     if (auth.tokenToUser(request.get('token')) === 'admin') return true;
   }
   return false;
+}
+
+function getPasswordHashPromise(user) {
+  return new Promise(function (resolve, reject) {
+    var connection = require('../routes/Database').Get();
+
+    const query = 'SELECT password FROM `' + config.userTableName + '` WHERE `name` = ' + connection.escape(user);
+    connection.query(query, function(err, result) {
+      if (err) {
+        reject(err);
+      } else {
+        if (typeof result[0] === 'undefined') {
+          reject('User not found!');
+        } else if (typeof result[0]['password'] === 'undefined') {
+          reject('Could not verify password!');
+        } else {
+          resolve(result[0]['password']);
+        }
+      }
+    });
+  });
+}
+
+function checkIfPasswordValidPromise(user, password) {
+  return new Promise(function (resolve, reject) {
+    getPasswordHashPromise(user).then(function onResolve(hash) {
+      helpers.verifyPasswordHashPromise(password, hash).then(function onResolve(pwIsValid) {
+        if (pwIsValid === true) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      }).catch(function (err) {
+        reject(err);
+      });
+    }).catch(function (err) {
+      reject(err);
+    });
+  });
+}
+
+function changePasswordPromise(user, oldPw, newPw) {
+  return new Promise(function (resolve, reject) {
+    checkIfPasswordValidPromise(user, oldPw).then(function onResolve(oldPwIsValid) {
+      if (oldPwIsValid === true) {
+        helpers.generatePasswordHashPromise(newPw).then(function onResolve(newPwHash) {
+          var connection = require('../routes/Database').Get();
+
+          const query = 'UPDATE `' + config.userTableName + '` SET `password`=' + connection.escape(newPwHash) + ' WHERE `name` = ' + connection.escape(user);
+          connection.query(query, function(err, result) {
+            if (err) {
+              reject('Could not update user');
+            } else {
+              resolve();
+            }
+          });
+        });
+      } else {
+        reject('Wrong password!');
+      }
+    }).catch(function (err) {
+      reject(err);
+    });
+  });
 }
 
 function checkIfFileInDb(folder, file, callback) {
@@ -362,26 +427,16 @@ module.exports = function admin() {
       res.redirect(path.join(relPath, '/'));
     });
 
-  router.get('/', function(req, res) {
-    res.render('admin', {
-      user: req.user
+  router.post('/change_password', function(req, res) {
+    const user = req.body.user || '';
+    const oldPw = req.body.oldPw || '';
+    const newPw = req.body.newPw || '';
+    changePasswordPromise(user, oldPw, newPw).then(function onResolve() {
+      res.sendStatus(200);
+    }).catch(function (err) {
+      console.log(err.stack);
+      res.status(400).send(err);
     });
-  });
-
-  router.get('/login', function(req, res) {
-    if (req.user) {
-      res.redirect(path.join(relPath, '/'));
-    } else {
-      res.render('login', {
-        message: req.flash('error'),
-        user: req.user
-      });
-    }
-  });
-
-  router.get('/logout', function(req, res) {
-    req.logout();
-    res.redirect(path.join(relPath, '/'));
   });
 
   router.get('/list', function(req, res) {
