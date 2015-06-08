@@ -207,6 +207,7 @@ var FileList = React.createClass({
             </div>
             <div className="panel-body">
               <FileUploadForm />
+              <hr />
               <button type="button" className="btn btn-default" onClick={this.triggerFullScan}>Scan file system</button>
             </div>
           </div>

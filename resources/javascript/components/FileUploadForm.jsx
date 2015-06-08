@@ -76,8 +76,8 @@ var FileUploadForm = React.createClass({
     xhr.addEventListener("error", this.transferFailed, false);
     xhr.open("POST", "admin/upload");
     xhr.setRequestHeader("token", ApplicationStore.getLoginToken());
-    
-    const uploadTo = FileStore.getSelectedFolder().name || '/';
+
+    const uploadTo = typeof FileStore.getSelectedFolder() === 'undefined' ? '' : FileStore.getSelectedFolder().name;
     xhr.setRequestHeader("folder", uploadTo);
     xhr.send(formData);
   },
@@ -94,16 +94,16 @@ var FileUploadForm = React.createClass({
     const content = this.state.folderStructure.toJSX();
     return (
       <div id="upload">
+        <div>
+          1. Choose upload location:<br/>
+          {content}
+        </div>
         <Dropzone onDrop={this.onDrop} width="100%">
-          <div>Drop files here or click to open the file chooser</div>
+          <div>2. Drop files here or click to open the file chooser</div>
         </Dropzone>
         <div>{this.state.message}</div>
         <div className="progress">
           <div className={progressClasses} role="progressbar" style={progressStyle} />
-        </div>
-        <div>
-          Upload to:<br/>
-          {content}
         </div>
       </div>
     );

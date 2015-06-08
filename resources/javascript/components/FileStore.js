@@ -178,6 +178,7 @@ Dispatcher.register(function (payload) {
             if (typeof _files[currentlySelectedId] !== 'undefined')
               _files[currentlySelectedId].selected = true;
           }
+          _page = FileStore.getSelectedFilePage();
           FileStore.emit(CHANGE_EVENT);
         }
       });

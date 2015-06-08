@@ -4,6 +4,11 @@ $icon-font-path: "../fonts/";
 
 @import "bootstrap";
 
+// iOS fix
+.btn, a {
+  cursor: pointer;
+}
+
 .daterangepicker {
   overflow: scroll;
 }
@@ -216,6 +221,8 @@ body {
 }
 
 .nav > li {
+  cursor: pointer;
+
   &:hover, &:focus {
     text-decoration: none;
     background-color: #e6e6e6;

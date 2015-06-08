@@ -5,7 +5,7 @@ var path = require('path');
 var config = require('../config_server');
 
 function get_folder_content(root, callback) {
-  root = root.replace(/./g, '');
+  root = root.replace(/\./g, '');
   fs.readdir(path.join(config.imagePath, root), function (err, files) {
     if (err) {
       callback([]);

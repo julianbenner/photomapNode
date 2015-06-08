@@ -162,8 +162,9 @@ var Overlay = React.createClass({
         buttons.push(<div key="overlayEdit" className="modal-control-btn modal-control-btn-left hiddenOnMobile"
                           onClick={this.editImage}><span className="glyphicon glyphicon-edit" aria-hidden="true"></span></div>);
     } else if (this.state.mode === 'edit') {
-      buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
-                        onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
+      if (OverlayStore.getGallery().length > 0)
+        buttons.push(<div key="overlayGallery" className="modal-control-btn modal-control-btn-right"
+                          onClick={this.showGallery}><span className="glyphicon glyphicon-th" aria-hidden="true"></span></div>);
     }
 
     let titleContent;
@@ -197,7 +198,7 @@ var Overlay = React.createClass({
         case 'filelistPresel':
           return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={OverlayStore.getSelectedImageId()}/>;
         case 'filelist':
-          return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={OverlayStore.getSelectedImageId() } />;
+          return <FileList key="overlayBodyFilelist" token={this.props.token} preselected={OverlayStore.getSelectedImageId()} />;
         case 'login':
           return <Login />;
       }
