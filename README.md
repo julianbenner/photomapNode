@@ -30,7 +30,11 @@ CREATE TABLE IF NOT EXISTS `photomap_user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+INSERT INTO `photomap_user` (`name`, `password`)  VALUES ('admin', '120a9bda6f97b1ce28d8a362289056909666e294ade2fb743e46b9b9b1fcf187:97ff3ca333046ac90fa7c73e6c64d77412023bd7006a0e608c8a54bbb1b516e947d15903cdd82062e3ca86e7fc7f7cc5faf5b7f79dd2f05a42d16cae769686c5:1000');
 ```
+
+This will inizialize the database with a user called admin with password admin. Feel free to change the username if you need to. If you need to alter the schema, please also adjust the config files (see further below).
+
 #### Node.js
 As we utilize some ES6 features, we recommend using a current version of io.js (tested with 2.2.1), but Node.js should also work (with the ```--harmony``` flag). In order to install some of the necessary packages with NPM, you need several external programs:
 * Python 2.7
@@ -49,4 +53,4 @@ As of yet, configuration is managed separately for server and client. Adjust ser
 Assets are compiled using Gulp. You can run ```gulp watch``` for development (triggering a re-compile whenever changes to the JavaScript or SCSS files are detected). For production, just run ```gulp```. This will build minimized versions of all necessary files.
 
 #### Run PhotoMap
-When all is set, you can simply run ```node bin/www```. However, in production you might want to use a wrapper such as pm2 for automated restarts upon server failure (e.g. ```pm2 start bin/www```). 
+When all is set, you can simply run ```node bin/www```. However, in production you might want to use a wrapper such as pm2 for automated restarts upon server failure (e.g. ```pm2 start bin/www```).
