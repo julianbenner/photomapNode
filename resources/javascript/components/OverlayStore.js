@@ -21,9 +21,11 @@ function toggleFullScreen() {
 
   if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
     requestFullScreen.call(docEl);
+    maximized = true;
   }
   else {
     cancelFullScreen.call(doc);
+    maximized = false;
   }
 }
 
@@ -134,7 +136,6 @@ Dispatcher.register(function (payload) {
 
     case 'toggle-enlarge':
       toggleFullScreen();
-      maximized = !maximized;
       OverlayStore.emit(CHANGE_EVENT);
       break;
   }

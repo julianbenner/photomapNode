@@ -24,7 +24,7 @@ var FolderWidget = React.createClass({
   componentWillUnmount: function () {
     MapStore.on('change', this._onChange);
   },
-
+  
   toggleList: function (event) {
     $("#folderDropdown").slideToggle();
   },
