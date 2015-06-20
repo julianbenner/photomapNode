@@ -3,7 +3,7 @@
 ## Description
 PhotoMap is a tool to help you visualize locations you have taken photos in and quickly find them on a map.
 
-It is realized with Node.js as backend and a React-based single-page-application frontend.
+It is implemented with Node.js as backend and a React-based single-page-application frontend.
 
 ## Installation
 
@@ -11,7 +11,7 @@ It is realized with Node.js as backend and a React-based single-page-application
 #### MariaDB
 PhotoMap utilizes an SQL database as data storage. While it was written with MariaDB 10.0 in mind, it should work with MySQL and other versions of MariaDB. You can use this snippet to initialize the database:
 ```sql
-CREATE DATABASE IF NOT EXISTS `photomap`
+CREATE DATABASE IF NOT EXISTS `photomap`;
 USE `photomap`;
 CREATE TABLE IF NOT EXISTS `photomap_image` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
