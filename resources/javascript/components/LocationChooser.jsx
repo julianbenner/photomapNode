@@ -67,7 +67,7 @@ var LocationChooser = React.createClass({
       if (!this.state.initialized) {
         const initialLat = this.props.lat || config.initial.lat;
         const initialLon = this.props.lon || config.initial.lon;
-        var map = this.map = L.mapbox.map(React.findDOMNode(this), 'examples.map-i86nkdio')
+        var map = this.map = L.mapbox.map(React.findDOMNode(this), config.mapboxStyle)
           .setView([initialLat, initialLon], config.initial.zoom);
 
         // lol
