@@ -71,3 +71,19 @@ $ npm install -g pm2
 ...
 $ pm2 start bin/www
 ```
+
+## To-do
+### Technical
+- [ ] Make use of React Router
+  - [ ] Ensure Android back button works as expected
+  - [ ] Permalinks indicating map position
+- [ ] Use Redux for state management
+- [ ] Modularizing (splitting content into more components)
+
+### Functionality
+- [ ] Render thumbnails when images are uploaded
+- [ ] From image view: "Jump to position on map"
+- [ ] Allow creation of folders in admin view and allow moving files
+
+### Bugs
+- [ ] Closing admin view when dragging the location chooser and letting go of the mouse on the main map
