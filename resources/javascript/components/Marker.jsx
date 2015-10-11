@@ -22,7 +22,7 @@ var Marker = React.createClass({
       if (this.props.text == '1') {
         MapStore.getSingleImage(lat, lon, function (data) {
           if (typeof data[0] !== 'undefined')
-            resolve(data[0].id);
+            resolve(data[0]);
           else
             resolve('');
         })
@@ -31,16 +31,20 @@ var Marker = React.createClass({
       }
     });
 
-    stylePromise.then(imageId => {
+    stylePromise.then(image => {
       let content, style;
-      if (imageId === '') {
+      let nose = '';
+      if (image === '') {
         style = '';
         content = this.props.text;
       } else {
-        style = 'style="background-image:url(image/' + imageId + '/tinySquare);top:0.5px;left:0.5px;transform:none;height:100%;-webkit-clip-path:circle(16px);clip-path:url(\'#circleMarker\')"';
+        style = 'style="background-image:url(image/' + image.id + '/tinySquare);top:0.5px;left:0.5px;transform:none;height:100%;-webkit-clip-path:circle(16px);clip-path:url(\'#circleMarker\')"';
         content = '';
+        if (image.direction !== null) {
+          nose = '<div style="width:0;height:0;border-style:solid;border-width:0 4.5px 5px 4.5px;border-color:transparent transparent rgba(39,128,227,.9) transparent;margin-top:-38px;margin-left:14px;transform:rotate(' + image.direction + 'deg);transform-origin:4px 21px;"></div>';
+        }
       }
-      const html = '<div class="image_count_child" ' + style + ' data-toggle="modal" data-target="#myModal">' + content + '</div>';
+      const html = '<div class="image_count_child" ' + style + ' data-toggle="modal" data-target="#myModal">' + content + '</div>' + nose;
       this.setState({
         marker: L.marker([this.props.avg_lat, this.props.avg_lon], {
           icon: L.divIcon({

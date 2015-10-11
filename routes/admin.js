@@ -188,7 +188,7 @@ function uploadImagePromise(tempFile, destination) {
             fs.unlink(tempFile.path);
           });
 
-          addImageToDb(destination, tempFile.originalname, result.lat, result.lon, result.date);
+          addImageToDb(destination, tempFile.originalname, result.lat, result.lon, result.date, result.direction);
           resolve();
         }).catch(function(err) {
           reject(err.message);
@@ -200,7 +200,7 @@ function uploadImagePromise(tempFile, destination) {
   });
 }
 
-function addImageToDb(folder, image, lat, lon, date) {
+function addImageToDb(folder, image, lat, lon, date, direction) {
   var connection = require('../routes/Database').Get();
 
   if (image !== 'Thumbs.db') { // herp
@@ -214,6 +214,10 @@ function addImageToDb(folder, image, lat, lon, date) {
     if (typeof date !== 'undefined') {
       columns += ', date';
       content += ', ' + connection.escape(date);
+    }
+    if (typeof direction !== 'undefined') {
+      columns += ', direction';
+      content += ', ' + connection.escape(direction);
     }
     const query = 'INSERT INTO `' + config.imageTableName + '` (' + columns + ') VALUES (' + connection.escape(image) + ',' + connection.escape(folder) + content + ')';
     console.log(query);
@@ -287,12 +291,15 @@ function getImageMetadataPromise(folder, image) {
       else {
         const gps = exifData.gps;
         const exif = exifData.exif;
-        let lat, lon, date;
+        let lat, lon, date, direction;
         if (typeof gps.GPSLongitude !== 'undefined' && typeof gps.GPSLatitude !== 'undefined') {
           lat = gps.GPSLatitude[0] + gps.GPSLatitude[1] / 60 + gps.GPSLatitude[2] / (60 * 60);
           lat = lat * (gps.GPSLatitudeRef === 'N' ? 1 : -1);
           lon = gps.GPSLongitude[0] + gps.GPSLongitude[1] / 60 + gps.GPSLongitude[2] / (60 * 60);
           lon = lon * (gps.GPSLongitudeRef === 'E' ? 1 : -1);
+        }
+        if (typeof gps.GPSImgDirection !== 'undefined') {
+          direction = gps.GPSImgDirection;
         }
         if (typeof exif !== 'undefined' && typeof exif.DateTimeOriginal !== 'original') {
           date = exif.DateTimeOriginal;
@@ -300,7 +307,8 @@ function getImageMetadataPromise(folder, image) {
         resolve({
           lat: lat,
           lon: lon,
-          date: date
+          date: date,
+          direction: direction
         });
       }
     });
@@ -312,7 +320,7 @@ function compareFileToDb(folder, item) {
     checkIfFileInDb(folder, item, function (answer) {
       if (typeof answer.exists !== 'undefined' && answer.exists == false) {
         console.log('Image ' + folder + '/' + item + ' does not exist in database!');
-        addImageToDb(folder, item, result.lat, result.lon, result.date);
+        addImageToDb(folder, item, result.lat, result.lon, result.date, result.direction);
       } else {
         console.log('Image ' + folder + '/' + item + ' exists in database!');
       }
